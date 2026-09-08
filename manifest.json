@@ -1,0 +1,23 @@
+{
+  "name": "MatchWine - Il Tuo Sommelier Personale",
+  "short_name": "MatchWine",
+  "description": "A ciascun piatto il suo calice secondo i principi della sommellerie.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf7f2",
+  "theme_color": "#520d1a",
+  "icons": [
+    {
+      "src": "images/LogPic.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/LogPic.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="it" class="bg-[#faf7f2] text-stone-800 selection:bg-rose-900/25 selection:text-wine-900" style="color-scheme: light only;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>MatchWine - Il Taccuino del Sommelier</title>
+    <meta name="application-name" content="MatchWine">
+    <meta name="description" content="MatchWine è l'applicazione web di sommelier digitale e consulenza enologica che analizza il profilo organolettico dei piatti per consigliare l'abbinamento ideale con il vino.">
+    
+    <meta name="color-scheme" content="light only">
+    <meta name="supported-color-schemes" content="light">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MatchWine">
+    <link rel="apple-touch-icon" href="images/LogPic.png">
+    <link rel="icon" type="image/png" href="images/LogPic.png">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Cormorant Garamond', 'serif'],
+                    },
+                    colors: {
+                        wine: {
+                            50: '#fdf2f4',
+                            100: '#fbe5e9',
+                            600: '#9b1b30',
+                            800: '#520d1a',
+                            900: '#33060f',
+                            950: '#220309',
+                        },
+                        gold: {
+                            100: '#fcf8ec',
+                            200: '#f5e8c7',
+                            300: '#e6cc85',
+                            400: '#d4af37',
+                            500: '#c5a059',
+                            600: '#a37f37',
+                        },
+                        sand: {
+                            50: '#fdfbf7',
+                            100: '#f5ebd9',
+                            200: '#e8d5b5',
+                            300: '#d4bda0'
+                        }
+                    },
+                    boxShadow: {
+                        'luxury': '0 16px 40px -10px rgba(82, 13, 26, 0.1), 0 4px 12px -2px rgba(0, 0, 0, 0.04)',
+                        'gold-glow': '0 0 25px rgba(197, 160, 89, 0.25)',
+                        'wine-glow': '0 10px 30px -5px rgba(82, 13, 26, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { color-scheme: light only !important; }
+        @media (prefers-color-scheme: dark) {
+            :root { color-scheme: light only !important; }
+        }
+        
+        body {
+            background-color: #faf7f2 !important;
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(255, 252, 247, 0.9) 0%, rgba(240, 228, 210, 0.6) 70%, rgba(215, 195, 168, 0.4) 100%),
+                radial-gradient(#e6d7c3 0.6px, transparent 0.6px) !important;
+            background-size: 100% 100%, 20px 20px;
+            background-attachment: fixed;
+            color: #33060f !important;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        main, #paywallModal {
+            position: relative;
+            z-index: 10;
+        }
+
+        img, svg { filter: none !important; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .wine-primary-btn {
+            background-color: #520d1a !important;
+            transition: all 0.2s ease;
+        }
+        .wine-primary-btn:hover {
+            background-color: #33060f !important;
+        }
+
+        .wine-card-bg {
+            background-color: #520d1a !important;
+        }
+
+        .notebook-sheet {
+            background: #ffffff;
+            background-image: radial-gradient(#f5ebd9 0.5px, transparent 0.5px);
+            background-size: 16px 16px;
+            box-shadow: 0 25px 50px -12px rgba(51, 6, 15, 0.12), 0 0 0 6px rgba(245, 235, 217, 0.3);
+            border: 1px solid #dcd0bc;
+            border-radius: 2rem;
+            position: relative;
+        }
+    </style>
+</head>
+<body class="bg-[#faf7f2] text-stone-900 max-w-md mx-auto font-sans antialiased border-x border-stone-200 shadow-2xl relative min-h-screen flex flex-col page-container">
+    
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 px-4 py-3 flex items-center justify-between bg-white border-b border-stone-200/60 shadow-2xs">
+        <div class="flex items-center cursor-pointer rounded-xl overflow-hidden py-0.5" onclick="resetToHome()">
+            <img src="images/Logo.JPG" alt="MatchWine" style="height: 38px;" class="w-auto object-contain rounded-xl">
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="toggleLanguage()" class="text-xs font-medium text-stone-600 hover:text-stone-900 px-2 py-1 transition">
+                <span id="langFlag">🇮🇹</span> <span id="langCode">IT</span>
+            </button>
+            <div id="authContainer">
+                <button id="btnLoginGoogle" onclick="loginWithGoogle()" class="text-xs font-medium text-wine-900 hover:opacity-75 transition">Accedi</button>
+                <div id="userProfileBadge" class="hidden flex items-center gap-2.5">
+                    <span onclick="handleCreditsClick()" id="creditsCount" class="cursor-pointer text-xs font-serif italic font-medium text-stone-700 hover:text-wine-900 transition">10 Crediti</span>
+                    <button onclick="logout()" class="w-7 h-7 rounded-full overflow-hidden bg-[#33060f] text-gold-300 flex items-center justify-center font-serif text-xs font-bold shadow-2xs hover:opacity-90 transition-opacity border border-gold-400/40">
+                        <img id="userAvatarImg" src="images/LogPic.png" alt="Avatar" class="w-full h-full object-cover hidden">
+                        <span id="userInitialLetter">A</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- MAIN -->
+    <main class="px-3 py-2.5 space-y-2.5 pb-6 flex-1 flex flex-col relative z-10 items-center">
+        
+        <!-- SELETTORE PERCORSO -->
+        <div class="w-full max-w-xl text-center space-y-1">
+            <span class="text-[9px] tracking-[0.25em] text-[#a37f37] uppercase block font-semibold">Scegli il percorso</span>
+            <div class="inline-flex items-center bg-[#fdfbf7] p-1 rounded-full border border-[#d4af37]/40 shadow-xs">
+                <button type="button" id="modePlateToGlass" onclick="switchSearchMode('dish')" class="px-4 py-1.5 rounded-full font-serif italic text-xs transition-all duration-300 bg-[#520d1a] text-white font-semibold shadow-sm cursor-pointer">Dal Piatto al Calice</button>
+                <button type="button" id="modeGlassToPlate" onclick="switchSearchMode('wine')" class="px-4 py-1.5 rounded-full font-serif italic text-xs transition-all duration-300 text-[#520d1a]/70 hover:text-[#520d1a] font-normal bg-transparent cursor-pointer">Dal Calice al Piatto</button>
+            </div>
+        </div>
+
+        <!-- BARRA DI RICERCA -->
+        <section class="w-full max-w-xl space-y-3 px-1">
+            <div class="flex items-center justify-between px-2">
+                <div>
+                    <label id="searchLabel" class="font-serif italic text-xl text-[#520d1a] font-medium leading-tight block">Quale piatto vuoi abbinare?</label>
+                    <p id="searchSublabel" class="text-xs font-serif italic text-stone-500 font-light mt-0.5">Trova il vino perfetto in pochi secondi.</p>
+                </div>
+                <button onclick="openSommelierInfo()" class="text-[10px] text-wine-900 font-medium flex items-center gap-1.5 bg-[#fdfbf7] px-3.5 py-1.5 rounded-full border border-[#d4af37]/40 shadow-2xs hover:border-[#d4af37] transition shrink-0 cursor-pointer">
+                    <span class="text-gold-600 font-bold">✦</span> <span id="badgeAiText" class="font-serif tracking-wide font-semibold">CHIEDI AL SOMMELIER IA</span>
+                </button>
+            </div>
+            
+            <form id="searchForm" onsubmit="handleSearch(event)" class="relative flex items-center w-full bg-[#fdfbf7] rounded-2xl border border-[#d4af37]/50 shadow-luxury px-4 py-3">
+                <div id="searchIconContainer" class="text-[#520d1a]/60 flex items-center justify-center mr-3 shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                </div>
+                
+                <input type="text" id="dishInput" autocomplete="off" placeholder="Es. Carbonara, risotto, sushi, carne..." class="w-full bg-transparent text-[#520d1a] placeholder-stone-400 text-sm font-medium focus:outline-none pr-4" required />
+                
+                <button type="button" id="clearBtn" onclick="clearInput()" class="hidden text-stone-400 hover:text-[#520d1a] p-1 transition-colors mr-2"><i data-lucide="x" class="w-4 h-4"></i></button>
+                
+                <button type="submit" id="submitBtn" class="px-5 py-2.5 wine-primary-btn text-white rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all hover:opacity-95 flex items-center gap-1.5 shrink-0 cursor-pointer">
+                    <span id="btnMatchText">Abbina</span> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </button>
+                
+                <div id="autocompleteDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-stone-300 shadow-xl overflow-hidden z-50 max-h-52 overflow-y-auto"></div>
+            </form>
+        </section>
+
+        <!-- PILLOLE "PROVA SUBITO" DINAMICHE -->
+        <div id="quickTrySection" class="w-full max-w-xl space-y-1 px-1">
+            <div class="flex items-center justify-center gap-2">
+                <div class="h-[1px] bg-[#d4af37]/40 flex-1"></div>
+                <span class="text-[9px] uppercase tracking-[0.2em] text-[#a37f37] font-semibold">Prova Subito</span>
+                <div class="h-[1px] bg-[#d4af37]/40 flex-1"></div>
+            </div>
+            <div id="quickTryButtons" class="flex items-center justify-center flex-wrap gap-1.5 px-1"></div>
+        </div>
+
+        <!-- BENVENUTO -->
+        <div id="welcomeState" class="w-full max-w-xl text-center py-3 px-2 space-y-3">
+            <div class="flex justify-center"><img src="images/Calice.png" alt="Calice" class="w-20 h-auto opacity-95 object-contain drop-shadow-sm" /></div>
+            
+            <div class="space-y-2.5">
+                <h2 id="welcomeTitle" class="text-3xl sm:text-3xl font-serif text-[#520d1a] tracking-wide font-normal italic">A Ciascun Piatto il Suo Calice</h2>
+                <div class="flex items-center justify-center gap-3 w-48 mx-auto py-1">
+                    <div class="h-[1px] bg-gradient-to-r from-transparent to-[#d4af37] flex-1"></div>
+                    <span class="text-gold-500 text-xs">◆</span>
+                    <div class="h-[1px] bg-gradient-to-l from-transparent to-[#d4af37] flex-1"></div>
+                </div>
+            </div>
+
+            <p id="welcomeDesc" class="text-[#520d1a]/85 font-serif italic text-sm leading-relaxed max-w-md mx-auto font-light">
+                Il tuo <strong class="font-semibold text-[#520d1a]">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta.
+            </p>
+    
+            <!-- 3 COLONNE -->
+            <div class="w-full bg-[#fdfbf7] rounded-3xl border border-[#d4af37]/50 shadow-xs grid grid-cols-3 divide-x divide-[#d4af37]/40 text-center py-3 px-2 mt-3">
+              <div class="px-1.5 flex flex-col items-center justify-between">
+                  <div class="h-11 w-full flex items-center justify-center">
+                    <img src="images/Tastevin.png" alt="Consulenza" class="max-h-full w-auto object-contain scale-125" />
+                  </div>
+                  <div class="h-10 w-full flex items-center justify-center my-1.5">
+                    <h4 class="font-serif font-bold text-[10px] sm:text-xs text-wine-900 tracking-wide uppercase leading-tight">CONSULENZA<br>ESPERTA</h4>
+                  </div>
+                  <p class="text-[9px] sm:text-[10px] text-stone-500 leading-tight font-light">Guidata dalla nostra Intelligenza Artificiale</p>
+              </div>
+
+              <div class="px-1.5 flex flex-col items-center justify-between">
+                  <div class="h-11 w-full flex items-center justify-center">
+                    <img src="images/GrappoloNew.png" alt="Abbinamenti" class="max-h-full w-auto object-contain scale-125" />
+                  </div>
+                  <div class="h-10 w-full flex items-center justify-center my-1.5">
+                    <h4 class="font-serif font-bold text-[10px] sm:text-xs text-wine-900 tracking-wide uppercase leading-tight">ABBINAMENTI<br>PERFETTI</h4>
+                  </div>
+                  <p class="text-[9px] sm:text-[10px] text-stone-500 leading-tight font-light">Per piatti della tradizione e d'autore</p>
+              </div>
+
+              <div class="px-1.5 flex flex-col items-center justify-between">
+                  <div class="h-11 w-full flex items-center justify-center">
+                    <img src="images/Botte.png" alt="Scopri e Impara" class="max-h-full w-auto object-contain scale-125" />
+                  </div>
+                  <div class="h-10 w-full flex items-center justify-center my-1.5">
+                    <h4 class="font-serif font-bold text-[10px] sm:text-xs text-wine-900 tracking-wide uppercase leading-tight">SCOPRI E<br>IMPARA</h4>
+                  </div>
+                  <p class="text-[9px] sm:text-[10px] text-stone-500 leading-tight font-light">Approfondimenti, consigli e curiosità sul vino</p>
+              </div>
+            </div>
+        </div>
+
+        <!-- CARICAMENTO -->
+        <div id="loadingState" class="hidden flex-1 py-14 flex flex-col items-center justify-center space-y-4 text-center my-auto">
+            <div class="relative w-20 h-20 flex items-center justify-center">
+                <div class="absolute inset-0 rounded-full border-2 border-amber-200 border-t-wine-800 animate-spin"></div>
+                <div class="absolute inset-2 rounded-full border-2 border-stone-200 border-b-gold-500 animate-spin" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
+                <div class="animate-bounce flex items-center justify-center z-10 w-9 h-9"><img src="images/Calice.png" alt="Calice" class="w-8 h-8 object-contain" /></div>
+            </div>
+            <div class="space-y-1">
+                <p id="loadingTitle" class="font-serif text-2xl font-semibold text-wine-900 italic">Consultando la Carta dei Vini...</p>
+                <p id="loadingSubtitle" class="text-xs text-stone-500 max-w-xs mx-auto">Analisi profilo organolettico: acidità, untuosità, persistenza e tannino.</p>
+            </div>
+        </div>
+
+        <!-- RISULTATI (CON TAB PULITI IN ALTO E CHAT ENOLOGO INCLUSA) -->
+        <div id="resultsContainer" class="hidden space-y-4 w-full max-w-xl pb-6">
+            
+           <!-- BARRA TAB ORIZZONTALE CON I 4 TAB DEI VINI -->
+            <div class="w-full bg-[#fdfbf7] p-1.5 rounded-full border border-[#d4af37]/40 shadow-xs flex items-center justify-between gap-1 overflow-x-auto no-scrollbar">
+                <button onclick="goToPage(1)" id="tab-1" class="flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 bg-[#520d1a] text-white font-semibold whitespace-nowrap text-center">Standard</button>
+                <button onclick="goToPage(2)" id="tab-2" class="flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 text-[#520d1a]/70 hover:text-[#520d1a] whitespace-nowrap text-center">Plus</button>
+                <button onclick="goToPage(3)" id="tab-3" class="flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 text-[#520d1a]/70 hover:text-[#520d1a] whitespace-nowrap text-center">Prestige</button>
+                <button onclick="goToPage(4)" id="tab-4" class="flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 text-[#520d1a]/70 hover:text-[#520d1a] whitespace-nowrap text-center">Sommelier</button>
+            </div>
+
+            <!-- CONTENITORE DINAMICO DELLE SCHEDE -->
+            <div id="readerCard" class="space-y-4 w-full">
+                <div id="readerPageContent" class="space-y-4"></div>
+            </div>
+
+            <!-- PULSANTI DI NAVIGAZIONE IN BASSO -->
+            <nav class="w-full flex items-center justify-between pt-2">
+                <button onclick="changeReaderPage(-1)" id="btnReaderPrev" class="px-4 py-2 rounded-full border border-stone-300 text-wine-900 text-xs font-serif tracking-widest uppercase hover:bg-stone-100 transition disabled:opacity-30 disabled:cursor-not-allowed bg-white shadow-2xs">← Indietro</button>
+                <button onclick="resetToHome()" class="text-xs font-serif text-stone-500 hover:text-wine-900 uppercase tracking-widest transition">Nuova Ricerca</button>
+                <button onclick="changeReaderPage(1)" id="btnReaderNext" class="px-5 py-2 rounded-full wine-primary-btn text-white text-xs font-serif tracking-widest uppercase shadow-md transition hover:opacity-95">Avanti →</button>
+            </nav>
+
+            <!-- CHAT ENOLOGO -->
+            <div class="space-y-3 pt-4">
+                <div class="flex items-center justify-between px-1">
+                    <h3 class="text-[11px] font-bold tracking-[0.25em] uppercase text-wine-900 flex items-center gap-2">
+                        <img src="images/TastevinDis.png" alt="Tastevin" class="w-5 h-5 object-contain scale-150 origin-left" /> L'Angolo dell'Esperto
+                    </h3>
+                </div>
+                
+                <div class="p-1.5 rounded-[28px] bg-gradient-to-br from-gold-500 via-gold-600 to-gold-400 shadow-2xl relative">
+                    <div class="p-1 rounded-[24px] bg-stone-900">
+                        <div class="bg-stone-950 p-6 rounded-[22px] border border-gold-400/40 space-y-4 relative overflow-hidden">
+                            <div class="flex items-center gap-4 relative z-10">
+                                <div class="w-14 h-14 rounded-2xl bg-stone-900 border border-gold-400/50 flex items-center justify-center text-gold-400 shadow-lg shrink-0 p-1 overflow-hidden">
+                                    <img src="images/TastevinDis.png" alt="Tastevin" class="w-full h-full object-contain scale-150" />
+                                </div>
+                                <div>
+                                    <h4 class="font-serif text-2xl text-stone-100 font-bold leading-tight tracking-wide">L'Enologo Risponde</h4>
+                                    <p class="text-xs text-stone-300 font-light tracking-wide mt-1 leading-relaxed">
+                                        Per annate rare, piatti della tradizione o abbinamenti fuori carta, interrogate il nostro esperto.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3 relative z-10 pt-2">
+                                <textarea id="aiSommelierInput" rows="2.5" placeholder="Scrivete qui il vostro quesito enologico..." class="w-full bg-stone-900 text-stone-100 placeholder-stone-500 text-xs font-medium p-4 rounded-xl border border-stone-800 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 focus:outline-none transition-all resize-none shadow-inner"></textarea>
+                                
+                                <div class="flex items-center gap-1.5 overflow-x-auto pt-0.5 pb-1 no-scrollbar text-xs">
+                                    <button type="button" onclick="fillQuickPrompt('Spiegami l\'abbinamento')" class="px-2.5 py-1.5 bg-stone-900 hover:bg-stone-800 border border-gold-400/30 rounded-lg text-[11px] font-medium text-gold-300 transition-all whitespace-nowrap flex items-center gap-1 shadow-2xs active:scale-95">
+                                        <i data-lucide="sparkles" class="w-3 h-3 text-gold-400"></i><span>Spiegami l'abbinamento</span>
+                                    </button>
+                                    <button type="button" onclick="fillQuickPrompt('Anno o annata ideale')" class="px-2.5 py-1.5 bg-stone-900 hover:bg-stone-800 border border-gold-400/30 rounded-lg text-[11px] font-medium text-gold-300 transition-all whitespace-nowrap flex items-center gap-1 shadow-2xs active:scale-95">
+                                        <i data-lucide="calendar" class="w-3 h-3 text-gold-400"></i><span>Anno o annata ideale</span>
+                                    </button>
+                                    <button type="button" onclick="fillQuickPrompt('Qualche curiosità sul vitigno?')" class="px-2.5 py-1.5 bg-stone-900 hover:bg-stone-800 border border-gold-400/30 rounded-lg text-[11px] font-medium text-gold-300 transition-all whitespace-nowrap flex items-center gap-1 shadow-2xs active:scale-95">
+                                        <i data-lucide="book-open" class="w-3 h-3 text-gold-400"></i><span>Curiosità sul vitigno</span>
+                                    </button>
+                                </div>
+                                
+                                <button type="button" onclick="askAiSommelier()" id="btnAskAi" class="w-full py-4 px-5 bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-stone-950 font-bold rounded-xl text-xs uppercase tracking-[0.18em] transition-all shadow-xl hover:shadow-gold-glow flex items-center justify-center gap-2 active:scale-95">
+                                    <span>Chiedi al sommelier</span>
+                                </button>
+                            </div>
+
+                            <div id="aiSommelierResponseBox" class="hidden mt-4 p-4 bg-stone-900/90 rounded-xl border border-gold-400/40 space-y-2 relative z-10 animate-in fade-in duration-300">
+                                <div class="flex items-center justify-between text-gold-400 font-serif font-bold text-sm border-b border-stone-800 pb-2">
+                                    <div class="flex items-center gap-2">
+                                        <img src="images/TastevinDis.png" alt="Tastevin" class="w-4 h-4 object-contain scale-150" />
+                                        <span>Il Parere dell'Enologo</span>
+                                    </div>
+                                </div>
+                                <p id="aiSommelierReplyText" class="text-xs text-stone-200 leading-relaxed font-light italic pt-1"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRIVACY -->
+        <div class="w-full text-center py-1">
+            <a href="privacy.html" class="text-[9px] tracking-[0.2em] text-[#8c6d33] uppercase font-medium hover:underline inline-flex items-center gap-1.5">
+                <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span> PRIVACY POLICY <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span>
+            </a>
+        </div>
+    </main>
+
+    <!-- TOAST -->
+    <div id="premiumToast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-sm bg-[#fdfbf7] text-wine-900 border border-gold-400/60 px-5 py-3.5 rounded-2xl shadow-xl text-xs font-serif italic tracking-wide text-center transition-all duration-300 opacity-0 pointer-events-none">
+        Il vostro calice è illimitato: la cantina PRO è interamente a vostra disposizione.
+    </div>
+
+    <!-- BANNER PWA -->
+    <div id="pwa-install-banner" class="install-banner" style="display: none;">
+      <div class="banner-content">
+        <img src="images/LogPic.png" alt="MatchWine Logo" class="banner-logo">
+        <div class="banner-text">
+          <strong>Installa MatchWine</strong>
+          <p>Aggiungila alla Home come un'app!</p>
+        </div>
+        <button id="install-button" class="banner-btn">Installa</button>
+        <button id="close-banner" class="banner-close">✕</button>
+      </div>
+    </div>
+
+    <!-- PAYWALL -->
+    <div id="paywallModal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 hidden">
+        <div class="w-full max-w-sm bg-white rounded-3xl p-6 border border-stone-200 space-y-5 text-center shadow-2xl animate-in zoom-in-95 duration-200 relative overflow-hidden">
+            <button onclick="closePaywall()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 p-1.5 rounded-full hover:bg-stone-100 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-white border border-gold-400/40 flex items-center justify-center overflow-hidden p-1 shadow-lg">
+                <img src="images/LogPic.png" alt="Logo" class="w-full h-full object-contain scale-[1.2] bg-white" />
+            </div>                
+            <div class="space-y-1">
+                <h3 id="paywallTitle" class="font-serif font-bold text-2xl text-wine-900">Sblocca il Sommelier IA</h3>
+                <p id="paywallSub" class="text-xs text-stone-500 leading-relaxed font-normal">
+                    Hai esaurito i crediti gratuiti o le richieste giornaliere. Sblocca le funzioni avanzate per continuare.
+                </p>
+            </div>
+            <button onclick="closePaywall()" class="w-full wine-card-bg text-stone-100 font-bold text-xs py-3.5 rounded-xl shadow-lg hover:opacity-95 transition-all uppercase tracking-wider">
+                Torna al Taccuino
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        const SUPABASE_URL = "https://cjjzpejwczllqwtquszm.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_g0jy3US3TGvAb0obYh36tA_sCRxNOjF";
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+        });
+        let currentUser = null;
+
+        async function initAuth() {
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                if (error) throw error;
+                if (session && session.user) {
+                    currentUser = session.user;
+                    updateAuthUI(session.user);
+                }
+            } catch (err) {
+                console.warn("Sessione non attiva.");
+            }
+        }
+        initAuth();
+
+        async function loginWithGoogle() {
+            const { error } = await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.origin }
+            });
+            if (error) alert("Impossibile completare l'accesso con Google.");
+        }
+
+        async function logout() {
+            if (confirm("Vuoi disconnettere il tuo account?")) {
+                await supabaseClient.auth.signOut();
+                window.location.reload();
+            }
+        }
+
+        supabaseClient.auth.onAuthStateChange(async (event, session) => {
+            if (session && session.user) {
+                currentUser = session.user;
+                updateAuthUI(session.user);
+            } else {
+                currentUser = null;
+                updateAuthUI(null);
+            }
+        });
+
+        async function updateAuthUI(user) {
+            const loginBtn = document.getElementById('btnLoginGoogle');
+            const profileBadge = document.getElementById('userProfileBadge');
+            const avatarImg = document.getElementById('userAvatarImg');
+            const avatarLetter = document.getElementById('userInitialLetter');
+            const creditsLabel = document.getElementById('creditsCount');
+
+            if (user) {
+                if (loginBtn) loginBtn.classList.add('hidden');
+                if (profileBadge) profileBadge.classList.remove('hidden');
+                
+                if (user.user_metadata?.avatar_url) {
+                    avatarImg.src = user.user_metadata.avatar_url;
+                    avatarImg.classList.remove('hidden');
+                    if (avatarLetter) avatarLetter.classList.add('hidden');
+                } else if (user.email) {
+                    const initial = user.email.charAt(0).toUpperCase();
+                    if (avatarLetter) {
+                        avatarLetter.innerText = initial;
+                        avatarLetter.classList.remove('hidden');
+                    }
+                    if (avatarImg) avatarImg.classList.add('hidden');
+                }
+
+                try {
+                    let { data: profile, error } = await supabaseClient
+                        .from('profiles')
+                        .select('credits_remaining, plan, is_active_subscription')
+                        .eq('id', user.id)
+                        .single();
+
+                    if (error || !profile) {
+                        const { data: upserted } = await supabaseClient
+                            .from('profiles')
+                            .upsert([{ id: user.id, email: user.email || '', full_name: user.user_metadata?.full_name || 'Utente', credits_remaining: 10, plan: 'free' }], { onConflict: 'id' })
+                            .select().single();
+                        if (upserted) profile = upserted;
+                    }
+
+                    if (profile && creditsLabel) {
+                        isUserPremium = ((profile.plan === 'monthly' || profile.plan === 'premium' || profile.plan === 'pro') && profile.is_active_subscription === true);
+                        creditsLabel.innerText = isUserPremium ? "Premium" : `${profile.credits_remaining} Crediti`;
+                    }
+                } catch (e) {
+                    if (creditsLabel) creditsLabel.innerText = "10 Crediti";
+                }
+            } else {
+                if (loginBtn) loginBtn.classList.remove('hidden');
+                if (profileBadge) profileBadge.classList.add('hidden');
+            }
+        }
+
+        let currentLang = 'it';
+        let currentData = null;
+        let searchMode = 'dish';
+        let readerPageIndex = 1; // Default su Standard (vino consigliato)
+        let isUserPremium = false;
+
+        const config = {
+            searchWebhookUrl: 'https://cjjzpejwczllqwtquszm.supabase.co/functions/v1/Matchwine-search',
+            wineSearchWebhookUrl: 'https://cjjzpejwczllqwtquszm.supabase.co/functions/v1/Matchwine-wine-search',
+            chatWebhookUrl: 'https://cjjzpejwczllqwtquszm.supabase.co/functions/v1/Matchwine-chat'
+        };
+
+        const i18n = {
+            it: {
+                searchPlaceholderDish: "Es. Carbonara, risotto, sushi, carne...",
+                searchPlaceholderWine: "Es. Barolo, Chianti Classico, Franciacorta...",
+                sublabelDish: "Trova il vino perfetto in pochi secondi.",
+                sublabelWine: "Trova i piatti ideali per esaltare questo vino.",
+                btnMatch: "Abbina",
+                aiMatch: "CHIEDI AL SOMMELIER IA",
+                loadingTitle: "Consultando la Carta dei Vini...",
+                loadingSubtitle: "Analisi profilo organolettico in corso...",
+                welcomeTitle: "A Ciascun Piatto il Suo Calice",
+                welcomeDesc: "Il tuo Sommelier IA ti guida verso l'armonia enologica perfetta."
+            },
+            en: {
+                searchPlaceholderDish: "e.g. Carbonara, risotto, sushi...",
+                searchPlaceholderWine: "e.g. Barolo, Chianti Classico...",
+                sublabelDish: "Find the perfect wine in seconds.",
+                sublabelWine: "Find the ideal dishes to pair with this wine.",
+                btnMatch: "Pair",
+                aiMatch: "AI SOMMELIER",
+                loadingTitle: "Consulting the Wine List...",
+                loadingSubtitle: "Organoleptic profile analysis...",
+                welcomeTitle: "Every Dish Deserves its Glass",
+                welcomeDesc: "Let our AI Sommelier guide you to the perfect wine pairing."
+            }
+        };
+
+        const availableDishes = [
+            "Carbonara", "Bistecca alla Fiorentina", "Spaghetti alle Vongole", "Pizza Margherita",
+            "Risotto ai Funghi Porcini", "Lasagne alla Bolognese", "Cacio e Pepe", "Ossobuco alla Milanese",
+            "Tiramisù", "Torta Sacher", "Amatriciana", "Gricia", "Pasta alla Norma", "Pesto alla Genovese"
+        ];
+
+        const availableWines = [
+            "Barolo DOCG (Ceretto)", "Brunello di Montalcino DOCG (Biondi-Santi)", "Amarone della Valpolicella DOCG (Masi)",
+            "Chianti Classico Riserva DOCG (Antinori)", "Sassicaia (Tenuta San Guido)", "Franciacorta DOCG Brut (Ca' del Bosco)"
+        ];
+
+        const dishInputEl = document.getElementById('dishInput');
+        const dropdownEl = document.getElementById('autocompleteDropdown');
+
+        if (dishInputEl) {
+            dishInputEl.addEventListener('input', function() {
+                const query = this.value.trim().toLowerCase();
+                toggleClearButton();
+                if (query.length === 0) {
+                    dropdownEl.classList.add('hidden');
+                    dropdownEl.innerHTML = '';
+                    return;
+                }
+                const dataSource = searchMode === 'dish' ? availableDishes : availableWines;
+                const matches = dataSource.filter(item => item.toLowerCase().includes(query)).slice(0, 3);
+                if (matches.length > 0) {
+                    let html = '';
+                    matches.forEach(match => {
+                        html += `<div onclick="selectSuggestedItem('${match.replace(/'/g, "\\'")}')" class="px-4 py-3 text-xs font-medium text-stone-700 hover:bg-stone-100 hover:text-wine-900 cursor-pointer transition-colors border-b border-stone-200 last:border-none flex items-center justify-between">
+                            <span>${match}</span><i data-lucide="arrow-up-left" class="w-3.5 h-3.5 text-stone-400"></i></div>`;
+                    });
+                    dropdownEl.innerHTML = html;
+                    dropdownEl.classList.remove('hidden');
+                    if (window.lucide) lucide.createIcons();
+                } else {
+                    dropdownEl.classList.add('hidden');
+                    dropdownEl.innerHTML = '';
+                }
+            });
+        }
+
+        function switchSearchMode(mode) {
+            searchMode = mode;
+            const btnPlate = document.getElementById('modePlateToGlass');
+            const btnGlass = document.getElementById('modeGlassToPlate');
+            const searchLabel = document.getElementById('searchLabel');
+            const searchSublabel = document.getElementById('searchSublabel');
+            const searchIcon = document.getElementById('searchIconContainer');
+            const quickTryButtons = document.getElementById('quickTryButtons');
+            const dict = i18n[currentLang];
+
+            const activeClass = "px-4 py-1.5 rounded-full font-serif italic text-xs transition-all duration-300 bg-[#520d1a] text-white font-semibold shadow-sm cursor-pointer";
+            const inactiveClass = "px-4 py-1.5 rounded-full font-serif italic text-xs transition-all duration-300 text-[#520d1a]/70 hover:text-[#520d1a] font-normal bg-transparent cursor-pointer";
+
+            if (mode === 'dish') {
+                if (btnPlate) btnPlate.className = activeClass;
+                if (btnGlass) btnGlass.className = inactiveClass;
+                if (searchLabel) searchLabel.innerText = "Quale piatto vuoi abbinare?";
+                if (searchSublabel) searchSublabel.innerText = dict.sublabelDish;
+                if (dishInputEl) dishInputEl.placeholder = dict.searchPlaceholderDish;
+                
+                if (searchIcon) searchIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>`;
+                
+                if (quickTryButtons) {
+                    quickTryButtons.innerHTML = `
+                        <button type="button" onclick="selectSuggestedItem('Carbonara')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
+                            <span class="text-gold-600">🍝</span> Carbonara
+                        </button>
+                        <button type="button" onclick="selectSuggestedItem('Pizza Margherita')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
+                            <span class="text-gold-600">🍕</span> Pizza Margherita
+                        </button>
+                        <button type="button" onclick="selectSuggestedItem('Risotto ai Funghi Porcini')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
+                            <span class="text-gold-600">🍄</span> Risotto ai Funghi
+                        </button>
+                    `;
+                }
+            } else {
+                if (btnGlass) btnGlass.className = activeClass;
+                if (btnPlate) btnPlate.className = inactiveClass;
+                if (searchLabel) searchLabel.innerText = "Quale vino hai in cantina?";
+                if (searchSublabel) searchSublabel.innerText = dict.sublabelWine;
+                if (dishInputEl) dishInputEl.placeholder = dict.searchPlaceholderWine;
+                
+                if (searchIcon) searchIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-6"/><path d="M8 22h8"/><path d="M6 2h12l-2 9a4 4 0 0 1-8 0L6 2z"/></svg>`;
+                
+                if (quickTryButtons) {
+                    quickTryButtons.innerHTML = `
+                        <button type="button" onclick="selectSuggestedItem('Barolo DOCG (Ceretto)')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
+                            <span class="text-gold-600">🍷</span> Barolo
+                        </button>
+                        <button type="button" onclick="selectSuggestedItem('Chianti Classico Riserva DOCG (Antinori)')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
+                            <span class="text-gold-600">🍇</span> Chianti Classico
+                        </button>
+                        <button type="button" onclick="selectSuggestedItem('Franciacorta DOCG Brut (Ca\\' del Bosco)')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
+                            <span class="text-gold-600">🍾</span> Franciacorta
+                        </button>
+                    `;
+                }
+            }
+            
+            if (dishInputEl) dishInputEl.value = '';
+            toggleClearButton();
+            if (dropdownEl) dropdownEl.classList.add('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function selectSuggestedItem(itemName) {
+            if (!dishInputEl) return;
+            dishInputEl.value = itemName;
+            if (dropdownEl) dropdownEl.classList.add('hidden');
+            toggleClearButton();
+            handleSearch(null);
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#searchForm') && !e.target.closest('#autocompleteDropdown')) {
+                if (dropdownEl) dropdownEl.classList.add('hidden');
+            }
+        });
+
+        function toggleClearButton() {
+            const btn = document.getElementById('clearBtn');
+            if (!btn || !dishInputEl) return;
+            if (dishInputEl.value.trim() !== '') btn.classList.remove('hidden');
+            else btn.classList.add('hidden');
+        }
+
+        function clearInput() {
+            if (!dishInputEl) return;
+            dishInputEl.value = '';
+            if (dropdownEl) dropdownEl.classList.add('hidden');
+            toggleClearButton();
+            dishInputEl.focus();
+        }
+
+        function updateUiLanguage() {
+            const dict = i18n[currentLang];
+            if (!dishInputEl) return;
+            if (searchMode === 'dish') {
+                dishInputEl.placeholder = dict.searchPlaceholderDish;
+                document.getElementById('searchSublabel').innerText = dict.sublabelDish;
+            } else {
+                dishInputEl.placeholder = dict.searchPlaceholderWine;
+                document.getElementById('searchSublabel').innerText = dict.sublabelWine;
+            }
+            document.getElementById('btnMatchText').innerText = dict.btnMatch;
+            document.getElementById('badgeAiText').innerText = dict.aiMatch;
+            document.getElementById('loadingTitle').innerText = dict.loadingTitle;
+            document.getElementById('loadingSubtitle').innerText = dict.loadingSubtitle;
+            document.getElementById('welcomeTitle').innerText = dict.welcomeTitle;
+            document.getElementById('welcomeDesc').innerHTML = currentLang === 'it' 
+                ? "Il tuo <strong class=\"font-semibold text-[#520d1a]\">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta."
+                : "Let our <strong class=\"font-semibold text-[#520d1a]\">AI Sommelier</strong> guide you to the perfect wine pairing.";
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function resetToHome() {
+            const resultsCont = document.getElementById('resultsContainer');
+            const welcomeState = document.getElementById('welcomeState');
+            const quickTry = document.getElementById('quickTrySection');
+            
+            if (resultsCont) resultsCont.classList.add('hidden');
+            if (welcomeState) welcomeState.classList.remove('hidden');
+            if (quickTry) quickTry.classList.remove('hidden');
+            
+            if (dishInputEl) dishInputEl.value = '';
+            toggleClearButton();
+            currentData = null;
+            readerPageIndex = 1;
+        }
+
+        function openSommelierInfo() {
+            const input = document.getElementById('aiSommelierInput');
+            if (input) {
+                input.scrollIntoView({ behavior: 'smooth' });
+                input.focus();
+            }
+        }
+
+        function fillQuickPrompt(text) {
+            const input = document.getElementById('aiSommelierInput');
+            if (input) {
+                input.value = text;
+                input.focus();
+            }
+        }
+
+        async function handleSearch(e) {
+            if (e) e.preventDefault();
+            if (!dishInputEl) return;
+            const inputValue = dishInputEl.value.trim();
+            if (!inputValue) return;
+
+            if (dropdownEl) dropdownEl.classList.add('hidden');
+            const banner = document.getElementById('pwa-install-banner');
+            if (banner) banner.style.display = 'none';
+
+            currentData = null;
+            readerPageIndex = 1; // Parte direttamente da Standard (vino consigliato)
+            showLoading(true);
+
+            const targetUrl = searchMode === 'dish' ? config.searchWebhookUrl : config.wineSearchWebhookUrl;
+            const payloadKey = searchMode === 'dish' ? 'dish_name' : 'wine_name';
+
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const token = session ? session.access_token : '';
+
+                const response = await fetch(targetUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ [payloadKey]: inputValue, lang: currentLang })
+                });
+
+                let result = await response.json();
+                if (Array.isArray(result)) result = result[0];
+
+                if (result && (result.paywall === true || result.success === false || response.status === 402)) {
+                    showLoading(false);
+                    document.getElementById('welcomeState').classList.remove('hidden');
+                    const quickTry = document.getElementById('quickTrySection');
+                    if (quickTry) quickTry.classList.remove('hidden');
+                    openPaywall();
+                    return;
+                }
+
+                if (response.status === 429) {
+                    showLoading(false);
+                    document.getElementById('welcomeState').classList.remove('hidden');
+                    const quickTry = document.getElementById('quickTrySection');
+                    if (quickTry) quickTry.classList.remove('hidden');
+                    alert(result.message || "Troppe richieste in pochi secondi.");
+                    return;
+                }
+
+                currentData = result.data || result.result || result;
+
+                if (!currentData || typeof currentData !== 'object') {
+                    throw "Formato dati non valido";
+                }
+
+                renderReaderPage();
+                showLoading(false);
+                
+                const welcomeState = document.getElementById('welcomeState');
+                const quickTry = document.getElementById('quickTrySection');
+                const resultsCont = document.getElementById('resultsContainer');
+
+                if (welcomeState) welcomeState.classList.add('hidden');
+                if (quickTry) quickTry.classList.add('hidden');
+                if (resultsCont) resultsCont.classList.remove('hidden');
+
+            } catch (err) {
+                console.warn('Errore ricerca:', err);
+                showLoading(false);
+                
+                const welcomeState = document.getElementById('welcomeState');
+                const quickTry = document.getElementById('quickTrySection');
+                if (welcomeState) welcomeState.classList.remove('hidden');
+                if (quickTry) quickTry.classList.remove('hidden');
+                
+                alert('Errore di comunicazione con il server. Riprova tra poco.');
+            }
+        }
+
+        function goToPage(index) {
+            if (index < 0 || index > 4 || readerPageIndex === index) return;
+            readerPageIndex = index;
+            renderReaderPage();
+        }
+
+        function changeReaderPage(direction) {
+            const newIndex = readerPageIndex + direction;
+            if (newIndex < 0 || newIndex > 4) return;
+            goToPage(newIndex);
+        }
+
+        function renderReaderPage() {
+            if (!currentData) return;
+            const d = currentData;
+            
+            const contentContainer = document.getElementById('readerPageContent');
+            const btnPrev = document.getElementById('btnReaderPrev');
+            const btnNext = document.getElementById('btnReaderNext');
+
+            if (!contentContainer) return;
+
+            // Aggiorna lo stile dei 4 tab in alto
+            for (let i = 1; i <= 4; i++) {
+                const tab = document.getElementById(`tab-${i}`);
+                if (tab) {
+                    if (i === readerPageIndex) {
+                        tab.className = "flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 bg-[#520d1a] text-white font-semibold whitespace-nowrap text-center shadow-sm";
+                    } else {
+                        tab.className = "flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 text-[#520d1a]/70 hover:text-[#520d1a] whitespace-nowrap text-center";
+                    }
+                }
+            }
+
+            if (btnPrev) btnPrev.disabled = readerPageIndex === 1;
+            if (btnNext) {
+                if (readerPageIndex === 4) {
+                    btnNext.innerText = "Fine";
+                    btnNext.disabled = true;
+                    btnNext.classList.add('opacity-50');
+                } else {
+                    btnNext.innerText = "Avanti →";
+                    btnNext.disabled = false;
+                    btnNext.classList.remove('opacity-50');
+                }
+            }
+
+            let html = '';
+            let cleanDishName = (d.dish_name || (dishInputEl ? dishInputEl.value.trim() : '') || 'Carbonara').replace(/([aeiouàèìòù])\1{2,}/gi, '$1');
+
+            // BLOCCO DEL PIATTO CON ILLUSTRAZIONE DINAMICA E PROFILO SENSORIALE
+            const dishCardHtml = `
+    <div class="notebook-sheet p-5 sm:p-6 space-y-4">
+        <div class="flex items-start gap-4">
+            <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shrink-0">
+                <img src="${getDishIllustration(d.category, cleanDishName, d.description)}" alt="Piatto" class="w-full h-full object-contain scale-125" />
+            </div>
+            <div class="space-y-1.5 flex-1 min-w-0">
+                <!-- TITOLO CON PRIMA LETTERA MAIUSCOLA -->
+                <h3 class="font-serif text-2xl sm:text-3xl font-bold leading-tight" style="color: #520d1a;">${capitalizeFirstLetter(cleanDishName)}</h3>
+                <!-- DESCRIZIONE -->
+                <p class="text-xs sm:text-sm leading-relaxed font-normal" style="color: #520d1a;">
+                    ${d.description || 'Piatto d\'eccellenza della tradizione enogastronomica.'}
+                </p>
+            </div>
+        </div>
+
+        <div class="pt-3 border-t border-[#dcd0bc]/60 space-y-3">
+            <div class="text-[10px] uppercase tracking-[0.2em] font-bold text-wine-900">PROFILO SENSORIALE PIATTO</div>
+            
+            <!-- GRIGLIA A 4 COLONNE -->
+            <div class="grid grid-cols-4 divide-x divide-[#dcd0bc]/60 text-center pt-1">
+                <!-- Grassezza -->
+                <div class="flex flex-col items-center px-1 space-y-1.5">
+                    <div class="flex items-center justify-center gap-1.5">
+                        <img src="images/grassezza.png" alt="Grassezza" class="w-5 h-5 sm:w-6 sm:h-6 object-contain drop-shadow-2xs" />
+                        <span class="text-[11px] text-wine-900 font-semibold">Grassezza</span>
+                    </div>
+                    <div class="text-xs font-bold text-wine-900">${d.fat_text || 'Alta'}</div>
+                    <div class="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden mt-1">
+                        <div class="bg-[#c5a059] h-full rounded-full" style="width: ${d.fat_val || '85%'};"></div>
+                    </div>
+                </div>
+
+                <!-- Succulenza -->
+                <div class="flex flex-col items-center px-1 space-y-1.5">
+                    <div class="flex items-center justify-center gap-1.5">
+                        <img src="images/succulenza.png" alt="Succulenza" class="w-5 h-5 sm:w-6 sm:h-6 object-contain drop-shadow-2xs" />
+                        <span class="text-[11px] text-wine-900 font-semibold">Succulenza</span>
+                    </div>
+                    <div class="text-xs font-bold text-wine-900">${d.juiciness_text || 'Media'}</div>
+                    <div class="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden mt-1">
+                        <div class="bg-[#a37f37] h-full rounded-full" style="width: ${d.juiciness_val || '60%'};"></div>
+                    </div>
+                </div>
+
+                <!-- Persistenza -->
+                <div class="flex flex-col items-center px-1 space-y-1.5">
+                    <div class="flex items-center justify-center gap-1.5">
+                        <img src="images/persistenza.png" alt="Persistenza" class="w-5 h-5 sm:w-6 sm:h-6 object-contain drop-shadow-2xs" />
+                        <span class="text-[11px] text-wine-900 font-semibold">Persistenza</span>
+                    </div>
+                    <div class="text-xs font-bold text-wine-900">${d.aroma_text || 'Elevata'}</div>
+                    <div class="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden mt-1">
+                        <div class="bg-[#520d1a] h-full rounded-full" style="width: ${d.aroma_val || '75%'};"></div>
+                    </div>
+                </div>
+
+                <!-- Sapidità -->
+                <div class="flex flex-col items-center px-1 space-y-1.5">
+                    <div class="flex items-center justify-center gap-1.5">
+                        <img src="images/sapido.png" alt="Sapidità" class="w-5 h-5 sm:w-6 sm:h-6 object-contain drop-shadow-2xs" />
+                        <span class="text-[11px] text-wine-900 font-semibold">Sapidità</span>
+                    </div>
+                    <div class="text-xs font-bold text-wine-900">${d.savory_text || 'Marcata'}</div>
+                    <div class="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden mt-1">
+                        <div class="bg-sky-800 h-full rounded-full" style="width: ${d.savory_val || '80%'};"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            `;
+
+            if (readerPageIndex >= 1 && readerPageIndex <= 3) {
+               // SCHEDE VINI (STANDARD, PLUS, PRESTIGE)
+const types = [
+    { tag: 'Standard (<15€)', title: d.standard_wine, desc: d.standard_wine_desc, matching: d.standard_wine_matching, region: d.standard_wine_region || 'Italia' },
+    { tag: 'Plus (15-40€)', title: d.plus_wine, desc: d.plus_wine_desc, matching: d.plus_wine_matching, region: d.plus_wine_region || 'Italia' },
+    { tag: 'Prestige (>40€)', title: d.prestige_wine, desc: d.prestige_wine_desc, matching: d.prestige_wine_matching, region: d.prestige_wine_region || 'Italia' }
+];
+const wineInfo = types[readerPageIndex - 1];
+
+html = `
+    <!-- CARD PRINCIPALE: VINO CONSIGLIATO -->
+    <div class="notebook-sheet p-5 sm:p-6 space-y-4">
+        <!-- TITOLO SUPERIORE E DIAMANTI IN ORO -->
+        <div class="text-center space-y-0.5">
+            <span class="text-[9px] uppercase font-bold tracking-[0.25em]" style="color: #a37f37;">✦ IL VINO CHE TI CONSIGLIAMO ✦</span>
+        </div>
+
+        <div class="flex flex-row items-center gap-4">
+            <div class="w-28 sm:w-36 shrink-0 flex items-center justify-center p-1">
+                <img src="images/bottiglieecalice.PNG" alt="Bottiglia e Calice" class="max-h-40 sm:max-h-44 object-contain drop-shadow-sm" />
+            </div>
+            
+            <div class="flex-1 space-y-2.5 min-w-0">
+                <div>
+                    <!-- BADGE ABBINAMENTO VERIFICATO COLORATO IN ORO -->
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-[8px] font-bold uppercase bg-[#faf5ec] border border-[#dcd0bc] mb-1.5" style="color: #a37f37;">ABBINAMENTO VERIFICATO</span>
+                    
+                    <!-- TITOLO DEL VINO IN BORDEAUX -->
+                    <h3 class="font-serif font-bold text-xl sm:text-2xl leading-tight" style="color: #520d1a;">${wineInfo.title || 'Vino Consigliato'}</h3>
+                    <p class="text-[11px] font-light mt-0.5 opacity-80" style="color: #520d1a;">${wineInfo.region}</p>
+                </div>
+
+                <!-- DESCRIZIONE DEL VINO IN BORDEAUX -->
+                <p class="text-xs leading-relaxed font-normal" style="color: #520d1a;">
+                    ${wineInfo.desc || ''}
+                </p>
+
+                <div class="space-y-1.5 pt-2 border-t border-[#dcd0bc]/50">
+                    <h4 class="text-[9px] uppercase font-bold tracking-widest" style="color: #520d1a;">PERCHÉ FUNZIONA</h4>
+                    <p class="text-xs leading-relaxed font-normal italic" style="color: #520d1a;">
+                        "${wineInfo.matching || ''}"
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    ${dishCardHtml}
+
+    <!-- CARD BORDEAUX FINALE "SCOPRI L'ABBINAMENTO COMPLETO" -->
+    <div class="wine-card-bg text-white p-3.5 sm:p-4 rounded-3xl border border-gold-400/40 shadow-wine-glow flex items-center justify-between cursor-pointer hover:opacity-95 transition" onclick="changeReaderPage(1)">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-gold-300 shrink-0">
+                <span class="text-sm">✦</span>
+            </div>
+            <div>
+                <h4 class="font-serif font-bold text-xs sm:text-sm text-stone-100 tracking-wide">SCOPRI L'ABBINAMENTO COMPLETO</h4>
+                <p class="text-[10px] text-stone-300 font-light">Vini alternativi, temperatura, calice e consigli del Sommelier</p>
+            </div>
+        </div>
+        <i data-lucide="chevron-right" class="w-4 h-4 text-gold-300 shrink-0"></i>
+    </div>
+                `;
+            } 
+            else if (readerPageIndex === 4) {
+                // SCHEDA SOMMELIER (BORDEAUX DI LUSSO)
+                html = `
+                    <div class="wine-card-bg text-white p-5 sm:p-6 rounded-[2rem] border border-gold-400/40 shadow-wine-glow space-y-4">
+                        <div class="text-center space-y-0.5">
+                            <span class="text-[9px] uppercase font-bold tracking-[0.25em] text-gold-300">✦ PROPOSTA TECNICA DELL'ESPERTO ✦</span>
+                        </div>
+
+                        <div class="flex flex-row items-center gap-4">
+                            <div class="w-28 sm:w-36 shrink-0 flex items-center justify-center p-1">
+                                <img src="images/bottiglieecalice.PNG" alt="Bottiglia e Calice" class="max-h-40 sm:max-h-44 object-contain drop-shadow-md brightness-110 filter" />
+                            </div>
+                            
+                            <div class="flex-1 space-y-2 min-w-0">
+                                <div>
+                                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-[8px] font-bold uppercase bg-white/10 text-gold-300 border border-gold-400/30 mb-1">SELEZIONE D'ECCELLENZA</span>
+                                    <h3 class="font-serif font-bold text-base sm:text-xl text-stone-100 leading-snug">${d.sommelier_wine || 'Selezione Speciale'}</h3>
+                                    <p class="text-[11px] text-stone-300 font-light mt-0.5">Italia</p>
+                                </div>
+
+                                <p class="text-xs text-stone-200 leading-relaxed font-light">
+                                    ${d.sommelier_wine_desc || 'Un vino di straordinaria complessità pensato per esaltare al massimo questo piatto.'}
+                                </p>
+
+                                <div class="space-y-1 pt-1.5 border-t border-white/15">
+                                    <h4 class="text-[9px] uppercase font-bold text-gold-300 tracking-widest">MOTIVO DELL'ABBINAMENTO</h4>
+                                    <p class="text-xs text-stone-100 leading-relaxed font-normal italic">
+                                        ${d.sommelier_principle || ''}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-white/15 text-xs">
+                            <div class="bg-black/30 p-2.5 rounded-xl border border-white/10 flex items-center gap-2">
+                                <span class="text-base">🍷</span>
+                                <div>
+                                    <div class="text-[8px] text-gold-300 uppercase font-bold tracking-wider">Tipo di Calice</div>
+                                    <div class="text-stone-200 font-medium text-[11px]">${d.sommelier_glass || 'Ballon / Calice ampio'}</div>
+                                </div>
+                            </div>
+                            <div class="bg-black/30 p-2.5 rounded-xl border border-white/10 flex items-center gap-2">
+                                <span class="text-base">🌡️</span>
+                                <div>
+                                    <div class="text-[8px] text-gold-300 uppercase font-bold tracking-wider">Temperatura</div>
+                                    <div class="text-stone-200 font-medium text-[11px]">${d.sommelier_temp || '16-18°C'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${dishCardHtml}
+                `;
+            }
+
+            contentContainer.innerHTML = html;
+            if (window.lucide) lucide.createIcons();
+        }
+        
+        function getDishIllustration(dishCategory, dishName = '', description = '') {
+    // 1. Controllo primario sulla categoria pulita
+    const cat = dishCategory ? dishCategory.trim().toLowerCase() : '';
+    const validCategories = ['bistecca', 'pesce', 'risotto', 'sushi', 'pizza', 'hamburger', 'mex', 'torta', 'formaggio'];
+    
+    if (validCategories.includes(cat)) {
+        return `images/${cat}.png`;
+    }
+    
+    // 2. Rete di sicurezza: analisi del testo (nome e descrizione) se manca la categoria
+    const text = (dishName + " " + description).toLowerCase();
+    
+    if (text.match(/sushi|sashimi|nigiri|uramaki|poke|giapponese|chirashi|temaki/)) return "images/sushi.png";
+    if (text.match(/taco|tacos|burrito|fajitas|enchiladas|nachos|messicano|tex-mex/)) return "images/mex.png";
+    if (text.match(/hamburger|cheeseburger|burger|sandwich|club sandwich|wrap|hot dog|patatine/)) return "images/hamburger.png";
+    if (text.match(/pizza|focaccia|calzone|piadina|bruschetta|panino/)) return "images/pizza.png";
+    if (text.match(/pesce|salmone|orata|branzino|tonno|polpo|gamberi|frittura|cozze|vongole|ostriche|baccalà|calamari|aragosta/)) return "images/pesce.png";
+    if (text.match(/risotto|riso|paella|pilaf|orzotto/)) return "images/risotto.png";
+    if (text.match(/carne|bistecca|filetto|costata|arrosto|tartare|agnello|maiale|stinco|prosciutto|spezzatino|ragù|pollo|tagliata|brasato|stufato/)) return "images/bistecca.png";
+    if (text.match(/formaggio|formaggi|fonduta|pecorino|parmigiano|mozzarella|burrata|gorgonzola|tagliere di formaggi/)) return "images/formaggio.png";
+    if (text.match(/torta|dolce|dessert|tiramisù|cioccolato|gelato|crostata|crep|biscotti|panna cotta|cheesecake|cannolo/)) return "images/torta.png";
+    
+    // 3. Default finale (Pasta / Piatto generico)
+    return "images/Piatto.png";
+}
+     
+        function capitalizeFirstLetter(val) {
+        if (!val) return '';
+          return val.charAt(0).toUpperCase() + val.slice(1);
+        }
+
+        async function askAiSommelier() {
+            const messageInput = document.getElementById('aiSommelierInput');
+            if (!messageInput) return;
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            const btn = document.getElementById('btnAskAi');
+            const responseBox = document.getElementById('aiSommelierResponseBox');
+            const replyText = document.getElementById('aiSommelierReplyText');
+
+            if (btn) {
+                btn.disabled = true;
+                btn.style.opacity = '0.7';
+            }
+            if (replyText) replyText.innerText = "L'enologo sta analizzando la vostra richiesta...";
+            if (responseBox) responseBox.classList.remove('hidden');
+
+            const currentDish = currentData ? (currentData.dish_name || currentData.wine_name) : (dishInputEl ? dishInputEl.value : "Piatto");
+
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const token = session ? session.access_token : '';
+
+                const response = await fetch(config.chatWebhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({
+                        message: message,
+                        lang: currentLang,
+                        context_dish: currentDish,
+                        context_wines: {
+                            standard: currentData?.standard_wine || '',
+                            plus: currentData?.plus_wine || '',
+                            prestige: currentData?.prestige_wine || '',
+                            sommelier_choice: currentData?.sommelier_wine || ''
+                        }
+                    })
+                });
+
+                let result = await response.json();
+                if (Array.isArray(result)) result = result[0];
+
+                if (result && (result.paywall === true || result.success === false || response.status === 402)) {
+                    if (responseBox) responseBox.classList.add('hidden');
+                    openPaywall();
+                    return;
+                }
+
+                if (response.status === 429) {
+                    if (replyText) replyText.innerText = result.reply || "Troppe richieste in pochi secondi.";
+                    return;
+                }
+
+                if (replyText) replyText.innerText = result.reply || result.message || "Ecco il parere ufficiale dell'enologo.";
+            } catch (err) {
+                if (replyText) replyText.innerText = "Si è verificato un errore di connessione.";
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                }
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        function showLoading(isLoading) {
+            const welcome = document.getElementById('welcomeState');
+            const quick = document.getElementById('quickTrySection');
+            const results = document.getElementById('resultsContainer');
+            const loading = document.getElementById('loadingState');
+
+            if (isLoading) {
+                if (welcome) welcome.classList.add('hidden');
+                if (quick) quick.classList.add('hidden');
+                if (results) results.classList.add('hidden');
+                if (loading) loading.classList.remove('hidden');
+            } else {
+                if (loading) loading.classList.add('hidden');
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'it' ? 'en' : 'it';
+            const flag = document.getElementById('langFlag');
+            const code = document.getElementById('langCode');
+            if (flag) flag.innerText = currentLang === 'it' ? '🇮🇹' : '🇬🇧';
+            if (code) code.innerText = currentLang.toUpperCase();
+            updateUiLanguage();
+        }
+
+        function openPaywall() {
+            const paywall = document.getElementById('paywallModal');
+            if (paywall) paywall.classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closePaywall() {
+            const paywall = document.getElementById('paywallModal');
+            if (paywall) paywall.classList.add('hidden');
+        }
+
+        function handleCreditsClick() {
+            if (isUserPremium) {
+                const toast = document.getElementById('premiumToast');
+                if (toast) {
+                    toast.classList.remove('opacity-0', 'pointer-events-none');
+                    toast.classList.add('opacity-100');
+                    setTimeout(() => {
+                        toast.classList.remove('opacity-100');
+                        toast.classList.add('opacity-0', 'pointer-events-none');
+                    }, 3500);
+                }
+                return;
+            }
+            openPaywall();
+        }
+
+        let deferredPrompt;
+        const installBanner = document.getElementById('pwa-install-banner');
+        const installBtn = document.getElementById('install-button');
+        const closeBannerBtn = document.getElementById('close-banner');
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        const bannerClosed = localStorage.getItem('matchwine_banner_closed');
+
+        const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+        const isAndroid = () => /android/.test(window.navigator.userAgent.toLowerCase());
+
+        if (!isStandalone && !bannerClosed && (isIos() || isAndroid())) {
+            if (installBanner) installBanner.style.display = 'flex';
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (!isStandalone && !bannerClosed && installBanner) installBanner.style.display = 'flex';
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted' && installBanner) installBanner.style.display = 'none';
+                    deferredPrompt = null;
+                } else {
+                    alert("Per installare MatchWine, apri le opzioni del browser e seleziona 'Aggiungi a schermata Home'.");
+                }
+            });
+        }
+
+        if (closeBannerBtn) {
+            closeBannerBtn.addEventListener('click', () => {
+                if (installBanner) installBanner.style.display = 'none';
+                localStorage.setItem('matchwine_banner_closed', 'true');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const paywall = document.getElementById('paywallModal');
+            if (paywall) paywall.classList.add('hidden');
+            
+            switchSearchMode('dish');
+            updateUiLanguage();
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
