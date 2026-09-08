@@ -95,7 +95,7 @@
             z-index: 50;
         }
 
-        main, #paywallModal {
+        main, #paywallModal, #installModal {
             position: relative;
             z-index: 10;
         }
@@ -266,10 +266,10 @@
             </div>
         </div>
 
-        <!-- RISULTATI (CON TAB PULITI IN ALTO E CHAT ENOLOGO INCLUSA) -->
+        <!-- RISULTATI -->
         <div id="resultsContainer" class="hidden space-y-4 w-full max-w-xl pb-6">
             
-           <!-- BARRA TAB ORIZZONTALE CON I 4 TAB DEI VINI -->
+           <!-- BARRA TAB ORIZZONTALE -->
             <div class="w-full bg-[#fdfbf7] p-1.5 rounded-full border border-[#d4af37]/40 shadow-xs flex items-center justify-between gap-1 overflow-x-auto no-scrollbar">
                 <button onclick="goToPage(1)" id="tab-1" class="flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 bg-[#520d1a] text-white font-semibold whitespace-nowrap text-center">Standard</button>
                 <button onclick="goToPage(2)" id="tab-2" class="flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 text-[#520d1a]/70 hover:text-[#520d1a] whitespace-nowrap text-center">Plus</button>
@@ -347,8 +347,24 @@
             </div>
         </div>
 
+        <!-- NUOVA BARRA INSTALLAZIONE PULITA (Appena sopra la Privacy Policy) -->
+        <div class="w-full max-w-xl px-1 pt-2">
+            <div onclick="openInstallModal()" class="w-full bg-[#fdfbf7] hover:bg-[#f5ebd9]/70 border border-[#d4af37]/50 rounded-2xl p-3 flex items-center justify-between shadow-xs transition cursor-pointer group">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-[#520d1a] text-gold-300 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition">
+                        <span class="text-sm font-bold">📱</span>
+                    </div>
+                    <div>
+                        <h4 class="font-serif font-bold text-xs text-wine-900 tracking-wide uppercase">Installa MatchWine sul tuo cellulare</h4>
+                        <p class="text-[10px] text-stone-500 font-light">Accedi all'app in un click dalla schermata Home</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-gold-600 shrink-0 group-hover:translate-x-0.5 transition-transform"></i>
+            </div>
+        </div>
+
         <!-- PRIVACY -->
-        <div class="w-full text-center py-1">
+        <div class="w-full text-center py-2">
             <a href="privacy.html" class="text-[9px] tracking-[0.2em] text-[#8c6d33] uppercase font-medium hover:underline inline-flex items-center gap-1.5">
                 <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span> PRIVACY POLICY <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span>
             </a>
@@ -360,17 +376,45 @@
         Il vostro calice è illimitato: la cantina PRO è interamente a vostra disposizione.
     </div>
 
-    <!-- BANNER PWA -->
-    <div id="pwa-install-banner" class="install-banner" style="display: none;">
-      <div class="banner-content">
-        <img src="images/LogPic.png" alt="MatchWine Logo" class="banner-logo">
-        <div class="banner-text">
-          <strong>Installa MatchWine</strong>
-          <p>Aggiungila alla Home come un'app!</p>
+    <!-- MODALE GUIDA INSTALLAZIONE CELLULARE (Stile Brand Coordinato) -->
+    <div id="installModal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 hidden">
+        <div class="w-full max-w-sm bg-[#fdfbf7] rounded-[2rem] p-6 border border-gold-400/50 space-y-4 text-center shadow-2xl animate-in zoom-in-95 duration-200 relative overflow-hidden">
+            <button onclick="closeInstallModal()" class="absolute top-4 right-4 text-stone-400 hover:text-wine-900 p-1.5 rounded-full hover:bg-stone-200/50 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-white border border-gold-400/40 flex items-center justify-center overflow-hidden p-1 shadow-lg">
+                <img src="images/LogPic.png" alt="Logo" class="w-full h-full object-contain scale-[1.2] bg-white" />
+            </div>            
+            
+            <div class="space-y-1">
+                <h3 class="font-serif font-bold text-2xl text-wine-900">Installa MatchWine</h3>
+                <p class="text-xs text-stone-600 leading-relaxed font-normal">
+                    Porta sempre con te il tuo sommelier digitale aggiungendo l'app alla schermata Home del telefono.
+                </p>
+            </div>
+
+            <!-- ISTRUZIONI DIVISE PER DISPOSITIVO -->
+            <div class="space-y-2.5 text-left bg-white p-3.5 rounded-2xl border border-stone-200 shadow-2xs text-xs text-stone-700">
+                <div class="border-b border-stone-100 pb-2">
+                    <strong class="text-wine-900 font-serif text-sm block mb-0.5">🍏 Per utenti iPhone (Safari):</strong>
+                    Tocca il tasto <span class="font-semibold text-gold-600">Condividi</span> (l'icona con la freccia verso l'alto) nel browser, scorri il menu e seleziona <span class="font-semibold text-wine-900">"Aggiungi alla schermata Home"</span>.
+                </div>
+                <div>
+                    <strong class="text-wine-900 font-serif text-sm block mb-0.5">🤖 Per utenti Android (Chrome):</strong>
+                    Tocca i <span class="font-semibold text-gold-600">tre puntini</span> in alto a destra nel browser e seleziona <span class="font-semibold text-wine-900">"Installa app"</span> o <span class="font-semibold text-wine-900">"Aggiungi a schermata Home"</span>.
+                </div>
+            </div>
+
+            <!-- PULSANTE INSTALLAZIONE DIRETTA SE SUPPORTO BROWSER DISPONIBILE -->
+            <button id="directInstallBtn" onclick="triggerDirectInstall()" class="w-full wine-card-bg text-white font-bold text-xs py-3.5 rounded-xl shadow-lg hover:opacity-95 transition-all uppercase tracking-wider hidden">
+                Installa Subito
+            </button>
+
+            <button onclick="closeInstallModal()" class="w-full bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold text-xs py-3 rounded-xl transition-all uppercase tracking-wider">
+                Ho capito
+            </button>
         </div>
-        <button id="install-button" class="banner-btn">Installa</button>
-        <button id="close-banner" class="banner-close">✕</button>
-      </div>
     </div>
 
     <!-- PAYWALL -->
@@ -497,7 +541,7 @@
         let currentLang = 'it';
         let currentData = null;
         let searchMode = 'dish';
-        let readerPageIndex = 1; // Default su Standard (vino consigliato)
+        let readerPageIndex = 1;
         let isUserPremium = false;
 
         const config = {
@@ -727,11 +771,9 @@
             if (!inputValue) return;
 
             if (dropdownEl) dropdownEl.classList.add('hidden');
-            const banner = document.getElementById('pwa-install-banner');
-            if (banner) banner.style.display = 'none';
 
             currentData = null;
-            readerPageIndex = 1; // Parte direttamente da Standard (vino consigliato)
+            readerPageIndex = 1;
             showLoading(true);
 
             const targetUrl = searchMode === 'dish' ? config.searchWebhookUrl : config.wineSearchWebhookUrl;
@@ -820,7 +862,6 @@
 
             if (!contentContainer) return;
 
-            // Aggiorna lo stile dei 4 tab in alto
             for (let i = 1; i <= 4; i++) {
                 const tab = document.getElementById(`tab-${i}`);
                 if (tab) {
@@ -848,7 +889,6 @@
             let html = '';
             let cleanDishName = (d.dish_name || (dishInputEl ? dishInputEl.value.trim() : '') || 'Carbonara').replace(/([aeiouàèìòù])\1{2,}/gi, '$1');
 
-            // BLOCCO DEL PIATTO CON ILLUSTRAZIONE DINAMICA E PROFILO SENSORIALE
             const dishCardHtml = `
     <div class="notebook-sheet p-5 sm:p-6 space-y-4">
         <div class="flex items-start gap-4">
@@ -856,9 +896,7 @@
                 <img src="${getDishIllustration(d.category, cleanDishName, d.description)}" alt="Piatto" class="w-full h-full object-contain scale-125" />
             </div>
             <div class="space-y-1.5 flex-1 min-w-0">
-                <!-- TITOLO CON PRIMA LETTERA MAIUSCOLA -->
                 <h3 class="font-serif text-2xl sm:text-3xl font-bold leading-tight" style="color: #520d1a;">${capitalizeFirstLetter(cleanDishName)}</h3>
-                <!-- DESCRIZIONE -->
                 <p class="text-xs sm:text-sm leading-relaxed font-normal" style="color: #520d1a;">
                     ${d.description || 'Piatto d\'eccellenza della tradizione enogastronomica.'}
                 </p>
@@ -868,9 +906,7 @@
         <div class="pt-3 border-t border-[#dcd0bc]/60 space-y-3">
             <div class="text-[10px] uppercase tracking-[0.2em] font-bold text-wine-900">PROFILO SENSORIALE PIATTO</div>
             
-            <!-- GRIGLIA A 4 COLONNE -->
             <div class="grid grid-cols-4 divide-x divide-[#dcd0bc]/60 text-center pt-1">
-                <!-- Grassezza -->
                 <div class="flex flex-col items-center px-1 space-y-1.5">
                     <div class="flex items-center justify-center gap-1.5">
                         <img src="images/grassezza.png" alt="Grassezza" class="w-5 h-5 sm:w-6 sm:h-6 object-contain drop-shadow-2xs" />
@@ -882,7 +918,6 @@
                     </div>
                 </div>
 
-                <!-- Succulenza -->
                 <div class="flex flex-col items-center px-1 space-y-1.5">
                     <div class="flex items-center justify-center gap-1.5">
                         <img src="images/succulenza.png" alt="Succulenza" class="w-5 h-5 sm:w-6 sm:h-6 object-contain drop-shadow-2xs" />
@@ -894,7 +929,6 @@
                     </div>
                 </div>
 
-                <!-- Persistenza -->
                 <div class="flex flex-col items-center px-1 space-y-1.5">
                     <div class="flex items-center justify-center gap-1.5">
                         <img src="images/persistenza.png" alt="Persistenza" class="w-5 h-5 sm:w-6 sm:h-6 object-contain drop-shadow-2xs" />
@@ -906,7 +940,6 @@
                     </div>
                 </div>
 
-                <!-- Sapidità -->
                 <div class="flex flex-col items-center px-1 space-y-1.5">
                     <div class="flex items-center justify-center gap-1.5">
                         <img src="images/sapido.png" alt="Sapidità" class="w-5 h-5 sm:w-6 sm:h-6 object-contain drop-shadow-2xs" />
@@ -923,18 +956,15 @@
             `;
 
             if (readerPageIndex >= 1 && readerPageIndex <= 3) {
-               // SCHEDE VINI (STANDARD, PLUS, PRESTIGE)
-const types = [
-    { tag: 'Standard (<15€)', title: d.standard_wine, desc: d.standard_wine_desc, matching: d.standard_wine_matching, region: d.standard_wine_region || 'Italia' },
-    { tag: 'Plus (15-40€)', title: d.plus_wine, desc: d.plus_wine_desc, matching: d.plus_wine_matching, region: d.plus_wine_region || 'Italia' },
-    { tag: 'Prestige (>40€)', title: d.prestige_wine, desc: d.prestige_wine_desc, matching: d.prestige_wine_matching, region: d.prestige_wine_region || 'Italia' }
-];
-const wineInfo = types[readerPageIndex - 1];
+                const types = [
+                    { tag: 'Standard (<15€)', title: d.standard_wine, desc: d.standard_wine_desc, matching: d.standard_wine_matching, region: d.standard_wine_region || 'Italia' },
+                    { tag: 'Plus (15-40€)', title: d.plus_wine, desc: d.plus_wine_desc, matching: d.plus_wine_matching, region: d.plus_wine_region || 'Italia' },
+                    { tag: 'Prestige (>40€)', title: d.prestige_wine, desc: d.prestige_wine_desc, matching: d.prestige_wine_matching, region: d.prestige_wine_region || 'Italia' }
+                ];
+                const wineInfo = types[readerPageIndex - 1];
 
-html = `
-    <!-- CARD PRINCIPALE: VINO CONSIGLIATO -->
+                html = `
     <div class="notebook-sheet p-5 sm:p-6 space-y-4">
-        <!-- TITOLO SUPERIORE E DIAMANTI IN ORO -->
         <div class="text-center space-y-0.5">
             <span class="text-[9px] uppercase font-bold tracking-[0.25em]" style="color: #a37f37;">✦ IL VINO CHE TI CONSIGLIAMO ✦</span>
         </div>
@@ -946,15 +976,12 @@ html = `
             
             <div class="flex-1 space-y-2.5 min-w-0">
                 <div>
-                    <!-- BADGE ABBINAMENTO VERIFICATO COLORATO IN ORO -->
                     <span class="inline-flex px-2.5 py-0.5 rounded-full text-[8px] font-bold uppercase bg-[#faf5ec] border border-[#dcd0bc] mb-1.5" style="color: #a37f37;">ABBINAMENTO VERIFICATO</span>
                     
-                    <!-- TITOLO DEL VINO IN BORDEAUX -->
                     <h3 class="font-serif font-bold text-xl sm:text-2xl leading-tight" style="color: #520d1a;">${wineInfo.title || 'Vino Consigliato'}</h3>
                     <p class="text-[11px] font-light mt-0.5 opacity-80" style="color: #520d1a;">${wineInfo.region}</p>
                 </div>
 
-                <!-- DESCRIZIONE DEL VINO IN BORDEAUX -->
                 <p class="text-xs leading-relaxed font-normal" style="color: #520d1a;">
                     ${wineInfo.desc || ''}
                 </p>
@@ -971,7 +998,6 @@ html = `
 
     ${dishCardHtml}
 
-    <!-- CARD BORDEAUX FINALE "SCOPRI L'ABBINAMENTO COMPLETO" -->
     <div class="wine-card-bg text-white p-3.5 sm:p-4 rounded-3xl border border-gold-400/40 shadow-wine-glow flex items-center justify-between cursor-pointer hover:opacity-95 transition" onclick="changeReaderPage(1)">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-gold-300 shrink-0">
@@ -987,7 +1013,6 @@ html = `
                 `;
             } 
             else if (readerPageIndex === 4) {
-                // SCHEDA SOMMELIER (BORDEAUX DI LUSSO)
                 html = `
                     <div class="wine-card-bg text-white p-5 sm:p-6 rounded-[2rem] border border-gold-400/40 shadow-wine-glow space-y-4">
                         <div class="text-center space-y-0.5">
@@ -1046,34 +1071,31 @@ html = `
         }
         
         function getDishIllustration(dishCategory, dishName = '', description = '') {
-    // 1. Controllo primario sulla categoria pulita
-    const cat = dishCategory ? dishCategory.trim().toLowerCase() : '';
-    const validCategories = ['bistecca', 'pesce', 'risotto', 'sushi', 'pizza', 'hamburger', 'mex', 'torta', 'formaggio'];
-    
-    if (validCategories.includes(cat)) {
-        return `images/${cat}.png`;
-    }
-    
-    // 2. Rete di sicurezza: analisi del testo (nome e descrizione) se manca la categoria
-    const text = (dishName + " " + description).toLowerCase();
-    
-    if (text.match(/sushi|sashimi|nigiri|uramaki|poke|giapponese|chirashi|temaki/)) return "images/sushi.png";
-    if (text.match(/taco|tacos|burrito|fajitas|enchiladas|nachos|messicano|tex-mex/)) return "images/mex.png";
-    if (text.match(/hamburger|cheeseburger|burger|sandwich|club sandwich|wrap|hot dog|patatine/)) return "images/hamburger.png";
-    if (text.match(/pizza|focaccia|calzone|piadina|bruschetta|panino/)) return "images/pizza.png";
-    if (text.match(/pesce|salmone|orata|branzino|tonno|polpo|gamberi|frittura|cozze|vongole|ostriche|baccalà|calamari|aragosta/)) return "images/pesce.png";
-    if (text.match(/risotto|riso|paella|pilaf|orzotto/)) return "images/risotto.png";
-    if (text.match(/carne|bistecca|filetto|costata|arrosto|tartare|agnello|maiale|stinco|prosciutto|spezzatino|ragù|pollo|tagliata|brasato|stufato/)) return "images/bistecca.png";
-    if (text.match(/formaggio|formaggi|fonduta|pecorino|parmigiano|mozzarella|burrata|gorgonzola|tagliere di formaggi/)) return "images/formaggio.png";
-    if (text.match(/torta|dolce|dessert|tiramisù|cioccolato|gelato|crostata|crep|biscotti|panna cotta|cheesecake|cannolo/)) return "images/torta.png";
-    
-    // 3. Default finale (Pasta / Piatto generico)
-    return "images/Piatto.png";
-}
+            const cat = dishCategory ? dishCategory.trim().toLowerCase() : '';
+            const validCategories = ['bistecca', 'pesce', 'risotto', 'sushi', 'pizza', 'hamburger', 'mex', 'torta', 'formaggio'];
+            
+            if (validCategories.includes(cat)) {
+                return `images/${cat}.png`;
+            }
+            
+            const text = (dishName + " " + description).toLowerCase();
+            
+            if (text.match(/sushi|sashimi|nigiri|uramaki|poke|giapponese|chirashi|temaki/)) return "images/sushi.png";
+            if (text.match(/taco|tacos|burrito|fajitas|enchiladas|nachos|messicano|tex-mex/)) return "images/mex.png";
+            if (text.match(/hamburger|cheeseburger|burger|sandwich|club sandwich|wrap|hot dog|patatine/)) return "images/hamburger.png";
+            if (text.match(/pizza|focaccia|calzone|piadina|bruschetta|panino/)) return "images/pizza.png";
+            if (text.match(/pesce|salmone|orata|branzino|tonno|polpo|gamberi|frittura|cozze|vongole|ostriche|baccalà|calamari|aragosta/)) return "images/pesce.png";
+            if (text.match(/risotto|riso|paella|pilaf|orzotto/)) return "images/risotto.png";
+            if (text.match(/carne|bistecca|filetto|costata|arrosto|tartare|agnello|maiale|stinco|prosciutto|spezzatino|ragù|pollo|tagliata|brasato|stufato/)) return "images/bistecca.png";
+            if (text.match(/formaggio|formaggi|fonduta|pecorino|parmigiano|mozzarella|burrata|gorgonzola|tagliere di formaggi/)) return "images/formaggio.png";
+            if (text.match(/torta|dolce|dessert|tiramisù|cioccolato|gelato|crostata|crep|biscotti|panna cotta|cheesecake|cannolo/)) return "images/torta.png";
+            
+            return "images/Piatto.png";
+        }
      
         function capitalizeFirstLetter(val) {
-        if (!val) return '';
-          return val.charAt(0).toUpperCase() + val.slice(1);
+            if (!val) return '';
+            return val.charAt(0).toUpperCase() + val.slice(1);
         }
 
         async function askAiSommelier() {
@@ -1178,6 +1200,37 @@ html = `
             if (paywall) paywall.classList.add('hidden');
         }
 
+        // GESTIONE MODALE INSTALLAZIONE PWA
+        let deferredPrompt;
+        const installModal = document.getElementById('installModal');
+        const directInstallBtn = document.getElementById('directInstallBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (directInstallBtn) directInstallBtn.classList.remove('hidden');
+        });
+
+        function openInstallModal() {
+            if (installModal) installModal.classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeInstallModal() {
+            if (installModal) installModal.classList.add('hidden');
+        }
+
+        async function triggerDirectInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    closeInstallModal();
+                }
+                deferredPrompt = null;
+            }
+        }
+
         function handleCreditsClick() {
             if (isUserPremium) {
                 const toast = document.getElementById('premiumToast');
@@ -1194,49 +1247,11 @@ html = `
             openPaywall();
         }
 
-        let deferredPrompt;
-        const installBanner = document.getElementById('pwa-install-banner');
-        const installBtn = document.getElementById('install-button');
-        const closeBannerBtn = document.getElementById('close-banner');
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-        const bannerClosed = localStorage.getItem('matchwine_banner_closed');
-
-        const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-        const isAndroid = () => /android/.test(window.navigator.userAgent.toLowerCase());
-
-        if (!isStandalone && !bannerClosed && (isIos() || isAndroid())) {
-            if (installBanner) installBanner.style.display = 'flex';
-        }
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            if (!isStandalone && !bannerClosed && installBanner) installBanner.style.display = 'flex';
-        });
-
-        if (installBtn) {
-            installBtn.addEventListener('click', async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted' && installBanner) installBanner.style.display = 'none';
-                    deferredPrompt = null;
-                } else {
-                    alert("Per installare MatchWine, apri le opzioni del browser e seleziona 'Aggiungi a schermata Home'.");
-                }
-            });
-        }
-
-        if (closeBannerBtn) {
-            closeBannerBtn.addEventListener('click', () => {
-                if (installBanner) installBanner.style.display = 'none';
-                localStorage.setItem('matchwine_banner_closed', 'true');
-            });
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             const paywall = document.getElementById('paywallModal');
             if (paywall) paywall.classList.add('hidden');
+            const installModalEl = document.getElementById('installModal');
+            if (installModalEl) installModalEl.classList.add('hidden');
             
             switchSearchMode('dish');
             updateUiLanguage();
