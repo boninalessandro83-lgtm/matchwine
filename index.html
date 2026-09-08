@@ -95,7 +95,7 @@
             z-index: 50;
         }
 
-        main, #paywallModal, #installModal {
+        main, #paywallModal {
             position: relative;
             z-index: 10;
         }
@@ -200,6 +200,55 @@
                 <div class="h-[1px] bg-[#d4af37]/40 flex-1"></div>
             </div>
             <div id="quickTryButtons" class="flex items-center justify-center flex-wrap gap-1.5 px-1"></div>
+        </div>
+
+        <!-- BARRA APERTURA GUIDA INSTALLAZIONE (In primo piano nella Home) -->
+        <div class="w-full max-w-xl px-1">
+            <div onclick="toggleInstallBox()" class="w-full bg-[#fdfbf7] hover:bg-[#f5ebd9]/70 border border-[#d4af37]/50 rounded-2xl p-3 flex items-center justify-between shadow-xs transition cursor-pointer group">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-[#520d1a] text-gold-300 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition">
+                        <span class="text-sm font-bold">📱</span>
+                    </div>
+                    <div>
+                        <h4 class="font-serif font-bold text-xs text-wine-900 tracking-wide uppercase">Installa MatchWine sul tuo cellulare</h4>
+                        <p class="text-[10px] text-stone-500 font-light">Accedi all'app in un click dalla schermata Home</p>
+                    </div>
+                </div>
+                <i id="installArrowIcon" data-lucide="chevron-down" class="w-4 h-4 text-gold-600 shrink-0 group-hover:translate-y-0.5 transition-transform"></i>
+            </div>
+        </div>
+
+        <!-- BOX GUIDA INSTALLAZIONE ESPANDIBILE (Apre direttamente nella Home) -->
+        <div id="installExpansionBox" class="hidden w-full max-w-xl px-1 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div class="bg-white rounded-2xl p-4 border border-[#d4af37]/60 shadow-luxury space-y-3 relative">
+                <button onclick="toggleInstallBox()" class="absolute top-3 right-3 text-stone-400 hover:text-wine-900 p-1 rounded-full transition">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-[#fdfbf7] border border-gold-400/40 flex items-center justify-center p-0.5 shrink-0 shadow-xs">
+                        <img src="images/LogPic.png" alt="Logo" class="w-full h-full object-contain" />
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-bold text-base text-wine-900 leading-tight">Guida all'installazione</h3>
+                        <p class="text-[10px] text-stone-500">Aggiungi l'app alla Home del tuo smartphone</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2 text-xs text-stone-700 bg-[#faf7f2] p-3 rounded-xl border border-stone-200">
+                    <div>
+                        <strong class="text-wine-900 font-serif block mb-0.5">🍏 Per iPhone (Safari):</strong>
+                        Tocca il tasto <span class="font-semibold text-gold-600">Condividi</span> (freccia in alto), scorri e seleziona <span class="font-semibold text-wine-900">"Aggiungi alla schermata Home"</span>.
+                    </div>
+                    <div class="pt-1.5 border-t border-stone-200">
+                        <strong class="text-wine-900 font-serif block mb-0.5">🤖 Per Android (Chrome):</strong>
+                        Tocca i <span class="font-semibold text-gold-600">tre puntini</span> in alto a destra e seleziona <span class="font-semibold text-wine-900">"Installa app"</span> o <span class="font-semibold text-wine-900">"Aggiungi a Home"</span>.
+                    </div>
+                </div>
+
+                <button id="directInstallBtn" onclick="triggerDirectInstall()" class="w-full wine-card-bg text-white font-bold text-xs py-2.5 rounded-xl shadow-md hover:opacity-95 transition uppercase tracking-wider hidden">
+                    Installa Subito
+                </button>
+            </div>
         </div>
 
         <!-- BENVENUTO -->
@@ -347,22 +396,6 @@
             </div>
         </div>
 
-        <!-- NUOVA BARRA INSTALLAZIONE PULITA (Appena sopra la Privacy Policy) -->
-        <div class="w-full max-w-xl px-1 pt-2">
-            <div onclick="openInstallModal()" class="w-full bg-[#fdfbf7] hover:bg-[#f5ebd9]/70 border border-[#d4af37]/50 rounded-2xl p-3 flex items-center justify-between shadow-xs transition cursor-pointer group">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-[#520d1a] text-gold-300 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition">
-                        <span class="text-sm font-bold">📱</span>
-                    </div>
-                    <div>
-                        <h4 class="font-serif font-bold text-xs text-wine-900 tracking-wide uppercase">Installa MatchWine sul tuo cellulare</h4>
-                        <p class="text-[10px] text-stone-500 font-light">Accedi all'app in un click dalla schermata Home</p>
-                    </div>
-                </div>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-gold-600 shrink-0 group-hover:translate-x-0.5 transition-transform"></i>
-            </div>
-        </div>
-
         <!-- PRIVACY -->
         <div class="w-full text-center py-2">
             <a href="privacy.html" class="text-[9px] tracking-[0.2em] text-[#8c6d33] uppercase font-medium hover:underline inline-flex items-center gap-1.5">
@@ -374,47 +407,6 @@
     <!-- TOAST -->
     <div id="premiumToast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-sm bg-[#fdfbf7] text-wine-900 border border-gold-400/60 px-5 py-3.5 rounded-2xl shadow-xl text-xs font-serif italic tracking-wide text-center transition-all duration-300 opacity-0 pointer-events-none">
         Il vostro calice è illimitato: la cantina PRO è interamente a vostra disposizione.
-    </div>
-
-    <!-- MODALE GUIDA INSTALLAZIONE CELLULARE (Stile Brand Coordinato) -->
-    <div id="installModal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 hidden">
-        <div class="w-full max-w-sm bg-[#fdfbf7] rounded-[2rem] p-6 border border-gold-400/50 space-y-4 text-center shadow-2xl animate-in zoom-in-95 duration-200 relative overflow-hidden">
-            <button onclick="closeInstallModal()" class="absolute top-4 right-4 text-stone-400 hover:text-wine-900 p-1.5 rounded-full hover:bg-stone-200/50 transition-colors">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            
-            <div class="w-14 h-14 mx-auto rounded-2xl bg-white border border-gold-400/40 flex items-center justify-center overflow-hidden p-1 shadow-lg">
-                <img src="images/LogPic.png" alt="Logo" class="w-full h-full object-contain scale-[1.2] bg-white" />
-            </div>            
-            
-            <div class="space-y-1">
-                <h3 class="font-serif font-bold text-2xl text-wine-900">Installa MatchWine</h3>
-                <p class="text-xs text-stone-600 leading-relaxed font-normal">
-                    Porta sempre con te il tuo sommelier digitale aggiungendo l'app alla schermata Home del telefono.
-                </p>
-            </div>
-
-            <!-- ISTRUZIONI DIVISE PER DISPOSITIVO -->
-            <div class="space-y-2.5 text-left bg-white p-3.5 rounded-2xl border border-stone-200 shadow-2xs text-xs text-stone-700">
-                <div class="border-b border-stone-100 pb-2">
-                    <strong class="text-wine-900 font-serif text-sm block mb-0.5">🍏 Per utenti iPhone (Safari):</strong>
-                    Tocca il tasto <span class="font-semibold text-gold-600">Condividi</span> (l'icona con la freccia verso l'alto) nel browser, scorri il menu e seleziona <span class="font-semibold text-wine-900">"Aggiungi alla schermata Home"</span>.
-                </div>
-                <div>
-                    <strong class="text-wine-900 font-serif text-sm block mb-0.5">🤖 Per utenti Android (Chrome):</strong>
-                    Tocca i <span class="font-semibold text-gold-600">tre puntini</span> in alto a destra nel browser e seleziona <span class="font-semibold text-wine-900">"Installa app"</span> o <span class="font-semibold text-wine-900">"Aggiungi a schermata Home"</span>.
-                </div>
-            </div>
-
-            <!-- PULSANTE INSTALLAZIONE DIRETTA SE SUPPORTO BROWSER DISPONIBILE -->
-            <button id="directInstallBtn" onclick="triggerDirectInstall()" class="w-full wine-card-bg text-white font-bold text-xs py-3.5 rounded-xl shadow-lg hover:opacity-95 transition-all uppercase tracking-wider hidden">
-                Installa Subito
-            </button>
-
-            <button onclick="closeInstallModal()" class="w-full bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold text-xs py-3 rounded-xl transition-all uppercase tracking-wider">
-                Ho capito
-            </button>
-        </div>
     </div>
 
     <!-- PAYWALL -->
@@ -1200,9 +1192,10 @@
             if (paywall) paywall.classList.add('hidden');
         }
 
-        // GESTIONE MODALE INSTALLAZIONE PWA
+        // GESTIONE BOX ESPANDIBILE INSTALLAZIONE PWA IN HOME
         let deferredPrompt;
-        const installModal = document.getElementById('installModal');
+        const installExpansionBox = document.getElementById('installExpansionBox');
+        const installArrowIcon = document.getElementById('installArrowIcon');
         const directInstallBtn = document.getElementById('directInstallBtn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -1211,13 +1204,17 @@
             if (directInstallBtn) directInstallBtn.classList.remove('hidden');
         });
 
-        function openInstallModal() {
-            if (installModal) installModal.classList.remove('hidden');
+        function toggleInstallBox() {
+            if (!installExpansionBox) return;
+            const isHidden = installExpansionBox.classList.contains('hidden');
+            if (isHidden) {
+                installExpansionBox.classList.remove('hidden');
+                if (installArrowIcon) installArrowIcon.style.transform = 'rotate(180deg)';
+            } else {
+                installExpansionBox.classList.add('hidden');
+                if (installArrowIcon) installArrowIcon.style.transform = 'rotate(0deg)';
+            }
             if (window.lucide) lucide.createIcons();
-        }
-
-        function closeInstallModal() {
-            if (installModal) installModal.classList.add('hidden');
         }
 
         async function triggerDirectInstall() {
@@ -1225,7 +1222,7 @@
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
                 if (outcome === 'accepted') {
-                    closeInstallModal();
+                    toggleInstallBox();
                 }
                 deferredPrompt = null;
             }
@@ -1250,8 +1247,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             const paywall = document.getElementById('paywallModal');
             if (paywall) paywall.classList.add('hidden');
-            const installModalEl = document.getElementById('installModal');
-            if (installModalEl) installModalEl.classList.add('hidden');
+            const expansionBox = document.getElementById('installExpansionBox');
+            if (expansionBox) expansionBox.classList.add('hidden');
             
             switchSearchMode('dish');
             updateUiLanguage();
