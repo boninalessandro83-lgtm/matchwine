@@ -77,10 +77,10 @@
         }
         
         body {
-            background-color: #faf7f2 !important;
+            background-color: #fcfbfa !important;
             background-image: 
                 radial-gradient(circle at 50% 20%, rgba(255, 252, 247, 0.9) 0%, rgba(240, 228, 210, 0.6) 70%, rgba(215, 195, 168, 0.4) 100%),
-                radial-gradient(#e6d7c3 0.6px, transparent 0.6px) !important;
+                radial-gradient(#fefefe 0.6px, transparent 0.6px) !important;
             background-size: 100% 100%, 20px 20px;
             background-attachment: fixed;
             color: #33060f !important;
@@ -95,7 +95,7 @@
             z-index: 50;
         }
 
-        main, #paywallModal {
+        main, #paywallModal, #profileModal {
             position: relative;
             z-index: 10;
         }
@@ -125,26 +125,39 @@
             border-radius: 2rem;
             position: relative;
         }
+
+        #netlify-deploy-badge, iframe[id^="netlify"] { 
+            display: none !important; 
+        }
     </style>
 </head>
 <body class="bg-[#faf7f2] text-stone-900 max-w-md mx-auto font-sans antialiased border-x border-stone-200 shadow-2xl relative min-h-screen flex flex-col page-container">
     
-    <!-- HEADER -->
+   <!-- HEADER -->
     <header class="sticky top-0 z-50 px-4 py-3 flex items-center justify-between bg-white border-b border-stone-200/60 shadow-2xs">
         <div class="flex items-center cursor-pointer rounded-xl overflow-hidden py-0.5" onclick="resetToHome()">
             <img src="images/Logo.JPG" alt="MatchWine" style="height: 38px;" class="w-auto object-contain rounded-xl">
         </div>
-        <div class="flex items-center gap-2">
-            <button onclick="toggleLanguage()" class="text-xs font-medium text-stone-600 hover:text-stone-900 px-2 py-1 transition">
-                <span id="langFlag">🇮🇹</span> <span id="langCode">IT</span>
-            </button>
+
             <div id="authContainer">
-                <button id="btnLoginGoogle" onclick="loginWithGoogle()" class="text-xs font-medium text-wine-900 hover:opacity-75 transition">Accedi</button>
+                <!-- Non loggato: Pulsante con la G di Google e +10 crediti -->
+                <button id="btnLoginGoogle" onclick="loginWithGoogle()" class="group inline-flex items-center gap-2.5 bg-[#d4af37]/85 hover:bg-[#c5a030] text-wine-950 px-3 py-1.5 rounded-xl border border-[#b89728]/70 shadow-xs hover:shadow transition-all duration-300 cursor-pointer">
+                    <div class="w-5 h-5 bg-white rounded-full flex items-center justify-center shrink-0 shadow-2xs">
+                        <svg class="w-3 h-3" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.2v3.15C3.16 21.32 7.23 24 12 24z"/>
+                            <path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.2C.43 8.15 0 9.89 0 12s.43 3.85 1.2 5.39l4.08-3.15z"/>
+                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.16 2.68 1.2 6.61l4.08 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/>
+                        </svg>
+                    </div>
+                    <span class="font-serif italic font-bold text-wine-950 text-xs tracking-wide pr-0.5">+10 crediti</span>
+                </button>
+
+                <!-- Loggato: Crediti a sinistra e tondo bordeaux con l'iniziale a destra -->
                 <div id="userProfileBadge" class="hidden flex items-center gap-2.5">
-                    <span onclick="handleCreditsClick()" id="creditsCount" class="cursor-pointer text-xs font-serif italic font-medium text-stone-700 hover:text-wine-900 transition">10 Crediti</span>
-                    <button onclick="logout()" class="w-7 h-7 rounded-full overflow-hidden bg-[#33060f] text-gold-300 flex items-center justify-center font-serif text-xs font-bold shadow-2xs hover:opacity-90 transition-opacity border border-gold-400/40">
-                        <img id="userAvatarImg" src="images/LogPic.png" alt="Avatar" class="w-full h-full object-cover hidden">
-                        <span id="userInitialLetter">A</span>
+                    <span onclick="handleCreditsClick()" id="creditsCount" class="cursor-pointer text-xs font-serif italic font-bold text-[#520d1a] hover:opacity-80 transition">10 Crediti</span>
+                    <button onclick="logout()" class="w-8 h-8 rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center font-serif text-xs font-bold shadow-xs hover:opacity-90 transition-opacity border border-gold-400/40 relative overflow-hidden cursor-pointer" title="Gestione account">
+                        <span id="userInitialLetter" class="text-gold-300 font-bold text-sm">A</span>
                     </button>
                 </div>
             </div>
@@ -154,7 +167,7 @@
     <!-- MAIN -->
     <main class="px-3 py-2.5 space-y-2.5 pb-6 flex-1 flex flex-col relative z-10 items-center">
         
-        <!-- SELETTORE PERCORSO -->
+       <!-- SELETTORE PERCORSO -->
         <div class="w-full max-w-xl text-center space-y-1">
             <span class="text-[9px] tracking-[0.25em] text-[#a37f37] uppercase block font-semibold">Scegli il percorso</span>
             <div class="inline-flex items-center bg-[#fdfbf7] p-1 rounded-full border border-[#d4af37]/40 shadow-xs">
@@ -168,11 +181,7 @@
             <div class="flex items-center justify-between px-2">
                 <div>
                     <label id="searchLabel" class="font-serif italic text-xl text-[#520d1a] font-medium leading-tight block">Quale piatto vuoi abbinare?</label>
-                    <p id="searchSublabel" class="text-xs font-serif italic text-stone-500 font-light mt-0.5">Trova il vino perfetto in pochi secondi.</p>
                 </div>
-                <button onclick="openSommelierInfo()" class="text-[10px] text-wine-900 font-medium flex items-center gap-1.5 bg-[#fdfbf7] px-3.5 py-1.5 rounded-full border border-[#d4af37]/40 shadow-2xs hover:border-[#d4af37] transition shrink-0 cursor-pointer">
-                    <span class="text-gold-600 font-bold">✦</span> <span id="badgeAiText" class="font-serif tracking-wide font-semibold">CHIEDI AL SOMMELIER IA</span>
-                </button>
             </div>
             
             <form id="searchForm" onsubmit="handleSearch(event)" class="relative flex items-center w-full bg-[#fdfbf7] rounded-2xl border border-[#d4af37]/50 shadow-luxury px-4 py-3">
@@ -182,7 +191,7 @@
                 
                 <input type="text" id="dishInput" autocomplete="off" placeholder="Es. Carbonara, risotto, sushi, carne..." class="w-full bg-transparent text-[#520d1a] placeholder-stone-400 text-sm font-medium focus:outline-none pr-4" required />
                 
-                <button type="button" id="clearBtn" onclick="clearInput()" class="hidden text-stone-400 hover:text-[#520d1a] p-1 transition-colors mr-2"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <button type="button" id="clearBtn" onclick="clearInput()" class="hidden text-stone-400 hover:text-[#520d1a] p-1 transition-colors mr-2 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
                 
                 <button type="submit" id="submitBtn" class="px-5 py-2.5 wine-primary-btn text-white rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all hover:opacity-95 flex items-center gap-1.5 shrink-0 cursor-pointer">
                     <span id="btnMatchText">Abbina</span> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -192,14 +201,19 @@
             </form>
         </section>
 
-        <!-- PILLOLE "PROVA SUBITO" DINAMICHE -->
-        <div id="quickTrySection" class="w-full max-w-xl space-y-1 px-1">
-            <div class="flex items-center justify-center gap-2">
-                <div class="h-[1px] bg-[#d4af37]/40 flex-1"></div>
-                <span class="text-[9px] uppercase tracking-[0.2em] text-[#a37f37] font-semibold">Prova Subito</span>
-                <div class="h-[1px] bg-[#d4af37]/40 flex-1"></div>
+        <!-- PILLOLE "PROVA SUBITO" (Senza riga dorata) -->
+        <div id="quickTrySection" class="w-full max-w-xl px-1 pt-1">
+            <div id="quickTryButtons" class="flex items-center justify-center flex-wrap gap-1.5 px-1">
+                <button type="button" onclick="selectSuggestedItem('Carbonara')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
+                    <span class="text-gold-600">🍝</span> Carbonara
+                </button>
+                <button type="button" onclick="selectSuggestedItem('Pizza Margherita')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
+                    <span class="text-gold-600">🍕</span> Pizza Margherita
+                </button>
+                <button type="button" onclick="selectSuggestedItem('Risotto ai Funghi Porcini')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
+                    <span class="text-gold-600">🍄</span> Risotto ai Funghi
+                </button>
             </div>
-            <div id="quickTryButtons" class="flex items-center justify-center flex-wrap gap-1.5 px-1"></div>
         </div>
 
         <!-- BENVENUTO -->
@@ -219,7 +233,6 @@
                 Il tuo <strong class="font-semibold text-[#520d1a]">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta.
             </p>
     
-            <!-- 3 COLONNE -->
             <div class="w-full bg-[#fdfbf7] rounded-3xl border border-[#d4af37]/50 shadow-xs grid grid-cols-3 divide-x divide-[#d4af37]/40 text-center py-3 px-2 mt-3">
               <div class="px-1.5 flex flex-col items-center justify-between">
                   <div class="h-11 w-full flex items-center justify-center">
@@ -228,7 +241,6 @@
                   <div class="h-10 w-full flex items-center justify-center my-1.5">
                     <h4 class="font-serif font-bold text-[10px] sm:text-xs text-wine-900 tracking-wide uppercase leading-tight">CONSULENZA<br>ESPERTA</h4>
                   </div>
-                  <p class="text-[9px] sm:text-[10px] text-stone-500 leading-tight font-light">Guidata dalla nostra Intelligenza Artificiale</p>
               </div>
 
               <div class="px-1.5 flex flex-col items-center justify-between">
@@ -238,7 +250,6 @@
                   <div class="h-10 w-full flex items-center justify-center my-1.5">
                     <h4 class="font-serif font-bold text-[10px] sm:text-xs text-wine-900 tracking-wide uppercase leading-tight">ABBINAMENTI<br>PERFETTI</h4>
                   </div>
-                  <p class="text-[9px] sm:text-[10px] text-stone-500 leading-tight font-light">Per piatti della tradizione e d'autore</p>
               </div>
 
               <div class="px-1.5 flex flex-col items-center justify-between">
@@ -248,7 +259,6 @@
                   <div class="h-10 w-full flex items-center justify-center my-1.5">
                     <h4 class="font-serif font-bold text-[10px] sm:text-xs text-wine-900 tracking-wide uppercase leading-tight">SCOPRI E<br>IMPARA</h4>
                   </div>
-                  <p class="text-[9px] sm:text-[10px] text-stone-500 leading-tight font-light">Approfondimenti, consigli e curiosità sul vino</p>
               </div>
             </div>
         </div>
@@ -269,77 +279,77 @@
         <!-- RISULTATI -->
         <div id="resultsContainer" class="hidden space-y-4 w-full max-w-xl pb-6">
             
-           <!-- BARRA TAB ORIZZONTALE -->
-            <div class="w-full bg-[#fdfbf7] p-1.5 rounded-full border border-[#d4af37]/40 shadow-xs flex items-center justify-between gap-1 overflow-x-auto no-scrollbar">
-                <button onclick="goToPage(1)" id="tab-1" class="flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 bg-[#520d1a] text-white font-semibold whitespace-nowrap text-center">Standard</button>
-                <button onclick="goToPage(2)" id="tab-2" class="flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 text-[#520d1a]/70 hover:text-[#520d1a] whitespace-nowrap text-center">Plus</button>
-                <button onclick="goToPage(3)" id="tab-3" class="flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 text-[#520d1a]/70 hover:text-[#520d1a] whitespace-nowrap text-center">Prestige</button>
-                <button onclick="goToPage(4)" id="tab-4" class="flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 text-[#520d1a]/70 hover:text-[#520d1a] whitespace-nowrap text-center">Sommelier</button>
-            </div>
+           <!-- BARRA TAB DINAMICA -->
+            <div id="tabsBarContainer" class="w-full bg-[#fdfbf7] p-1.5 rounded-2xl border border-[#d4af37]/40 shadow-xs flex items-center justify-between gap-1 overflow-x-auto no-scrollbar"></div>
 
             <!-- CONTENITORE DINAMICO DELLE SCHEDE -->
             <div id="readerCard" class="space-y-4 w-full">
                 <div id="readerPageContent" class="space-y-4"></div>
             </div>
 
-            <!-- PULSANTI DI NAVIGAZIONE IN BASSO -->
+            <!-- PULSANTI DI NAVIGAZIONE -->
             <nav class="w-full flex items-center justify-between pt-2">
-                <button onclick="changeReaderPage(-1)" id="btnReaderPrev" class="px-4 py-2 rounded-full border border-stone-300 text-wine-900 text-xs font-serif tracking-widest uppercase hover:bg-stone-100 transition disabled:opacity-30 disabled:cursor-not-allowed bg-white shadow-2xs">← Indietro</button>
-                <button onclick="resetToHome()" class="text-xs font-serif text-stone-500 hover:text-wine-900 uppercase tracking-widest transition">Nuova Ricerca</button>
-                <button onclick="changeReaderPage(1)" id="btnReaderNext" class="px-5 py-2 rounded-full wine-primary-btn text-white text-xs font-serif tracking-widest uppercase shadow-md transition hover:opacity-95">Avanti →</button>
+                <button onclick="changeReaderPage(-1)" id="btnReaderPrev" class="px-4 py-2 rounded-full border border-stone-300 text-wine-900 text-xs font-serif tracking-widest uppercase hover:bg-stone-100 transition disabled:opacity-30 disabled:cursor-not-allowed bg-white shadow-2xs cursor-pointer">← Indietro</button>
+                <button onclick="resetToHome()" class="text-xs font-serif text-stone-500 hover:text-wine-900 uppercase tracking-widest transition cursor-pointer">Nuova Ricerca</button>
+                <button onclick="changeReaderPage(1)" id="btnReaderNext" class="px-5 py-2 rounded-full wine-primary-btn text-white text-xs font-serif tracking-widest uppercase shadow-md transition hover:opacity-95 cursor-pointer">Avanti →</button>
             </nav>
 
             <!-- CHAT ENOLOGO -->
             <div class="space-y-3 pt-4">
-                <div class="flex items-center justify-between px-1">
-                    <h3 class="text-[11px] font-bold tracking-[0.25em] uppercase text-wine-900 flex items-center gap-2">
-                        <img src="images/TastevinDis.png" alt="Tastevin" class="w-5 h-5 object-contain scale-150 origin-left" /> L'Angolo dell'Esperto
-                    </h3>
+                <div onclick="toggleEnologoChat()" class="wine-card-bg text-white p-3.5 sm:p-4 rounded-3xl border border-gold-400/40 shadow-wine-glow flex items-center justify-between cursor-pointer hover:opacity-95 transition group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-gold-300 shrink-0 group-hover:scale-110 transition-transform">
+                            <span class="text-sm">✦</span>
+                        </div>
+                        <div>
+                            <h4 class="font-serif font-bold text-xs sm:text-sm text-stone-100 tracking-wide">HAI BISOGNO DI UNA CONSULENZA D'AUTORE?</h4>
+                            <p class="text-[10px] text-stone-300 font-light">Approfondisci ogni dettaglio con il nostro Enologo</p>
+                        </div>
+                    </div>
+                    <i id="enologoChevron" data-lucide="chevron-down" class="w-4 h-4 text-gold-300 shrink-0 transition-transform duration-300"></i>
                 </div>
-                
-                <div class="p-1.5 rounded-[28px] bg-gradient-to-br from-gold-500 via-gold-600 to-gold-400 shadow-2xl relative">
-                    <div class="p-1 rounded-[24px] bg-stone-900">
-                        <div class="bg-stone-950 p-6 rounded-[22px] border border-gold-400/40 space-y-4 relative overflow-hidden">
-                            <div class="flex items-center gap-4 relative z-10">
-                                <div class="w-14 h-14 rounded-2xl bg-stone-900 border border-gold-400/50 flex items-center justify-center text-gold-400 shadow-lg shrink-0 p-1 overflow-hidden">
-                                    <img src="images/TastevinDis.png" alt="Tastevin" class="w-full h-full object-contain scale-150" />
-                                </div>
-                                <div>
-                                    <h4 class="font-serif text-2xl text-stone-100 font-bold leading-tight tracking-wide">L'Enologo Risponde</h4>
-                                    <p class="text-xs text-stone-300 font-light tracking-wide mt-1 leading-relaxed">
-                                        Per annate rare, piatti della tradizione o abbinamenti fuori carta, interrogate il nostro esperto.
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            <div class="space-y-3 relative z-10 pt-2">
-                                <textarea id="aiSommelierInput" rows="2.5" placeholder="Scrivete qui il vostro quesito enologico..." class="w-full bg-stone-900 text-stone-100 placeholder-stone-500 text-xs font-medium p-4 rounded-xl border border-stone-800 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 focus:outline-none transition-all resize-none shadow-inner"></textarea>
-                                
-                                <div class="flex items-center gap-1.5 overflow-x-auto pt-0.5 pb-1 no-scrollbar text-xs">
-                                    <button type="button" onclick="fillQuickPrompt('Spiegami l\'abbinamento')" class="px-2.5 py-1.5 bg-stone-900 hover:bg-stone-800 border border-gold-400/30 rounded-lg text-[11px] font-medium text-gold-300 transition-all whitespace-nowrap flex items-center gap-1 shadow-2xs active:scale-95">
-                                        <i data-lucide="sparkles" class="w-3 h-3 text-gold-400"></i><span>Spiegami l'abbinamento</span>
-                                    </button>
-                                    <button type="button" onclick="fillQuickPrompt('Anno o annata ideale')" class="px-2.5 py-1.5 bg-stone-900 hover:bg-stone-800 border border-gold-400/30 rounded-lg text-[11px] font-medium text-gold-300 transition-all whitespace-nowrap flex items-center gap-1 shadow-2xs active:scale-95">
-                                        <i data-lucide="calendar" class="w-3 h-3 text-gold-400"></i><span>Anno o annata ideale</span>
-                                    </button>
-                                    <button type="button" onclick="fillQuickPrompt('Qualche curiosità sul vitigno?')" class="px-2.5 py-1.5 bg-stone-900 hover:bg-stone-800 border border-gold-400/30 rounded-lg text-[11px] font-medium text-gold-300 transition-all whitespace-nowrap flex items-center gap-1 shadow-2xs active:scale-95">
-                                        <i data-lucide="book-open" class="w-3 h-3 text-gold-400"></i><span>Curiosità sul vitigno</span>
-                                    </button>
-                                </div>
-                                
-                                <button type="button" onclick="askAiSommelier()" id="btnAskAi" class="w-full py-4 px-5 bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-stone-950 font-bold rounded-xl text-xs uppercase tracking-[0.18em] transition-all shadow-xl hover:shadow-gold-glow flex items-center justify-center gap-2 active:scale-95">
-                                    <span>Chiedi al sommelier</span>
-                                </button>
-                            </div>
 
-                            <div id="aiSommelierResponseBox" class="hidden mt-4 p-4 bg-stone-900/90 rounded-xl border border-gold-400/40 space-y-2 relative z-10 animate-in fade-in duration-300">
-                                <div class="flex items-center justify-between text-gold-400 font-serif font-bold text-sm border-b border-stone-800 pb-2">
-                                    <div class="flex items-center gap-2">
-                                        <img src="images/TastevinDis.png" alt="Tastevin" class="w-4 h-4 object-contain scale-150" />
-                                        <span>Il Parere dell'Enologo</span>
+                <div id="enologoChatContainer" class="hidden space-y-3 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div class="p-1.5 rounded-[28px] bg-gradient-to-br from-gold-500 via-gold-600 to-gold-400 shadow-2xl relative">
+                        <div class="p-1 rounded-[24px] bg-stone-900">
+                            <div class="bg-stone-950 p-5 rounded-[22px] border border-gold-400/40 space-y-4 relative overflow-hidden">
+                                <div class="grid grid-cols-[72px_1fr] items-center gap-4 relative z-10 border-b border-stone-800 pb-4">
+                                    <div class="w-16 h-16 flex items-center justify-center text-gold-400 shrink-0">
+                                        <img src="images/TastevinDis.png" alt="Tastevin" class="w-16 h-16 object-contain filter brightness-125 scale-125" />
+                                    </div>
+                                    <div class="space-y-0.5">
+                                        <h4 class="font-serif text-xl sm:text-2xl text-stone-100 font-bold leading-tight tracking-wide">L'Enologo Risponde</h4>
+                                        <p class="text-[11px] sm:text-xs text-stone-400 font-light tracking-wide leading-snug">
+                                            Per annate rare, varianti o abbinamenti fuori carta, chiedi al nostro esperto.
+                                        </p>
                                     </div>
                                 </div>
-                                <p id="aiSommelierReplyText" class="text-xs text-stone-200 leading-relaxed font-light italic pt-1"></p>
+                                <div class="space-y-3 relative z-10 pt-1">
+                                    <textarea id="aiSommelierInput" rows="2" placeholder="Scrivi qui il tuo quesito enologico..." class="w-full bg-stone-900 text-stone-100 placeholder-stone-500 text-xs font-medium p-3.5 rounded-xl border border-stone-800 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 focus:outline-none transition-all resize-none shadow-inner"></textarea>
+                                    <div class="grid grid-cols-3 gap-1.5 pt-0.5 pb-1">
+                                        <button type="button" onclick="fillQuickPrompt('Spiegami l\'abbinamento')" class="px-2 py-2 bg-stone-900 hover:bg-stone-800 border border-gold-400/30 rounded-lg text-[10px] font-medium text-gold-300 transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-95 text-center leading-tight cursor-pointer">
+                                            <i data-lucide="sparkles" class="w-3 h-3 text-gold-400 shrink-0"></i><span>Spiegami</span>
+                                        </button>
+                                        <button type="button" onclick="fillQuickPrompt('Anno o annata ideale')" class="px-2 py-2 bg-stone-900 hover:bg-stone-800 border border-gold-400/30 rounded-lg text-[10px] font-medium text-gold-300 transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-95 text-center leading-tight cursor-pointer">
+                                            <i data-lucide="calendar" class="w-3 h-3 text-gold-400 shrink-0"></i><span>Annata ideale</span>
+                                        </button>
+                                        <button type="button" onclick="fillQuickPrompt('Qualche curiosità sul vitigno?')" class="px-2 py-2 bg-stone-900 hover:bg-stone-800 border border-gold-400/30 rounded-lg text-[10px] font-medium text-gold-300 transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-95 text-center leading-tight cursor-pointer">
+                                            <i data-lucide="book-open" class="w-3 h-3 text-gold-400 shrink-0"></i><span>Curiosità</span>
+                                        </button>
+                                    </div>
+                                    <button type="button" onclick="askAiSommelier()" id="btnAskAi" class="w-full py-3.5 px-5 bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-stone-950 font-serif font-bold rounded-xl text-sm italic tracking-widest transition-all shadow-xl hover:shadow-gold-glow flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
+                                        <span>CHIEDI AL SOMMELIER</span>
+                                    </button>
+                                </div>
+                                <div id="aiSommelierResponseBox" class="hidden mt-4 p-4 bg-stone-900/90 rounded-xl border border-gold-400/40 space-y-2 relative z-10 animate-in fade-in duration-300">
+                                    <div class="flex items-center justify-between text-gold-400 font-serif font-bold text-sm border-b border-stone-800 pb-2">
+                                        <div class="flex items-center gap-2">
+                                            <img src="images/TastevinDis.png" alt="Tastevin" class="w-4 h-4 object-contain scale-150" />
+                                            <span>Il Parere dell'Enologo</span>
+                                        </div>
+                                    </div>
+                                    <p id="aiSommelierReplyText" class="text-xs text-stone-200 leading-relaxed font-light italic pt-1"></p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -347,8 +357,8 @@
             </div>
         </div>
 
-        <!-- SEZIONE INSTALLAZIONE PWA (Spaziatura speculare e ravvicinata alle colonne) -->
-        <div class="w-full max-w-xl px-4 mt-2.5 mb-2.5 text-center">
+        <!-- SEZIONE INSTALLAZIONE PWA -->
+        <div id="installSectionContainer" class="w-full max-w-xl px-4 mt-2.5 mb-2.5 text-center">
             <div onclick="toggleInstallBox()" class="inline-flex items-center gap-2.5 cursor-pointer group py-1.5 px-3 transition-all">
                 <span class="text-gold-600 text-base transition-transform group-hover:scale-125">✦</span>
                 <span class="font-serif italic text-base sm:text-lg font-medium tracking-wide text-wine-900 group-hover:text-gold-600 transition-colors">
@@ -357,10 +367,9 @@
                 <i id="installArrowIcon" data-lucide="chevron-down" class="w-4 h-4 text-gold-600 shrink-0 transition-transform group-hover:translate-y-0.5"></i>
             </div>
 
-            <!-- BOX GUIDA CHE SI APRE AL CLICK -->
             <div id="installExpansionBox" class="hidden w-full mt-2 animate-in fade-in slide-in-from-top-2 duration-300 text-left">
                 <div class="bg-white rounded-2xl p-4 border border-[#d4af37]/60 shadow-luxury space-y-3 relative">
-                    <button onclick="toggleInstallBox()" class="absolute top-3 right-3 text-stone-400 hover:text-wine-900 p-1 rounded-full transition">
+                    <button onclick="toggleInstallBox()" class="absolute top-3 right-3 text-stone-400 hover:text-wine-900 p-1 rounded-full transition cursor-pointer">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                     <div class="flex items-center gap-2.5">
@@ -372,7 +381,6 @@
                             <p class="text-[10px] text-stone-500">Aggiungi l'app alla Home del tuo smartphone</p>
                         </div>
                     </div>
-
                     <div class="space-y-2 text-xs text-stone-700 bg-[#faf7f2] p-3 rounded-xl border border-stone-200">
                         <div>
                             <strong class="text-wine-900 font-serif block mb-0.5">🍏 Per iPhone (Safari):</strong>
@@ -383,8 +391,7 @@
                             Tocca i <span class="font-semibold text-gold-600">tre puntini</span> in alto a destra e seleziona <span class="font-semibold text-wine-900">"Installa app"</span> o <span class="font-semibold text-wine-900">"Aggiungi a Home"</span>.
                         </div>
                     </div>
-
-                    <button id="directInstallBtn" onclick="triggerDirectInstall()" class="w-full wine-card-bg text-white font-bold text-xs py-2.5 rounded-xl shadow-md hover:opacity-95 transition uppercase tracking-wider hidden">
+                    <button id="directInstallBtn" onclick="triggerDirectInstall()" class="w-full wine-card-bg text-white font-bold text-xs py-2.5 rounded-xl shadow-md hover:opacity-95 transition uppercase tracking-wider hidden cursor-pointer">
                         Installa Subito
                     </button>
                 </div>
@@ -407,7 +414,7 @@
     <!-- PAYWALL -->
     <div id="paywallModal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 hidden">
         <div class="w-full max-w-sm bg-white rounded-3xl p-6 border border-stone-200 space-y-5 text-center shadow-2xl animate-in zoom-in-95 duration-200 relative overflow-hidden">
-            <button onclick="closePaywall()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 p-1.5 rounded-full hover:bg-stone-100 transition-colors">
+            <button onclick="closePaywall()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 p-1.5 rounded-full hover:bg-stone-100 transition-colors cursor-pointer">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
             <div class="w-14 h-14 mx-auto rounded-2xl bg-white border border-gold-400/40 flex items-center justify-center overflow-hidden p-1 shadow-lg">
@@ -419,8 +426,31 @@
                     Hai esaurito i crediti gratuiti o le richieste giornaliere. Sblocca le funzioni avanzate per continuare.
                 </p>
             </div>
-            <button onclick="closePaywall()" class="w-full wine-card-bg text-stone-100 font-bold text-xs py-3.5 rounded-xl shadow-lg hover:opacity-95 transition-all uppercase tracking-wider">
+            <button onclick="closePaywall()" class="w-full wine-card-bg text-stone-100 font-bold text-xs py-3.5 rounded-xl shadow-lg hover:opacity-95 transition-all uppercase tracking-wider cursor-pointer">
                 Torna al Taccuino
+            </button>
+        </div>
+    </div>
+
+    <!-- MENU A TENDINA PROFILO (Ancorato in alto a destra, perfettamente dentro il layout centrale) -->
+    <div id="profileModal" class="hidden absolute top-14 right-3 w-64 bg-white rounded-2xl border border-[#d4af37]/40 shadow-2xl p-4 space-y-4 z-50 text-left animate-in fade-in slide-in-from-top-2 duration-200">
+        <div class="flex items-center gap-3 border-b border-stone-100 pb-3">
+            <div class="w-10 h-10 rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center font-serif text-sm font-bold shrink-0 border border-gold-400/40">
+                <span id="modalUserInitial">A</span>
+            </div>            
+            <div class="min-w-0 flex-1">
+                <p class="text-[10px] uppercase font-bold tracking-widest text-[#a37f37]">ACCOUNT</p>
+                <p id="modalUserEmail" class="text-xs text-stone-700 font-medium truncate">
+                    utente@email.com
+                </p>
+            </div>
+        </div>
+        <div class="space-y-2">
+            <button onclick="executeLogout()" class="w-full bg-[#520d1a] hover:bg-[#33060f] text-white font-serif italic text-xs py-2.5 rounded-xl shadow-xs transition-all uppercase tracking-wider cursor-pointer text-center">
+                Disconnetti account
+            </button>
+            <button onclick="closeProfileModal()" class="w-full bg-stone-100 hover:bg-stone-200 text-stone-600 font-serif text-xs py-2 rounded-xl transition-all cursor-pointer text-center">
+                Chiudi
             </button>
         </div>
     </div>
@@ -456,12 +486,42 @@
             if (error) alert("Impossibile completare l'accesso con Google.");
         }
 
-        async function logout() {
-            if (confirm("Vuoi disconnettere il tuo account?")) {
-                await supabaseClient.auth.signOut();
-                window.location.reload();
+        // Apre/chiude il menu a tendina in alto a destra
+        function logout() {
+            const modal = document.getElementById('profileModal');
+            const initialEl = document.getElementById('modalUserInitial');
+            const emailEl = document.getElementById('modalUserEmail');
+
+            if (currentUser) {
+                const displayName = currentUser.user_metadata?.full_name || currentUser.email || 'A';
+                if (initialEl) initialEl.innerText = displayName.charAt(0).toUpperCase();
+                if (emailEl) emailEl.innerText = currentUser.email || '';
+            }
+
+            if (modal) {
+                modal.classList.toggle('hidden');
+                if (window.lucide) lucide.createIcons();
             }
         }
+
+        function closeProfileModal() {
+            const modal = document.getElementById('profileModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        async function executeLogout() {
+            await supabaseClient.auth.signOut();
+            window.location.reload();
+        }
+
+        // Chiude il menu se si clicca fuori
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('profileModal');
+            const profileBadge = document.getElementById('userProfileBadge');
+            if (modal && profileBadge && !modal.contains(e.target) && !profileBadge.contains(e.target)) {
+                modal.classList.add('hidden');
+            }
+        });
 
         supabaseClient.auth.onAuthStateChange(async (event, session) => {
             if (session && session.user) {
@@ -476,7 +536,6 @@
         async function updateAuthUI(user) {
             const loginBtn = document.getElementById('btnLoginGoogle');
             const profileBadge = document.getElementById('userProfileBadge');
-            const avatarImg = document.getElementById('userAvatarImg');
             const avatarLetter = document.getElementById('userInitialLetter');
             const creditsLabel = document.getElementById('creditsCount');
 
@@ -484,17 +543,9 @@
                 if (loginBtn) loginBtn.classList.add('hidden');
                 if (profileBadge) profileBadge.classList.remove('hidden');
                 
-                if (user.user_metadata?.avatar_url) {
-                    avatarImg.src = user.user_metadata.avatar_url;
-                    avatarImg.classList.remove('hidden');
-                    if (avatarLetter) avatarLetter.classList.add('hidden');
-                } else if (user.email) {
-                    const initial = user.email.charAt(0).toUpperCase();
-                    if (avatarLetter) {
-                        avatarLetter.innerText = initial;
-                        avatarLetter.classList.remove('hidden');
-                    }
-                    if (avatarImg) avatarImg.classList.add('hidden');
+                const displayName = user.user_metadata?.full_name || user.email || 'A';
+                if (avatarLetter) {
+                    avatarLetter.innerText = displayName.charAt(0).toUpperCase();
                 }
 
                 try {
@@ -512,16 +563,24 @@
                         if (upserted) profile = upserted;
                     }
 
-                    if (profile && creditsLabel) {
-                        isUserPremium = ((profile.plan === 'monthly' || profile.plan === 'premium' || profile.plan === 'pro') && profile.is_active_subscription === true);
-                        creditsLabel.innerText = isUserPremium ? "Premium" : `${profile.credits_remaining} Crediti`;
+                    if (profile) {
+                        isUserPremium = (
+                            (profile.plan === 'monthly' || profile.plan === 'premium' || profile.plan === 'pro') && 
+                            profile.is_active_subscription === true
+                        );
+
+                        if (creditsLabel) {
+                            creditsLabel.innerText = isUserPremium ? "Premium" : `${profile.credits_remaining} Crediti`;
+                        }
                     }
                 } catch (e) {
+                    console.warn("Errore lettura profilo:", e);
                     if (creditsLabel) creditsLabel.innerText = "10 Crediti";
                 }
             } else {
                 if (loginBtn) loginBtn.classList.remove('hidden');
                 if (profileBadge) profileBadge.classList.add('hidden');
+                isUserPremium = false;
             }
         }
 
@@ -544,7 +603,6 @@
                 sublabelDish: "Trova il vino perfetto in pochi secondi.",
                 sublabelWine: "Trova i piatti ideali per esaltare questo vino.",
                 btnMatch: "Abbina",
-                aiMatch: "CHIEDI AL SOMMELIER IA",
                 loadingTitle: "Consultando la Carta dei Vini...",
                 loadingSubtitle: "Analisi profilo organolettico in corso...",
                 welcomeTitle: "A Ciascun Piatto il Suo Calice",
@@ -556,7 +614,6 @@
                 sublabelDish: "Find the perfect wine in seconds.",
                 sublabelWine: "Find the ideal dishes to pair with this wine.",
                 btnMatch: "Pair",
-                aiMatch: "AI SOMMELIER",
                 loadingTitle: "Consulting the Wine List...",
                 loadingSubtitle: "Organoleptic profile analysis...",
                 welcomeTitle: "Every Dish Deserves its Glass",
@@ -607,10 +664,12 @@
 
         function switchSearchMode(mode) {
             searchMode = mode;
+            readerPageIndex = 1;
+            resetToHome();
+
             const btnPlate = document.getElementById('modePlateToGlass');
             const btnGlass = document.getElementById('modeGlassToPlate');
             const searchLabel = document.getElementById('searchLabel');
-            const searchSublabel = document.getElementById('searchSublabel');
             const searchIcon = document.getElementById('searchIconContainer');
             const quickTryButtons = document.getElementById('quickTryButtons');
             const dict = i18n[currentLang];
@@ -622,7 +681,6 @@
                 if (btnPlate) btnPlate.className = activeClass;
                 if (btnGlass) btnGlass.className = inactiveClass;
                 if (searchLabel) searchLabel.innerText = "Quale piatto vuoi abbinare?";
-                if (searchSublabel) searchSublabel.innerText = dict.sublabelDish;
                 if (dishInputEl) dishInputEl.placeholder = dict.searchPlaceholderDish;
                 
                 if (searchIcon) searchIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>`;
@@ -644,7 +702,6 @@
                 if (btnGlass) btnGlass.className = activeClass;
                 if (btnPlate) btnPlate.className = inactiveClass;
                 if (searchLabel) searchLabel.innerText = "Quale vino hai in cantina?";
-                if (searchSublabel) searchSublabel.innerText = dict.sublabelWine;
                 if (dishInputEl) dishInputEl.placeholder = dict.searchPlaceholderWine;
                 
                 if (searchIcon) searchIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-6"/><path d="M8 22h8"/><path d="M6 2h12l-2 9a4 4 0 0 1-8 0L6 2z"/></svg>`;
@@ -704,13 +761,10 @@
             if (!dishInputEl) return;
             if (searchMode === 'dish') {
                 dishInputEl.placeholder = dict.searchPlaceholderDish;
-                document.getElementById('searchSublabel').innerText = dict.sublabelDish;
             } else {
                 dishInputEl.placeholder = dict.searchPlaceholderWine;
-                document.getElementById('searchSublabel').innerText = dict.sublabelWine;
             }
             document.getElementById('btnMatchText').innerText = dict.btnMatch;
-            document.getElementById('badgeAiText').innerText = dict.aiMatch;
             document.getElementById('loadingTitle').innerText = dict.loadingTitle;
             document.getElementById('loadingSubtitle').innerText = dict.loadingSubtitle;
             document.getElementById('welcomeTitle').innerText = dict.welcomeTitle;
@@ -736,11 +790,34 @@
         }
 
         function openSommelierInfo() {
-            const input = document.getElementById('aiSommelierInput');
-            if (input) {
-                input.scrollIntoView({ behavior: 'smooth' });
-                input.focus();
+            const chatBox = document.getElementById('enologoChatContainer');
+            const chevron = document.getElementById('enologoChevron');
+            if (chatBox) {
+                chatBox.classList.remove('hidden');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+                chatBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                const input = document.getElementById('aiSommelierInput');
+                if (input) input.focus();
             }
+        }
+
+        function toggleEnologoChat() {
+            const chatBox = document.getElementById('enologoChatContainer');
+            const chevron = document.getElementById('enologoChevron');
+            if (!chatBox) return;
+
+            const isHidden = chatBox.classList.contains('hidden');
+            if (isHidden) {
+                chatBox.classList.remove('hidden');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+                setTimeout(() => {
+                    chatBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+            } else {
+                chatBox.classList.add('hidden');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+            }
+            if (window.lucide) lucide.createIcons();
         }
 
         function fillQuickPrompt(text) {
@@ -803,6 +880,7 @@
                     throw "Formato dati non valido";
                 }
 
+                renderTabsBar();
                 renderReaderPage();
                 showLoading(false);
                 
@@ -827,15 +905,58 @@
             }
         }
 
+        function renderTabsBar() {
+            const tabsBar = document.getElementById('tabsBarContainer');
+            if (!tabsBar) return;
+
+            let html = '';
+            if (searchMode === 'dish') {
+                html = `
+                    <button onclick="goToPage(1)" id="tab-1" class="flex-1 flex flex-col items-center py-1.5 px-2 rounded-xl transition-all duration-300 text-center whitespace-nowrap cursor-pointer">
+                        <span class="text-xs font-serif font-bold tracking-wide">Standard</span>
+                        <span class="text-[10px] font-sans tracking-tight">&lt; 15 €</span>
+                    </button>
+                    <div class="w-px h-6 bg-[#d4af37]/30 shrink-0"></div>
+                    <button onclick="goToPage(2)" id="tab-2" class="flex-1 flex flex-col items-center py-1.5 px-2 rounded-xl transition-all duration-300 text-center whitespace-nowrap cursor-pointer">
+                        <span class="text-xs font-serif font-bold tracking-wide">Plus</span>
+                        <span class="text-[10px] font-sans tracking-tight">15 - 40 €</span>
+                    </button>
+                    <div class="w-px h-6 bg-[#d4af37]/30 shrink-0"></div>
+                    <button onclick="goToPage(3)" id="tab-3" class="flex-1 flex flex-col items-center py-1.5 px-2 rounded-xl transition-all duration-300 text-center whitespace-nowrap cursor-pointer">
+                        <span class="text-xs font-serif font-bold tracking-wide">Prestige</span>
+                        <span class="text-[10px] font-sans tracking-tight">&gt; 40 €</span>
+                    </button>
+                    <div class="w-px h-6 bg-[#d4af37]/30 shrink-0"></div>
+                    <button onclick="goToPage(4)" id="tab-4" class="flex-1 flex flex-col items-center py-1.5 px-2 rounded-xl transition-all duration-300 text-center whitespace-nowrap cursor-pointer">
+                        <span class="text-xs font-serif font-bold tracking-wide">Consiglio</span>
+                        <span class="text-xs font-serif font-bold tracking-wide">del Sommelier</span>
+                    </button>
+                `;
+            } else {
+                html = `
+                    <button onclick="goToPage(1)" id="tab-1" class="flex-1 flex flex-col items-center py-2 px-3 rounded-xl transition-all duration-300 text-center whitespace-nowrap cursor-pointer">
+                        <span class="text-xs sm:text-sm font-serif font-bold tracking-wide">Piatto della Tradizione</span>
+                    </button>
+                    <div class="w-px h-6 bg-[#d4af37]/30 shrink-0"></div>
+                    <button onclick="goToPage(2)" id="tab-2" class="flex-1 flex flex-col items-center py-2 px-3 rounded-xl transition-all duration-300 text-center whitespace-nowrap cursor-pointer">
+                        <span class="text-xs sm:text-sm font-serif font-bold tracking-wide">Piatto Gourmet</span>
+                    </button>
+                `;
+            }
+            tabsBar.innerHTML = html;
+        }
+
         function goToPage(index) {
-            if (index < 0 || index > 4 || readerPageIndex === index) return;
+            const maxPage = searchMode === 'dish' ? 4 : 2;
+            if (index < 1 || index > maxPage || readerPageIndex === index) return;
             readerPageIndex = index;
             renderReaderPage();
         }
 
         function changeReaderPage(direction) {
+            const maxPage = searchMode === 'dish' ? 4 : 2;
             const newIndex = readerPageIndex + direction;
-            if (newIndex < 0 || newIndex > 4) return;
+            if (newIndex < 1 || newIndex > maxPage) return;
             goToPage(newIndex);
         }
 
@@ -849,20 +970,32 @@
 
             if (!contentContainer) return;
 
-            for (let i = 1; i <= 4; i++) {
+            renderTabsBar();
+
+            const maxPage = searchMode === 'dish' ? 4 : 2;
+
+            for (let i = 1; i <= maxPage; i++) {
                 const tab = document.getElementById(`tab-${i}`);
                 if (tab) {
                     if (i === readerPageIndex) {
-                        tab.className = "flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 bg-[#520d1a] text-white font-semibold whitespace-nowrap text-center shadow-sm";
+                        tab.className = "flex-1 flex flex-col items-center py-1.5 px-2 rounded-xl transition-all duration-300 bg-[#520d1a] text-white font-semibold shadow-sm whitespace-nowrap text-center cursor-pointer";
+                        const subSpan = tab.querySelector('span:nth-child(2)');
+                        if (subSpan) {
+                            subSpan.className = (searchMode === 'dish' && i === 4) ? "text-xs font-serif font-bold tracking-wide text-gold-300" : "text-[10px] text-gold-300 font-sans tracking-tight";
+                        }
                     } else {
-                        tab.className = "flex-1 px-2.5 py-1.5 rounded-full font-serif italic text-[11px] sm:text-xs transition-all duration-300 text-[#520d1a]/70 hover:text-[#520d1a] whitespace-nowrap text-center";
+                        tab.className = "flex-1 flex flex-col items-center py-1.5 px-2 rounded-xl transition-all duration-300 text-[#520d1a]/70 hover:text-[#520d1a] whitespace-nowrap text-center cursor-pointer";
+                        const subSpan = tab.querySelector('span:nth-child(2)');
+                        if (subSpan) {
+                            subSpan.className = (searchMode === 'dish' && i === 4) ? "text-xs font-serif font-bold tracking-wide" : "text-[10px] text-stone-500 font-sans tracking-tight";
+                        }
                     }
                 }
             }
 
             if (btnPrev) btnPrev.disabled = readerPageIndex === 1;
             if (btnNext) {
-                if (readerPageIndex === 4) {
+                if (readerPageIndex === maxPage) {
                     btnNext.innerText = "Fine";
                     btnNext.disabled = true;
                     btnNext.classList.add('opacity-50');
@@ -874,187 +1007,341 @@
             }
 
             let html = '';
-            let cleanDishName = (d.dish_name || (dishInputEl ? dishInputEl.value.trim() : '') || 'Carbonara').replace(/([aeiouàèìòù])\1{2,}/gi, '$1');
 
-            const dishCardHtml = `
-    <div class="notebook-sheet p-5 sm:p-6 space-y-4">
-        <div class="flex items-start gap-4">
-            <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shrink-0">
-                <img src="${getDishIllustration(d.category, cleanDishName, d.description)}" alt="Piatto" class="w-full h-full object-contain scale-125" />
-            </div>
-            <div class="space-y-1.5 flex-1 min-w-0">
-                <h3 class="font-serif text-2xl sm:text-3xl font-bold leading-tight" style="color: #520d1a;">${capitalizeFirstLetter(cleanDishName)}</h3>
-                <p class="text-xs sm:text-sm leading-relaxed font-normal" style="color: #520d1a;">
-                    ${d.description || 'Piatto d\'eccellenza della tradizione enogastronomica.'}
-                </p>
-            </div>
-        </div>
+            // Badge dinamico intelligente guidato dal backend (Database vs IA)
+            const isFromDatabase = d.source === 'database' || d.verified === true;
+            const badgeHtml = isFromDatabase 
+                ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider bg-[#faf5ec] border border-[#dcd0bc] mb-1" style="color: #a37f37;">✦ ABBINAMENTO VERIFICATO</span>`
+                : `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider bg-[#520d1a]/10 border border-[#520d1a]/30 mb-1" style="color: #520d1a;">✨ ELABORAZIONE SOMMELIER IA</span>`;
 
-        <div class="pt-3 border-t border-[#dcd0bc]/60 space-y-3">
-            <div class="text-[10px] uppercase tracking-[0.2em] font-bold text-wine-900">PROFILO SENSORIALE PIATTO</div>
-            
-            <div class="grid grid-cols-4 divide-x divide-[#dcd0bc]/60 text-center pt-1">
-                <div class="flex flex-col items-center px-1 space-y-1.5">
-                    <div class="flex items-center justify-center gap-1.5">
-                        <img src="images/grassezza.png" alt="Grassezza" class="w-5 h-5 sm:w-6 sm:h-6 object-contain drop-shadow-2xs" />
-                        <span class="text-[11px] text-wine-900 font-semibold">Grassezza</span>
-                    </div>
-                    <div class="text-xs font-bold text-wine-900">${d.fat_text || 'Alta'}</div>
-                    <div class="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden mt-1">
-                        <div class="bg-[#c5a059] h-full rounded-full" style="width: ${d.fat_val || '85%'};"></div>
-                    </div>
-                </div>
+            if (searchMode === 'dish') {
+                let cleanDishName = (d.dish_name || (dishInputEl ? dishInputEl.value.trim() : '') || 'Carbonara').replace(/([aeiouàèìòù])\1{2,}/gi, '$1');
 
-                <div class="flex flex-col items-center px-1 space-y-1.5">
-                    <div class="flex items-center justify-center gap-1.5">
-                        <img src="images/succulenza.png" alt="Succulenza" class="w-5 h-5 sm:w-6 sm:h-6 object-contain drop-shadow-2xs" />
-                        <span class="text-[11px] text-wine-900 font-semibold">Succulenza</span>
-                    </div>
-                    <div class="text-xs font-bold text-wine-900">${d.juiciness_text || 'Media'}</div>
-                    <div class="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden mt-1">
-                        <div class="bg-[#a37f37] h-full rounded-full" style="width: ${d.juiciness_val || '60%'};"></div>
-                    </div>
-                </div>
+                const formatWineTitleParts = (fullTitle) => {
+                    if (!fullTitle) return { winery: 'Vino Consigliato', type: '', region: '' };
+                    let cleaned = fullTitle.replace(/[-–—]/g, '|');
+                    let parts = cleaned.split('|').map(p => p.trim()).filter(Boolean);
+                    let winery = parts[0] ? parts[0].toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase()) : 'Selezionato';
+                    let type = parts.length > 1 ? parts[1].toUpperCase() : '';
+                    let region = parts.length > 2 ? parts[parts.length - 1].toUpperCase() : '';
+                    if (parts.length === 1) return { winery: fullTitle, type: '', region: '' };
+                    return { winery, type, region };
+                };
 
-                <div class="flex flex-col items-center px-1 space-y-1.5">
-                    <div class="flex items-center justify-center gap-1.5">
-                        <img src="images/persistenza.png" alt="Persistenza" class="w-5 h-5 sm:w-6 sm:h-6 object-contain drop-shadow-2xs" />
-                        <span class="text-[11px] text-wine-900 font-semibold">Persistenza</span>
-                    </div>
-                    <div class="text-xs font-bold text-wine-900">${d.aroma_text || 'Elevata'}</div>
-                    <div class="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden mt-1">
-                        <div class="bg-[#520d1a] h-full rounded-full" style="width: ${d.aroma_val || '75%'};"></div>
-                    </div>
-                </div>
+                // 1. CARD DEL VINO STANDARD, PLUS, PRESTIGE
+                const wineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp, priceTag) => {
+                    let parts = formatWineTitleParts(wineTitle);
+                    let displayGlass = wineGlass && wineGlass.trim() !== '' ? wineGlass : 'Ballon / Calice ampio';
+                    let displayTemp = wineTemp && wineTemp.trim() !== '' ? wineTemp : '16-18°C';
 
-                <div class="flex flex-col items-center px-1 space-y-1.5">
-                    <div class="flex items-center justify-center gap-1.5">
-                        <img src="images/sapido.png" alt="Sapidità" class="w-5 h-5 sm:w-6 sm:h-6 object-contain drop-shadow-2xs" />
-                        <span class="text-[11px] text-wine-900 font-semibold">Sapidità</span>
-                    </div>
-                    <div class="text-xs font-bold text-wine-900">${d.savory_text || 'Marcata'}</div>
-                    <div class="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden mt-1">
-                        <div class="bg-sky-800 h-full rounded-full" style="width: ${d.savory_val || '80%'};"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-            `;
+                    return `
+                    <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
+                        <div class="text-center space-y-0.5">
+                            <span class="text-[9px] uppercase font-bold tracking-[0.25em]" style="color: #a37f37;">✦ IL VINO CHE TI CONSIGLIAMO ✦</span>
+                        </div>
+                        <div class="grid grid-cols-[144px_1fr] items-start gap-4">
+                            <div class="w-36 flex flex-col items-center justify-between gap-3 p-1">
+                                <div class="bg-white rounded-xl p-2 shadow-sm flex items-center justify-center w-full">
+                                    <img src="images/bottiglieecalice.PNG" alt="Bottiglia e Calice" class="max-h-32 object-contain drop-shadow-sm" />
+                                </div>
+                                <a href="https://www.google.com/search?q=acquista+${encodeURIComponent(wineTitle || '')}" target="_blank" rel="noopener noreferrer" class="w-full inline-flex items-center justify-center gap-1.5 bg-[#520d1a] hover:bg-[#33060f] text-gold-300 py-1.5 px-2 rounded-xl text-[11px] font-serif font-bold tracking-wide shadow-xs transition-all duration-300 border border-gold-400/40 text-center">
+                                    <span>Cerca vino</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                                </a>
+                            </div>
+                            <div class="flex-1 space-y-2.5 min-w-0 flex flex-col justify-between">
+                                <div>
+                                    ${badgeHtml}
+                                    <div class="space-y-1">
+                                        <div class="font-serif italic font-bold text-base sm:text-lg capitalize text-[#520d1a] leading-tight">
+                                            ${parts.winery}
+                                        </div>
+                                        <h3 class="font-serif font-bold leading-tight tracking-wide text-sm sm:text-base uppercase text-[#520d1a]">
+                                            ${parts.type || parts.winery}
+                                        </h3>
+                                        ${parts.region ? `<div class="text-[11px] sm:text-xs font-serif font-bold tracking-widest uppercase text-[#520d1a] pt-0.5">${parts.region}</div>` : ''}
+                                    </div>
+                                </div>
+                                <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-bold pt-1">
+                                    "${wineDesc || ''}"
+                                </p>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5 pt-2.5 border-t border-[#dcd0bc]/60">
+                            <h4 class="text-[9px] uppercase font-bold tracking-widest" style="color: #a37f37;">PERCHÉ FUNZIONA L'ABBINAMENTO</h4>
+                            <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-bold">
+                                "${wineMatching || ''}"
+                            </p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 pt-2 border-t border-[#dcd0bc]/60 items-center">
+                            <div class="flex items-center gap-2 text-stone-900">
+                                <div class="w-7 h-7 rounded-xl bg-[#520d1a]/10 text-[#520d1a] flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 22h8"/><path d="M12 11v11"/><path d="m19 3-7 8-7-8Z"/></svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-[8px] uppercase tracking-wider font-bold block" style="color: #a37f37;">TIPO DI CALICE</span>
+                                    <span class="text-[11px] font-serif font-medium truncate block text-[#520d1a]">${displayGlass}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 text-stone-900">
+                                <div class="w-7 h-7 rounded-xl bg-[#520d1a]/10 text-[#520d1a] flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-[8px] uppercase tracking-wider font-bold block" style="color: #a37f37;">TEMPERATURA</span>
+                                    <span class="text-[11px] font-serif font-medium truncate block text-[#520d1a]">${displayTemp}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                };
 
-            if (readerPageIndex >= 1 && readerPageIndex <= 3) {
-                const types = [
-                    { tag: 'Standard (<15€)', title: d.standard_wine, desc: d.standard_wine_desc, matching: d.standard_wine_matching, region: d.standard_wine_region || 'Italia' },
-                    { tag: 'Plus (15-40€)', title: d.plus_wine, desc: d.plus_wine_desc, matching: d.plus_wine_matching, region: d.plus_wine_region || 'Italia' },
-                    { tag: 'Prestige (>40€)', title: d.prestige_wine, desc: d.prestige_wine_desc, matching: d.prestige_wine_matching, region: d.prestige_wine_region || 'Italia' }
-                ];
-                const wineInfo = types[readerPageIndex - 1];
+                // 2. CARD DEL SOMMELIER (PAGINA 4) - BORDEAUX SCURO
+                const sommelierWineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp) => {
+                    let parts = formatWineTitleParts(wineTitle);
+                    let displayGlass = wineGlass && wineGlass.trim() !== '' ? wineGlass : 'Ballon / Calice ampio';
+                    let displayTemp = wineTemp && wineTemp.trim() !== '' ? wineTemp : '16-18°C';
 
-                html = `
-    <div class="notebook-sheet p-5 sm:p-6 space-y-4">
-        <div class="text-center space-y-0.5">
-            <span class="text-[9px] uppercase font-bold tracking-[0.25em]" style="color: #a37f37;">✦ IL VINO CHE TI CONSIGLIAMO ✦</span>
-        </div>
-
-        <div class="flex flex-row items-center gap-4">
-            <div class="w-28 sm:w-36 shrink-0 flex items-center justify-center p-1">
-                <img src="images/bottiglieecalice.PNG" alt="Bottiglia e Calice" class="max-h-40 sm:max-h-44 object-contain drop-shadow-sm" />
-            </div>
-            
-            <div class="flex-1 space-y-2.5 min-w-0">
-                <div>
-                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-[8px] font-bold uppercase bg-[#faf5ec] border border-[#dcd0bc] mb-1.5" style="color: #a37f37;">ABBINAMENTO VERIFICATO</span>
-                    
-                    <h3 class="font-serif font-bold text-xl sm:text-2xl leading-tight" style="color: #520d1a;">${wineInfo.title || 'Vino Consigliato'}</h3>
-                    <p class="text-[11px] font-light mt-0.5 opacity-80" style="color: #520d1a;">${wineInfo.region}</p>
-                </div>
-
-                <p class="text-xs leading-relaxed font-normal" style="color: #520d1a;">
-                    ${wineInfo.desc || ''}
-                </p>
-
-                <div class="space-y-1.5 pt-2 border-t border-[#dcd0bc]/50">
-                    <h4 class="text-[9px] uppercase font-bold tracking-widest" style="color: #520d1a;">PERCHÉ FUNZIONA</h4>
-                    <p class="text-xs leading-relaxed font-normal italic" style="color: #520d1a;">
-                        "${wineInfo.matching || ''}"
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    ${dishCardHtml}
-
-    <div class="wine-card-bg text-white p-3.5 sm:p-4 rounded-3xl border border-gold-400/40 shadow-wine-glow flex items-center justify-between cursor-pointer hover:opacity-95 transition" onclick="changeReaderPage(1)">
-        <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-gold-300 shrink-0">
-                <span class="text-sm">✦</span>
-            </div>
-            <div>
-                <h4 class="font-serif font-bold text-xs sm:text-sm text-stone-100 tracking-wide">SCOPRI L'ABBINAMENTO COMPLETO</h4>
-                <p class="text-[10px] text-stone-300 font-light">Vini alternativi, temperatura, calice e consigli del Sommelier</p>
-            </div>
-        </div>
-        <i data-lucide="chevron-right" class="w-4 h-4 text-gold-300 shrink-0"></i>
-    </div>
-                `;
-            } 
-            else if (readerPageIndex === 4) {
-                html = `
-                    <div class="wine-card-bg text-white p-5 sm:p-6 rounded-[2rem] border border-gold-400/40 shadow-wine-glow space-y-4">
+                    return `
+                    <div class="wine-card-bg p-4 sm:p-5 space-y-4 rounded-[2rem] border border-gold-400/40 shadow-wine-glow text-white">
                         <div class="text-center space-y-0.5">
                             <span class="text-[9px] uppercase font-bold tracking-[0.25em] text-gold-300">✦ PROPOSTA TECNICA DELL'ESPERTO ✦</span>
                         </div>
-
-                        <div class="flex flex-row items-center gap-4">
-                            <div class="w-28 sm:w-36 shrink-0 flex items-center justify-center p-1">
-                                <img src="images/bottiglieecalice.PNG" alt="Bottiglia e Calice" class="max-h-40 sm:max-h-44 object-contain drop-shadow-md brightness-110 filter" />
+                        <div class="grid grid-cols-[144px_1fr] items-start gap-4">
+                            <div class="w-36 flex flex-col items-center justify-between gap-3 p-1">
+                                <div class="bg-white rounded-xl p-2 shadow-sm flex items-center justify-center w-full">
+                                    <img src="images/bottiglieecalice.PNG" alt="Bottiglia e Calice" class="max-h-32 object-contain drop-shadow-sm" />
+                                </div>
+                                <a href="https://www.google.com/search?q=acquista+${encodeURIComponent(wineTitle || '')}" target="_blank" rel="noopener noreferrer" class="w-full inline-flex items-center justify-center gap-1.5 bg-[#33060f] hover:bg-[#220309] text-gold-300 py-1.5 px-2 rounded-xl text-[11px] font-serif font-bold tracking-wide shadow-xs transition-all duration-300 border border-gold-400/40 text-center">
+                                    <span>Cerca vino</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                                </a>
                             </div>
-                            
-                            <div class="flex-1 space-y-2 min-w-0">
+                            <div class="flex-1 space-y-2.5 min-w-0 flex flex-col justify-between">
                                 <div>
                                     <span class="inline-flex px-2.5 py-0.5 rounded-full text-[8px] font-bold uppercase bg-white/10 text-gold-300 border border-gold-400/30 mb-1">SELEZIONE D'ECCELLENZA</span>
-                                    <h3 class="font-serif font-bold text-base sm:text-xl text-stone-100 leading-snug">${d.sommelier_wine || 'Selezione Speciale'}</h3>
-                                    <p class="text-[11px] text-stone-300 font-light mt-0.5">Italia</p>
+                                    <div class="space-y-1">
+                                        <div class="font-serif italic font-bold text-base sm:text-lg capitalize text-gold-200 leading-tight">
+                                            ${parts.winery}
+                                        </div>
+                                        <h3 class="font-serif font-bold leading-tight tracking-wide text-sm sm:text-base uppercase text-stone-100">
+                                            ${parts.type || parts.winery}
+                                        </h3>
+                                        ${parts.region ? `<div class="text-[11px] sm:text-xs font-serif font-bold tracking-widest uppercase text-stone-200 pt-0.5">${parts.region}</div>` : ''}
+                                    </div>
                                 </div>
-
-                                <p class="text-xs text-stone-200 leading-relaxed font-light">
-                                    ${d.sommelier_wine_desc || 'Un vino di straordinaria complessità pensato per esaltare al massimo questo piatto.'}
+                                <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-stone-100 font-bold pt-1">
+                                    "${wineDesc || ''}"
                                 </p>
-
-                                <div class="space-y-1 pt-1.5 border-t border-white/15">
-                                    <h4 class="text-[9px] uppercase font-bold text-gold-300 tracking-widest">MOTIVO DELL'ABBINAMENTO</h4>
-                                    <p class="text-xs text-stone-100 leading-relaxed font-normal italic">
-                                        ${d.sommelier_principle || ''}
-                                    </p>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5 pt-2.5 border-t border-gold-400/20">
+                            <h4 class="text-[9px] uppercase font-bold tracking-widest text-gold-300">MOTIVO DELL'ABBINAMENTO</h4>
+                            <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-stone-100 font-bold">
+                                "${wineMatching || ''}"
+                            </p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 pt-2 border-t border-gold-400/20 items-center">
+                            <div class="flex items-center gap-2 text-stone-100">
+                                <div class="w-7 h-7 rounded-xl bg-white/10 text-gold-300 flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 22h8"/><path d="M12 11v11"/><path d="m19 3-7 8-7-8Z"/></svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-[8px] uppercase tracking-wider font-bold block text-gold-300">TIPO DI CALICE</span>
+                                    <span class="text-[11px] font-serif font-medium truncate block text-stone-100">${displayGlass}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 text-stone-100">
+                                <div class="w-7 h-7 rounded-xl bg-white/10 text-gold-300 flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-[8px] uppercase tracking-wider font-bold block text-gold-300">TEMPERATURA</span>
+                                    <span class="text-[11px] font-serif font-medium truncate block text-stone-100">${displayTemp}</span>
                                 </div>
                             </div>
                         </div>
+                    </div>`;
+                };
 
-                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-white/15 text-xs">
-                            <div class="bg-black/30 p-2.5 rounded-xl border border-white/10 flex items-center gap-2">
-                                <span class="text-base">🍷</span>
-                                <div>
-                                    <div class="text-[8px] text-gold-300 uppercase font-bold tracking-wider">Tipo di Calice</div>
-                                    <div class="text-stone-200 font-medium text-[11px]">${d.sommelier_glass || 'Ballon / Calice ampio'}</div>
+                // 3. CARD DEL PIATTO IN BASSO
+                const dishCardHtml = `
+                <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
+                    <div class="text-center space-y-0.5">
+                        <span class="text-[9px] uppercase font-bold tracking-[0.25em]" style="color: #a37f37;">✦ IL PIATTO SCELTO ✦</span>
+                    </div>
+                    <div class="grid grid-cols-[144px_1fr] items-start gap-4">
+                        <div class="w-36 flex flex-col items-center justify-between gap-3 p-1">
+                            <div class="flex items-center justify-center">
+                                <img src="${getDishIllustration(d.category, cleanDishName, d.description)}" alt="Piatto" class="max-h-32 object-contain drop-shadow-sm" />
+                            </div>
+                            <a href="https://www.google.com/search?q=ricetta+${encodeURIComponent(cleanDishName)}" target="_blank" rel="noopener noreferrer" class="w-full inline-flex items-center justify-center gap-1.5 bg-[#520d1a] hover:bg-[#33060f] text-gold-300 py-1.5 px-2 rounded-xl text-[11px] font-serif font-bold tracking-wide shadow-xs transition-all duration-300 border border-gold-400/40 text-center">
+                                <span>Cerca ricetta</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            </a>
+                        </div>
+                        <div class="flex-1 space-y-2 min-w-0 flex flex-col justify-between">
+                            <div>
+                                <span class="inline-flex px-2.5 py-0.5 rounded-full text-[8px] font-bold uppercase bg-[#faf5ec] border border-[#dcd0bc] mb-1" style="color: #a37f37;">ABBINAMENTO VERIFICATO</span>
+                                <h3 class="font-serif font-bold leading-tight tracking-wide text-sm sm:text-base uppercase" style="color: #520d1a;">
+                                    ${capitalizeFirstLetter(cleanDishName)}
+                                </h3>
+                            </div>
+                            <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-normal pt-1">
+                                ${d.description || 'Piatto d\'eccellenza della tradizione enogastronomica.'}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="space-y-2.5 pt-3 border-t border-[#dcd0bc]/60">
+                        <h4 class="text-[9px] uppercase font-bold tracking-widest text-center" style="color: #a37f37;">PROFILO SENSORIALE PIATTO</h4>
+                        <div class="grid grid-cols-4 gap-2 text-center items-center pt-1">
+                            <div class="flex flex-col items-center justify-center px-1 border-r border-[#dcd0bc]/50 last:border-none">
+                                <div class="flex items-center gap-1 mb-1">
+                                    <img src="images/grassezza.png" alt="Grassezza" class="w-3.5 h-3.5 object-contain" />
+                                    <span class="text-[9px] sm:text-[10px] font-serif font-bold text-wine-900 leading-tight">Grassezza</span>
+                                </div>
+                                <span class="text-[11px] sm:text-xs font-bold text-stone-900 block leading-none mb-1.5">${d.fat_text || 'Alta'}</span>
+                                <div class="w-full bg-stone-200 h-1 rounded-full overflow-hidden">
+                                    <div class="bg-[#a37f37] h-full rounded-full" style="width: ${d.fat_val || '75%'}"></div>
                                 </div>
                             </div>
-                            <div class="bg-black/30 p-2.5 rounded-xl border border-white/10 flex items-center gap-2">
-                                <span class="text-base">🌡️</span>
-                                <div>
-                                    <div class="text-[8px] text-gold-300 uppercase font-bold tracking-wider">Temperatura</div>
-                                    <div class="text-stone-200 font-medium text-[11px]">${d.sommelier_temp || '16-18°C'}</div>
+                            <div class="flex flex-col items-center justify-center px-1 border-r border-[#dcd0bc]/50 last:border-none">
+                                <div class="flex items-center gap-1 mb-1">
+                                    <img src="images/succulenza.png" alt="Succulenza" class="w-3.5 h-3.5 object-contain" />
+                                    <span class="text-[9px] sm:text-[10px] font-serif font-bold text-wine-900 leading-tight">Succulenza</span>
+                                </div>
+                                <span class="text-[11px] sm:text-xs font-bold text-stone-900 block leading-none mb-1.5">${d.juiciness_text || 'Media'}</span>
+                                <div class="w-full bg-stone-200 h-1 rounded-full overflow-hidden">
+                                    <div class="bg-[#a37f37] h-full rounded-full" style="width: ${d.juiciness_val || '60%'}"></div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center justify-center px-1 border-r border-[#dcd0bc]/50 last:border-none">
+                                <div class="flex items-center gap-1 mb-1">
+                                    <img src="images/persistenza.png" alt="Persistenza" class="w-3.5 h-3.5 object-contain" />
+                                    <span class="text-[9px] sm:text-[10px] font-serif font-bold text-wine-900 leading-tight">Persistenza</span>
+                                </div>
+                                <span class="text-[11px] sm:text-xs font-bold text-stone-900 block leading-none mb-1.5">${d.aroma_text || 'Elevata'}</span>
+                                <div class="w-full bg-stone-200 h-1 rounded-full overflow-hidden">
+                                    <div class="bg-[#520d1a] h-full rounded-full" style="width: ${d.aroma_val || '80%'}"></div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center justify-center px-1">
+                                <div class="flex items-center gap-1 mb-1">
+                                    <img src="images/sapido.png" alt="Sapidità" class="w-3.5 h-3.5 object-contain" />
+                                    <span class="text-[9px] sm:text-[10px] font-serif font-bold text-wine-900 leading-tight">Sapidità</span>
+                                </div>
+                                <span class="text-[11px] sm:text-xs font-bold text-stone-900 block leading-none mb-1.5">${d.savory_text || 'Marcata'}</span>
+                                <div class="w-full bg-stone-200 h-1 rounded-full overflow-hidden">
+                                    <div class="bg-[#0284c7] h-full rounded-full" style="width: ${d.savory_val || '70%'}"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>`;
 
-                    ${dishCardHtml}
-                `;
+                if (readerPageIndex >= 1 && readerPageIndex <= 3) {
+                    const types = [
+                        { tag: 'Standard (<15€)', title: d.standard_wine, desc: d.standard_wine_desc, matching: d.standard_wine_matching, glass: d.standard_glass || d.standard_wine_glass || d.glass, temp: d.standard_temp || d.standard_wine_temp || d.temp },
+                        { tag: 'Plus (15-40€)', title: d.plus_wine, desc: d.plus_wine_desc, matching: d.plus_wine_matching, glass: d.plus_glass || d.plus_wine_glass || d.glass, temp: d.plus_temp || d.plus_wine_temp || d.temp },
+                        { tag: 'Prestige (>40€)', title: d.prestige_wine, desc: d.prestige_wine_desc, matching: d.prestige_wine_matching, glass: d.prestige_glass || d.prestige_wine_glass || d.glass, temp: d.prestige_temp || d.prestige_wine_temp || d.temp }
+                    ];
+                    const wineInfo = types[readerPageIndex - 1];
+                    html = wineCardHtml(wineInfo.title, wineInfo.desc, wineInfo.matching, wineInfo.glass, wineInfo.temp, wineInfo.tag) + dishCardHtml;
+                } else if (readerPageIndex === 4) {
+                    html = sommelierWineCardHtml(
+                        d.sommelier_wine, 
+                        d.sommelier_wine_desc, 
+                        d.sommelier_principle, 
+                        d.sommelier_glass || d.sommelier_wine_glass || d.glass, 
+                        d.sommelier_temp || d.sommelier_wine_temp || d.temp
+                    ) + dishCardHtml;
+                }
+            } else {
+                // Percorso Dal Calice al Piatto (Wine to Dish)
+                const currentMatchObj = readerPageIndex === 1 ? (d.tradition || {}) : (d.gourmet || {});
+                
+                let dishTitleToUse = currentMatchObj.dish_name || currentMatchObj.trad_dish_name || currentMatchObj.gour_dish_name || "Piatto Consigliato";
+                let dishDescToUse = currentMatchObj.description || currentMatchObj.trad_description || currentMatchObj.gour_description || "Ricetta tradizionale d'eccellenza.";
+                let wineMatchingReason = currentMatchObj.matching_reason || currentMatchObj.trad_matching_reason || currentMatchObj.gour_matching_reason || "Questo calice sposa perfettamente il piatto grazie al perfetto bilanciamento tra struttura, acidità e persistenza aromatica.";
+                
+                let dishImageToUse = readerPageIndex === 1 ? 'images/Piattotradiz.png' : 'images/Piattogourmet.png';
+
+                const customDishCard = `
+                <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
+                    <div class="text-center space-y-0.5">
+                        <span class="text-[9px] uppercase font-bold tracking-[0.25em]" style="color: #a37f37;">✦ IL PIATTO CHE TI CONSIGLIAMO ✦</span>
+                    </div>
+                    <div class="grid grid-cols-[144px_1fr] items-start gap-4">
+                        <div class="w-36 flex flex-col items-center justify-between gap-3 p-1">
+                            <div class="flex items-center justify-center">
+                                <img src="${dishImageToUse}" alt="Piatto Consigliato" class="max-h-32 object-contain drop-shadow-sm" />
+                            </div>
+                            <a href="https://www.google.com/search?q=ricetta+${encodeURIComponent(dishTitleToUse)}" target="_blank" rel="noopener noreferrer" class="w-full inline-flex items-center justify-center gap-1.5 bg-[#520d1a] hover:bg-[#33060f] text-gold-300 py-1.5 px-2 rounded-xl text-[11px] font-serif font-bold tracking-wide shadow-xs transition-all duration-300 border border-gold-400/40 text-center">
+                                <span>Cerca ricetta</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            </a>
+                        </div>
+                        <div class="flex-1 space-y-2 min-w-0 flex flex-col justify-between">
+                            <div>
+                                ${badgeHtml}
+                                <h3 class="font-serif font-bold leading-tight tracking-wide text-sm sm:text-base uppercase mt-1" style="color: #520d1a;">
+                                    ${capitalizeFirstLetter(dishTitleToUse)}
+                                </h3>
+                            </div>
+                            <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-normal pt-1">
+                                ${dishDescToUse}
+                            </p>
+                        </div>
+                    </div>
+                </div>`;
+
+                let wineTitleToUse = dishInputEl ? dishInputEl.value.trim() : (d.wine_name || 'Vino in cantina');
+                let wineDescToUse = d.wine_description || 'Straordinaria etichetta di grande pregio, caratterizzata da una complessità olfattiva unica e da una struttura perfettamente equilibrata.';
+                
+                const userWineCard = `
+                <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
+                    <div class="text-center space-y-0.5">
+                        <span class="text-[9px] uppercase font-bold tracking-[0.25em]" style="color: #a37f37;">✦ IL VINO CHE HAI SCELTO ✦</span>
+                    </div>
+                    <div class="grid grid-cols-[144px_1fr] items-start gap-4">
+                        <div class="w-36 flex flex-col items-center justify-between gap-3 p-1">
+                            <div class="flex items-center justify-center">
+                                <img src="images/bottiglieecalice.PNG" alt="Bottiglia e Calice" class="max-h-32 object-contain drop-shadow-sm" />
+                            </div>
+                            <a href="https://www.google.com/search?q=acquista+${encodeURIComponent(wineTitleToUse)}" target="_blank" rel="noopener noreferrer" class="w-full inline-flex items-center justify-center gap-1.5 bg-[#520d1a] hover:bg-[#33060f] text-gold-300 py-1.5 px-2 rounded-xl text-[11px] font-serif font-bold tracking-wide shadow-xs transition-all duration-300 border border-gold-400/40 text-center">
+                                <span>Cerca vino</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                            </a>
+                        </div>
+                        <div class="flex-1 space-y-2 min-w-0 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-serif font-bold leading-tight tracking-wide text-sm uppercase" style="color: #520d1a;">
+                                   ${wineTitleToUse}
+                                </h3>
+                            </div>
+                            <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-normal pt-1">
+                                ${capitalizeFirstLetter(wineDescToUse)}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="space-y-1.5 pt-2.5 border-t border-[#dcd0bc]/60">
+                        <h4 class="text-[9px] uppercase font-bold tracking-widest" style="color: #a37f37;">PERCHÉ FUNZIONA L'ABBINAMENTO</h4>
+                        <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-bold">
+                            "${wineMatchingReason}"
+                        </p>
+                    </div>
+                </div>`;
+
+                html = customDishCard + userWineCard;
             }
 
             contentContainer.innerHTML = html;
             if (window.lucide) lucide.createIcons();
+        }
+
+        function formatWineryName(str) {
+            if (!str) return '';
+            return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         }
         
         function getDishIllustration(dishCategory, dishName = '', description = '') {
@@ -1187,11 +1474,17 @@
             if (paywall) paywall.classList.add('hidden');
         }
 
-        // GESTIONE BOX ESPANDIBILE INSTALLAZIONE PWA IN BASSO
         let deferredPrompt;
         const installExpansionBox = document.getElementById('installExpansionBox');
         const installArrowIcon = document.getElementById('installArrowIcon');
         const directInstallBtn = document.getElementById('directInstallBtn');
+        const installSectionContainer = document.getElementById('installSectionContainer');
+
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            if (installSectionContainer) {
+                installSectionContainer.style.display = 'none';
+            }
+        }
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -1240,8 +1533,34 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            const imagesToPreload = [
+                'images/Piattotradiz.png',
+                'images/Piattogourmet.png',
+                'images/bottiglieecalice.PNG',
+                'images/Calice.png',
+                'images/grassezza.png',
+                'images/succulenza.png',
+                'images/persistenza.png',
+                'images/sapido.png',
+                'images/bistecca.png',
+                'images/pesce.png',
+                'images/risotto.png',
+                'images/sushi.png',
+                'images/pizza.png',
+                'images/hamburger.png',
+                'images/mex.png',
+                'images/torta.png',
+                'images/formaggio.png'
+            ];
+            imagesToPreload.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+
             const paywall = document.getElementById('paywallModal');
             if (paywall) paywall.classList.add('hidden');
+            const profileModal = document.getElementById('profileModal');
+            if (profileModal) profileModal.classList.add('hidden');
             const expansionBox = document.getElementById('installExpansionBox');
             if (expansionBox) expansionBox.classList.add('hidden');
             
