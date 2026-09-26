@@ -19,8 +19,17 @@
     <link rel="apple-touch-icon" href="images/LogPic.png">
     <link rel="icon" type="image/png" href="images/LogPic.png">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-407ZRP97W1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-407ZRP97W1');
+    </script>
     
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,6 +39,22 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <script>
+        // === METTI LA PASSWORD QUI (SUBITO ALL'INIZIO DELLO SCRIPT) ===
+        (function() {
+            const sitePassword = "sommelier2026";
+            let isAuthorized = localStorage.getItem("matchwine_auth");
+
+            if (isAuthorized !== "true") {
+                let userInput = prompt("Inserisci la password per accedere a MatchWine in fase di test:");
+                if (userInput === sitePassword) {
+                    localStorage.setItem("matchwine_auth", "true");
+                } else {
+                    document.body.innerHTML = "<div style='text-align:center; padding-top:80px; font-family:sans-serif;'><h2>Accesso Negato</h2><p>Password errata o sito in manutenzione.</p></div>";
+                    throw new Error("Accesso non autorizzato");
+                }
+            }
+        })();
+        
         tailwind.config = {
             theme: {
                 extend: {
@@ -95,7 +120,7 @@
             z-index: 50;
         }
 
-        main, #paywallModal, #profileModal {
+        main {
             position: relative;
             z-index: 10;
         }
@@ -126,39 +151,193 @@
             position: relative;
         }
 
-        #netlify-deploy-badge, iframe[id^="netlify"] { 
+        @keyframes smooth-zoom {
+            0%, 100% { transform: scale(0.75); }
+            50% { transform: scale(1.35); }
+        }
+        .animate-smooth-zoom {
+            animation: smooth-zoom 2s infinite ease-in-out;
+        }
+
+        #netlify-deploy-badge, 
+        iframe[id^="netlify"], 
+        div[style*="netlify"],
+        a[href*="netlify.com/support"],
+        #netlify-badge { 
             display: none !important; 
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
     </style>
 </head>
 <body class="bg-[#faf7f2] text-stone-900 max-w-md mx-auto font-sans antialiased border-x border-stone-200 shadow-2xl relative min-h-screen flex flex-col page-container">
     
    <!-- HEADER -->
-    <header class="sticky top-0 z-50 px-4 py-3 flex items-center justify-between bg-white border-b border-stone-200/60 shadow-2xs">
+    <header class="sticky top-0 z-50 px-4 py-3 flex items-center justify-between bg-white border-b border-stone-200/60 shadow-2xs relative">
         <div class="flex items-center cursor-pointer rounded-xl overflow-hidden py-0.5" onclick="resetToHome()">
             <img src="images/Logo.JPG" alt="MatchWine" style="height: 38px;" class="w-auto object-contain rounded-xl">
         </div>
 
-            <div id="authContainer">
-                <!-- Non loggato: Pulsante con la G di Google e +10 crediti -->
-                <button id="btnLoginGoogle" onclick="loginWithGoogle()" class="group inline-flex items-center gap-2.5 bg-[#d4af37]/85 hover:bg-[#c5a030] text-wine-950 px-3 py-1.5 rounded-xl border border-[#b89728]/70 shadow-xs hover:shadow transition-all duration-300 cursor-pointer">
-                    <div class="w-5 h-5 bg-white rounded-full flex items-center justify-center shrink-0 shadow-2xs">
-                        <svg class="w-3 h-3" viewBox="0 0 24 24">
-                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.2v3.15C3.16 21.32 7.23 24 12 24z"/>
-                            <path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.2C.43 8.15 0 9.89 0 12s.43 3.85 1.2 5.39l4.08-3.15z"/>
-                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.16 2.68 1.2 6.61l4.08 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/>
-                        </svg>
+        <div id="authContainer" class="relative">
+            <button id="btnLoginGoogle" onclick="loginWithGoogle()" class="group inline-flex items-center gap-2.5 bg-[#d4af37]/85 hover:bg-[#c5a030] text-wine-950 px-3 py-1.5 rounded-xl border border-[#b89728]/70 shadow-xs hover:shadow transition-all duration-300 cursor-pointer">
+                <div class="w-5 h-5 bg-white rounded-full flex items-center justify-center shrink-0 shadow-2xs">
+                    <svg class="w-3 h-3" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.2v3.15C3.16 21.32 7.23 24 12 24z"/>
+                        <path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.2C.43 8.15 0 9.89 0 12s.43 3.85 1.2 5.39l4.08-3.15z"/>
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.16 2.68 1.2 6.61l4.08 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/>
+                    </svg>
+                </div>
+                <span class="font-serif italic font-bold text-wine-950 text-xs tracking-wide pr-0.5">+10 crediti</span>
+            </button>
+
+            <div id="userProfileBadge" class="hidden flex items-center gap-2.5">
+                <span onclick="handleCreditsClick()" id="creditsCount" class="cursor-pointer text-xs font-serif italic font-bold text-[#520d1a] hover:opacity-80 transition">10 Crediti</span>
+                <button onclick="toggleProfileModal()" class="w-8 h-8 rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center font-serif text-xs font-bold shadow-xs hover:opacity-90 transition-opacity border border-gold-400/40 relative overflow-hidden cursor-pointer" title="Gestione account">
+                    <span id="userInitialLetter" class="text-gold-300 font-bold text-sm">A</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- MENU PROFILO -->
+        <div id="profileModal" class="hidden absolute top-full right-4 mt-2 w-80 bg-white rounded-3xl border border-[#d4af37]/40 shadow-2xl p-4 space-y-4 text-left z-60 animate-in fade-in slide-in-from-top-2 duration-200">
+            <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 p-1.5 rounded-full hover:bg-stone-200/60 transition-colors cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button> 
+            <div class="flex items-center gap-3 border-b border-stone-100 pb-3">
+                <div class="w-10 h-10 rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center font-serif text-sm font-bold shrink-0 border border-gold-400/40">
+                    <span id="modalUserInitial">A</span>
+               </div>   
+               <div class="min-w-0 flex-1">
+                 <p class="text-[10px] uppercase font-bold tracking-widest text-[#a37f37]">ACCOUNT</p>
+                 <p id="modalUserEmail" class="text-xs text-stone-700 font-medium truncate">
+                    utente@email.com
+                 </p>
+                 <p class="text-[11px] font-serif italic font-bold text-gold-600 mt-0.5">
+                    Grado: <span id="modalSommelierLevel">Apprendista</span> 
+                    <span class="text-stone-400 mx-1">•</span> 
+                    <span class="text-amber-700 not-italic font-sans font-bold">✦ <span id="modalUserPoints">0</span> pt</span>
+                 </p>
+                </div>
+        </div>
+
+            <!-- SEZIONE TACCUINO PREFERITI -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between px-1">
+                    <span class="font-serif italic font-bold text-xs text-[#520d1a] uppercase tracking-wider">♥ I miei abbinamenti preferiti</span>
+                    <span id="favoritesCountBadge" class="text-[10px] font-bold bg-[#fdfbf7] text-[#a37f37] border border-[#d4af37]/40 px-2 py-0.5 rounded-full">0 / 10</span>
+                </div>
+                <div id="favoritesListContainer" class="max-h-48 overflow-y-auto space-y-1.5 pr-1 no-scrollbar">
+                    <p class="text-[11px] text-stone-400 italic text-center py-2">Nessun abbinamento salvato nel taccuino.</p>
+                </div>
+            </div>
+
+            <div class="space-y-2 pt-2 border-t border-stone-100">
+                <button onclick="executeLogout()" class="w-full bg-[#520d1a] hover:bg-[#33060f] text-white font-serif italic text-xs py-2.5 rounded-xl shadow-xs transition-all uppercase tracking-wider cursor-pointer text-center">
+                    Disconnetti account
+                </button>
+            </div>
+        </div>
+
+        <!-- MODALE STATO PREMIUM -->
+        <div id="premiumStatusModal" class="hidden absolute top-full right-4 mt-2 w-80 bg-white rounded-3xl border border-gold-400/50 shadow-2xl p-5 space-y-4 text-left z-60 animate-in fade-in slide-in-from-top-2 duration-200">
+            <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center shrink-0 border border-gold-400/40 shadow-xs">
+                        <span class="text-sm">✦</span>
                     </div>
-                    <span class="font-serif italic font-bold text-wine-950 text-xs tracking-wide pr-0.5">+10 crediti</span>
+                    <div>
+                        <p class="text-[9px] uppercase font-bold tracking-widest text-[#a37f37]">STATUS ATTIVO</p>
+                        <h3 class="font-serif font-bold text-base text-wine-900 leading-tight">Membro Premium PRO</h3>
+                    </div>
+                </div>
+                <button onclick="closePremiumStatusModal()" class="text-stone-400 hover:text-stone-800 p-1.5 rounded-full hover:bg-stone-200/60 transition-colors cursor-pointer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="space-y-2.5 text-xs text-stone-600 bg-[#fdfbf7] p-3 rounded-2xl border border-gold-400/30">
+                <div class="flex items-center gap-2">
+                    <span class="text-gold-600 font-bold">✓</span>
+                    <span>Abbinamenti illimitati senza pensieri</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-gold-600 font-bold">✓</span>
+                    <span>Consulenze d'autore illimitate con l'Enologo</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-gold-600 font-bold">✓</span>
+                    <span>Accesso prioritario a tutte le funzioni</span>
+                </div>
+            </div>
+
+            <div class="space-y-2 pt-1">
+                <button onclick="manageSubscription()" class="w-full bg-[#520d1a] hover:bg-[#33060f] text-gold-300 font-serif italic text-xs py-2.5 rounded-xl shadow-xs transition-all uppercase tracking-wider cursor-pointer text-center border border-gold-400/30 font-bold">
+                    Gestisci Abbonamento
+                </button>
+            </div>
+        </div>
+       
+        <!-- PAYWALL / CREDITI MODALE -->
+        <div id="paywallModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-xs animate-in fade-in duration-200">
+            <div class="w-full max-w-sm bg-[#fcfbfa] rounded-3xl p-6 border border-[#d4af37]/60 shadow-2xl space-y-4 text-left relative scale-100 transition-all">
+                <button onclick="closePaywall()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 p-1.5 rounded-full hover:bg-stone-200/60 transition-colors cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
 
-                <!-- Loggato: Crediti a sinistra e tondo bordeaux con l'iniziale a destra -->
-                <div id="userProfileBadge" class="hidden flex items-center gap-2.5">
-                    <span onclick="handleCreditsClick()" id="creditsCount" class="cursor-pointer text-xs font-serif italic font-bold text-[#520d1a] hover:opacity-80 transition">10 Crediti</span>
-                    <button onclick="logout()" class="w-8 h-8 rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center font-serif text-xs font-bold shadow-xs hover:opacity-90 transition-opacity border border-gold-400/40 relative overflow-hidden cursor-pointer" title="Gestione account">
-                        <span id="userInitialLetter" class="text-gold-300 font-bold text-sm">A</span>
-                    </button>
+                <div>
+                    <p class="text-[10px] uppercase font-bold tracking-widest text-[#a37f37]">SBLOCCA IL SOMMELIER</p>
+                    <h3 class="font-serif font-bold text-xl text-wine-900">Scegli il tuo piano</h3>
+                </div>
+
+                <div class="space-y-2.5">
+                    <div class="bg-white p-4 rounded-2xl border border-gold-400 shadow-xs space-y-2 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-[#d4af37] text-white text-[8px] font-bold px-2.5 py-0.5 rounded-bl-xl uppercase tracking-wider">
+                            Illimitato
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="font-serif font-bold text-wine-900 text-sm">Piano Premium</span>
+                            <span class="text-base font-bold text-wine-900">1,99 € <span class="text-[10px] font-normal text-stone-500">/ mese</span></span>
+                        </div>
+                        <p class="text-xs text-stone-500 leading-tight">Richieste illimitate e funzioni avanzate senza pensieri.</p>
+                        <button onclick="buyPlan('premium')" class="w-full wine-card-bg text-stone-100 font-bold text-xs py-2.5 rounded-xl shadow-xs hover:opacity-95 transition-all uppercase tracking-wider cursor-pointer">
+                            Attiva Premium
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-3.5 rounded-xl border border-[#d4af37]/60 shadow-xs transition-all flex items-center justify-between relative pt-6">
+                        <div class="absolute top-1.5 left-3.5 text-[11px] font-serif italic font-bold text-[#a37f37]">
+                            ✦ Il Sommelier Consiglia
+                        </div>
+                        <div class="pt-0.5">
+                            <p class="font-serif font-bold text-wine-900 text-base">200 Crediti</p>
+                            <p class="text-[10px] text-stone-500">Massima convenienza</p>
+                        </div>
+                        <button onclick="buyPlan('credits_200')" class="bg-[#520d1a] hover:bg-[#33060f] text-gold-300 font-serif font-bold text-base px-4 py-2.5 rounded-xl transition-all shadow-xs cursor-pointer">
+                            5,00 €
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#d4af37]/60 transition-all flex items-center justify-between">
+                        <div>
+                            <p class="font-serif font-bold text-wine-900 text-base">50 Crediti</p>
+                            <p class="text-[10px] text-stone-500">Ideale per iniziare</p>
+                        </div>
+                        <button onclick="buyPlan('credits_50')" class="bg-[#520d1a] hover:bg-[#33060f] text-gold-300 font-serif font-bold text-base px-4 py-2.5 rounded-xl transition-all shadow-xs cursor-pointer">
+                            2,00 €
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#d4af37]/60 transition-all flex items-center justify-between">
+                        <div>
+                            <p class="font-serif font-bold text-wine-900 text-base">20 Crediti</p>
+                            <p class="text-[10px] text-stone-500">Ricarica rapida</p>
+                        </div>
+                        <button onclick="buyPlan('credits_20')" class="bg-[#520d1a] hover:bg-[#33060f] text-gold-300 font-serif font-bold text-base px-4 py-2.5 rounded-xl transition-all shadow-xs cursor-pointer">
+                            0,99 €
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -201,7 +380,7 @@
             </form>
         </section>
 
-        <!-- PILLOLE "PROVA SUBITO" (Senza riga dorata) -->
+        <!-- PILLOLE "PROVA SUBITO" -->
         <div id="quickTrySection" class="w-full max-w-xl px-1 pt-1">
             <div id="quickTryButtons" class="flex items-center justify-center flex-wrap gap-1.5 px-1">
                 <button type="button" onclick="selectSuggestedItem('Carbonara')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
@@ -230,36 +409,75 @@
             </div>
 
             <p id="welcomeDesc" class="text-[#520d1a]/85 font-serif italic text-sm leading-relaxed max-w-md mx-auto font-light">
-                Il tuo <strong class="font-semibold text-[#520d1a]">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta.
+                Il tuo <strong class="font-semibold text-[#520d1a]">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta[cite: 1].
             </p>
+
+            <!-- SEZIONE GAMING / QUIZ DEL GIORNO E CLASSIFICA -->
+            <div id="triviaWidgetContainer" class="w-full max-w-xl bg-[#fffefb] rounded-2xl border border-[#d4af37]/60 shadow-luxury px-4 py-3.5 space-y-3 mt-3 text-left">
+                <div class="flex items-center justify-between w-full">
+                    
+                    <!-- SEZIONE SINISTRA: Titolo in corsivo elegante -->
+                    <div class="flex items-center gap-3 min-w-0 pr-2">
+                        <span class="text-base shrink-0">🍷</span>
+                        <h3 class="font-serif italic font-bold text-base sm:text-lg whitespace-nowrap tracking-wide leading-tight" style="color: #581c25;">Quiz Enologico del Giorno</h3>
+                    </div>
+
+                    <!-- SEZIONE DESTRA: Coppa coppa1.png grande e incollata a sinistra del tasto GIOCA -->
+                    <div class="flex items-center shrink-0">
+                        <!-- Bottone Classifica con coppa1.png imponente sovrapposta a sinistra del GIOCA -->
+                        <button onclick="toggleLeaderboardBox()" class="flex items-center justify-center transition hover:scale-110 cursor-pointer p-0 shrink-0 relative z-10 -mr-4 -my-6" title="Classifica Cantine">
+                            <img src="images/coppa1.png" alt="Classifica" style="width: 80px; height: 80px; min-width: 80px;" class="object-contain filter drop-shadow-xl" />
+                        </button>
+
+                        <!-- Pulsante Gioca (visibile da chiuso) -->
+                        <button onclick="toggleTriviaBox()" id="triviaToggleBtn" class="inline-flex items-center gap-1.5 wine-primary-btn text-white px-5 py-3 rounded-xl text-xs font-serif font-bold tracking-wider uppercase transition cursor-pointer shadow-sm shrink-0 relative z-0">
+                            <span id="triviaBtnText">GIOCA</span>
+                            <i id="triviaIcon" data-lucide="chevron-down" class="w-3.5 h-3.5 text-gold-300 transition-transform duration-300"></i>
+                        </button>
+
+                        <!-- Icona X di chiusura (visibile da aperto, senza box) -->
+                        <button onclick="toggleTriviaBox()" id="triviaCloseBtn" class="hidden text-stone-400 hover:text-[#520d1a] p-1.5 rounded-full hover:bg-stone-200/60 transition-colors cursor-pointer shrink-0">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- BOX A SCOMPARSA CLASSIFICA -->
+                <div id="leaderboardContentBox" class="hidden space-y-3 pt-2 border-t border-stone-200/60 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-serif italic text-gold-600 font-bold uppercase tracking-wider">✦ Albo d'Oro Cantine</span>
+                    </div>
+                    <!-- Tab Mensile / Annuale -->
+                    <div class="flex p-1 bg-[#FAF6EE] rounded-full mb-3 border border-[#F2EAD9]">
+                       <button onclick="switchLeaderboardTab('monthly')" id="tabMonthly" 
+                       class="flex-1 py-1.5 text-xs font-serif font-bold rounded-full transition-all bg-[#4A1525] text-white shadow-sm">
+                       Mensile
+                      </button>
     
-            <div class="w-full bg-[#fdfbf7] rounded-3xl border border-[#d4af37]/50 shadow-xs grid grid-cols-3 divide-x divide-[#d4af37]/40 text-center py-3 px-2 mt-3">
-              <div class="px-1.5 flex flex-col items-center justify-between">
-                  <div class="h-11 w-full flex items-center justify-center">
-                    <img src="images/Tastevin.png" alt="Consulenza" class="max-h-full w-auto object-contain scale-125" />
-                  </div>
-                  <div class="h-10 w-full flex items-center justify-center my-1.5">
-                    <h4 class="font-serif font-bold text-[10px] sm:text-xs text-wine-900 tracking-wide uppercase leading-tight">CONSULENZA<br>ESPERTA</h4>
-                  </div>
-              </div>
+                      <button onclick="switchLeaderboardTab('annual')" id="tabAnnual" 
+                      class="flex-1 py-1.5 text-xs font-serif font-medium rounded-full transition-all text-stone-600 hover:text-stone-900">
+                      Annuale
+                     </button>
+                    </div>
+                    <!-- Lista Classifica -->
+                    <div id="leaderboardListContainer" class="space-y-1.5 max-h-48 overflow-y-auto pr-1 no-scrollbar">
+                        <p class="text-xs font-serif italic text-stone-400 text-center py-3">Calcolo posizioni in cantina...</p>
+                    </div>
+                </div>
 
-              <div class="px-1.5 flex flex-col items-center justify-between">
-                  <div class="h-11 w-full flex items-center justify-center">
-                    <img src="images/GrappoloNew.png" alt="Abbinamenti" class="max-h-full w-auto object-contain scale-125" />
-                  </div>
-                  <div class="h-10 w-full flex items-center justify-center my-1.5">
-                    <h4 class="font-serif font-bold text-[10px] sm:text-xs text-wine-900 tracking-wide uppercase leading-tight">ABBINAMENTI<br>PERFETTI</h4>
-                  </div>
-              </div>
-
-              <div class="px-1.5 flex flex-col items-center justify-between">
-                  <div class="h-11 w-full flex items-center justify-center">
-                    <img src="images/Botte.png" alt="Scopri e Impara" class="max-h-full w-auto object-contain scale-125" />
-                  </div>
-                  <div class="h-10 w-full flex items-center justify-center my-1.5">
-                    <h4 class="font-serif font-bold text-[10px] sm:text-xs text-wine-900 tracking-wide uppercase leading-tight">SCOPRI E<br>IMPARA</h4>
-                  </div>
-              </div>
+                <div id="triviaContentBox" class="hidden space-y-4 pt-1 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div class="flex items-center justify-end pb-0.5">
+                        <span id="triviaPointsBadge" class="text-[10px] font-bold bg-[#faf5ec] text-gold-600 border border-[#dcd0bc] px-2.5 py-0.5 rounded-full uppercase tracking-wider">✦ 1 Punto</span>
+                    </div>
+                    <p id="triviaQuestionText" class="font-serif italic text-base sm:text-lg text-wine-900 font-bold leading-relaxed">
+                        Il Sommelier sta stappando il quiz di oggi...
+                    </p>
+                    <div id="triviaOptionsList" class="space-y-2.5"></div>
+                    <div id="triviaFeedbackBox" class="hidden p-4 rounded-2xl bg-white border border-[#d4af37]/60 space-y-2 text-xs text-stone-800 shadow-sm">
+                        <p id="triviaFeedbackTitle" class="font-serif font-bold text-wine-900 text-sm sm:text-base"></p>
+                        <p id="triviaExplanationText" class="text-stone-700 font-serif italic text-xs sm:text-sm leading-relaxed"></p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -268,11 +486,13 @@
             <div class="relative w-20 h-20 flex items-center justify-center">
                 <div class="absolute inset-0 rounded-full border-2 border-amber-200 border-t-wine-800 animate-spin"></div>
                 <div class="absolute inset-2 rounded-full border-2 border-stone-200 border-b-gold-500 animate-spin" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
-                <div class="animate-bounce flex items-center justify-center z-10 w-9 h-9"><img src="images/Calice.png" alt="Calice" class="w-8 h-8 object-contain" /></div>
+                <div class="animate-smooth-zoom flex items-center justify-center z-10 w-9 h-9">
+                    <img src="images/Calice.png" alt="Calice" class="w-8 h-8 object-contain" />
+                </div>
             </div>
             <div class="space-y-1">
                 <p id="loadingTitle" class="font-serif text-2xl font-semibold text-wine-900 italic">Consultando la Carta dei Vini...</p>
-                <p id="loadingSubtitle" class="text-xs text-stone-500 max-w-xs mx-auto">Analisi profilo organolettico: acidità, untuosità, persistenza e tannino.</p>
+                <p id="loadingSubtitle" class="text-xs text-stone-500 max-w-xs mx-auto transition-opacity duration-300">Analisi profilo organolettico in corso...</p>
             </div>
         </div>
 
@@ -287,11 +507,12 @@
                 <div id="readerPageContent" class="space-y-4"></div>
             </div>
 
-            <!-- PULSANTI DI NAVIGAZIONE -->
-            <nav class="w-full flex items-center justify-between pt-2">
-                <button onclick="changeReaderPage(-1)" id="btnReaderPrev" class="px-4 py-2 rounded-full border border-stone-300 text-wine-900 text-xs font-serif tracking-widest uppercase hover:bg-stone-100 transition disabled:opacity-30 disabled:cursor-not-allowed bg-white shadow-2xs cursor-pointer">← Indietro</button>
-                <button onclick="resetToHome()" class="text-xs font-serif text-stone-500 hover:text-wine-900 uppercase tracking-widest transition cursor-pointer">Nuova Ricerca</button>
-                <button onclick="changeReaderPage(1)" id="btnReaderNext" class="px-5 py-2 rounded-full wine-primary-btn text-white text-xs font-serif tracking-widest uppercase shadow-md transition hover:opacity-95 cursor-pointer">Avanti →</button>
+            <!-- PULSANTE NUOVA RICERCA -->
+            <nav class="w-full flex items-center justify-center pt-2">
+                <button onclick="resetToHome()" class="inline-flex items-center gap-2 py-2 px-5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/60 text-[#520d1a] rounded-xl text-[11px] font-serif italic tracking-widest uppercase shadow-xs transition-all cursor-pointer">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-gold-600"></i>
+                    <span>Nuova Ricerca</span>
+                </button>
             </nav>
 
             <!-- CHAT ENOLOGO -->
@@ -411,50 +632,6 @@
         Il vostro calice è illimitato: la cantina PRO è interamente a vostra disposizione.
     </div>
 
-    <!-- PAYWALL -->
-    <div id="paywallModal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 hidden">
-        <div class="w-full max-w-sm bg-white rounded-3xl p-6 border border-stone-200 space-y-5 text-center shadow-2xl animate-in zoom-in-95 duration-200 relative overflow-hidden">
-            <button onclick="closePaywall()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 p-1.5 rounded-full hover:bg-stone-100 transition-colors cursor-pointer">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            <div class="w-14 h-14 mx-auto rounded-2xl bg-white border border-gold-400/40 flex items-center justify-center overflow-hidden p-1 shadow-lg">
-                <img src="images/LogPic.png" alt="Logo" class="w-full h-full object-contain scale-[1.2] bg-white" />
-            </div>                
-            <div class="space-y-1">
-                <h3 id="paywallTitle" class="font-serif font-bold text-2xl text-wine-900">Sblocca il Sommelier IA</h3>
-                <p id="paywallSub" class="text-xs text-stone-500 leading-relaxed font-normal">
-                    Hai esaurito i crediti gratuiti o le richieste giornaliere. Sblocca le funzioni avanzate per continuare.
-                </p>
-            </div>
-            <button onclick="closePaywall()" class="w-full wine-card-bg text-stone-100 font-bold text-xs py-3.5 rounded-xl shadow-lg hover:opacity-95 transition-all uppercase tracking-wider cursor-pointer">
-                Torna al Taccuino
-            </button>
-        </div>
-    </div>
-
-    <!-- MENU A TENDINA PROFILO (Ancorato in alto a destra, perfettamente dentro il layout centrale) -->
-    <div id="profileModal" class="hidden absolute top-14 right-3 w-64 bg-white rounded-2xl border border-[#d4af37]/40 shadow-2xl p-4 space-y-4 z-50 text-left animate-in fade-in slide-in-from-top-2 duration-200">
-        <div class="flex items-center gap-3 border-b border-stone-100 pb-3">
-            <div class="w-10 h-10 rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center font-serif text-sm font-bold shrink-0 border border-gold-400/40">
-                <span id="modalUserInitial">A</span>
-            </div>            
-            <div class="min-w-0 flex-1">
-                <p class="text-[10px] uppercase font-bold tracking-widest text-[#a37f37]">ACCOUNT</p>
-                <p id="modalUserEmail" class="text-xs text-stone-700 font-medium truncate">
-                    utente@email.com
-                </p>
-            </div>
-        </div>
-        <div class="space-y-2">
-            <button onclick="executeLogout()" class="w-full bg-[#520d1a] hover:bg-[#33060f] text-white font-serif italic text-xs py-2.5 rounded-xl shadow-xs transition-all uppercase tracking-wider cursor-pointer text-center">
-                Disconnetti account
-            </button>
-            <button onclick="closeProfileModal()" class="w-full bg-stone-100 hover:bg-stone-200 text-stone-600 font-serif text-xs py-2 rounded-xl transition-all cursor-pointer text-center">
-                Chiudi
-            </button>
-        </div>
-    </div>
-
     <!-- JAVASCRIPT -->
     <script>
         const SUPABASE_URL = "https://cjjzpejwczllqwtquszm.supabase.co";
@@ -471,10 +648,12 @@
                 if (session && session.user) {
                     currentUser = session.user;
                     updateAuthUI(session.user);
+                    loadUserFavorites();
                 }
             } catch (err) {
                 console.warn("Sessione non attiva.");
             }
+            loadDailyTrivia();
         }
         initAuth();
 
@@ -486,20 +665,43 @@
             if (error) alert("Impossibile completare l'accesso con Google.");
         }
 
-        // Apre/chiude il menu a tendina in alto a destra
-        function logout() {
+        async function toggleProfileModal() {
             const modal = document.getElementById('profileModal');
             const initialEl = document.getElementById('modalUserInitial');
             const emailEl = document.getElementById('modalUserEmail');
+            const levelEl = document.getElementById('modalSommelierLevel');
+            const pointsEl = document.getElementById('modalUserPoints');
 
             if (currentUser) {
                 const displayName = currentUser.user_metadata?.full_name || currentUser.email || 'A';
                 if (initialEl) initialEl.innerText = displayName.charAt(0).toUpperCase();
                 if (emailEl) emailEl.innerText = currentUser.email || '';
+
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('profiles')
+                        .select('sommelier_level, trivia_points')
+                        .eq('id', currentUser.id)
+                        .single();
+
+                    if (!error && data) {
+                        if (levelEl) levelEl.innerText = data.sommelier_level || 'Apprendista';
+                        if (pointsEl) pointsEl.innerText = data.trivia_points || 0;
+                    }
+                } catch (err) {
+                    console.warn("Impossibile caricare i punti del profilo:", err);
+                }
+
+                loadUserFavorites();
             }
 
             if (modal) {
+                document.getElementById('paywallModal')?.classList.add('hidden');
+                document.getElementById('premiumStatusModal')?.classList.add('hidden');
                 modal.classList.toggle('hidden');
+                if (!modal.classList.contains('hidden')) {
+                    modal.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
                 if (window.lucide) lucide.createIcons();
             }
         }
@@ -509,24 +711,134 @@
             if (modal) modal.classList.add('hidden');
         }
 
+        function closePremiumStatusModal() {
+            const modal = document.getElementById('premiumStatusModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function manageSubscription() {
+            alert("Reindirizzamento al portale di gestione abbonamento sicuro.");
+        }
+
         async function executeLogout() {
             await supabaseClient.auth.signOut();
             window.location.reload();
         }
 
-        // Chiude il menu se si clicca fuori
-        document.addEventListener('click', function(e) {
-            const modal = document.getElementById('profileModal');
-            const profileBadge = document.getElementById('userProfileBadge');
-            if (modal && profileBadge && !modal.contains(e.target) && !profileBadge.contains(e.target)) {
-                modal.classList.add('hidden');
+        async function saveToFavorites(dishName, wineName, btnElement) {
+            if (!currentUser) {
+                showToast("Effettua l'accesso con Google per salvare i tuoi preferiti.");
+                loginWithGoogle();
+                return;
             }
-        });
+
+            try {
+                const { error } = await supabaseClient
+                    .from('user_favorites')
+                    .insert([
+                        { 
+                            user_id: currentUser.id, 
+                            dish_name: dishName, 
+                            wine_name: wineName 
+                        }
+                    ]);
+
+                if (error) throw error;
+
+                if (btnElement) {
+                    btnElement.style.transform = 'scale(1.3)';
+                    setTimeout(() => btnElement.style.transform = 'scale(1)', 200);
+                }
+
+                showToast("Abbinamento custodito nel vostro taccuino.");
+                loadUserFavorites();
+            } catch (err) {
+                console.error("Errore nel salvataggio:", err);
+                showToast("Impossibile salvare l'abbinamento. Riprova.");
+            }
+        }
+
+        async function loadUserFavorites() {
+            if (!currentUser) return;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('user_favorites')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const container = document.getElementById('favoritesListContainer');
+                const badge = document.getElementById('favoritesCountBadge');
+                
+                if (badge) badge.innerText = `${data ? data.length : 0} / 10`;
+
+                if (!container) return;
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<p class="text-[11px] text-stone-400 italic text-center py-2">Nessun abbinamento salvato nel taccuino.</p>`;
+                    return;
+                }
+
+                let html = '';
+                data.forEach(item => {
+                    html += `
+                        <div class="bg-[#fdfbf7] p-2.5 rounded-xl border border-[#d4af37]/30 flex items-center justify-between gap-2">
+                            <div class="min-w-0 flex-1">
+                                <p class="font-serif font-bold text-xs text-wine-900 truncate">${item.dish_name}</p>
+                                <p class="text-[10px] text-stone-500 font-serif italic truncate">🍷 ${item.wine_name}</p>
+                            </div>
+                            <button onclick="removeFavorite('${item.id}')" class="text-stone-400 hover:text-rose-700 p-1 transition-colors cursor-pointer shrink-0" title="Rimuovi">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+                if (window.lucide) lucide.createIcons();
+            } catch (err) {
+                console.warn("Errore caricamento preferiti:", err);
+            }
+        }
+
+        async function removeFavorite(favId) {
+            try {
+                const { error } = await supabaseClient
+                    .from('user_favorites')
+                    .delete()
+                    .eq('id', favId);
+
+                if (error) throw error;
+                showToast("Abbinamento rimosso dal taccuino.");
+                loadUserFavorites();
+            } catch (err) {
+                console.error("Errore rimozione preferito:", err);
+            }
+        }
+
+        function showToast(message) {
+            let toast = document.getElementById('customToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'customToast';
+                toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-sm bg-[#fdfbf7] text-wine-900 border border-gold-400/60 px-5 py-3.5 rounded-2xl shadow-xl text-xs font-serif italic tracking-wide text-center transition-all duration-300 opacity-0 pointer-events-none';
+                document.body.appendChild(toast);
+            }
+            toast.innerText = message;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
 
         supabaseClient.auth.onAuthStateChange(async (event, session) => {
             if (session && session.user) {
                 currentUser = session.user;
                 updateAuthUI(session.user);
+                loadUserFavorites();
             } else {
                 currentUser = null;
                 updateAuthUI(null);
@@ -538,6 +850,7 @@
             const profileBadge = document.getElementById('userProfileBadge');
             const avatarLetter = document.getElementById('userInitialLetter');
             const creditsLabel = document.getElementById('creditsCount');
+            const levelLabel = document.getElementById('modalSommelierLevel');
 
             if (user) {
                 if (loginBtn) loginBtn.classList.add('hidden');
@@ -551,14 +864,14 @@
                 try {
                     let { data: profile, error } = await supabaseClient
                         .from('profiles')
-                        .select('credits_remaining, plan, is_active_subscription')
+                        .select('credits_remaining, plan, is_active_subscription, sommelier_level')
                         .eq('id', user.id)
                         .single();
 
                     if (error || !profile) {
                         const { data: upserted } = await supabaseClient
                             .from('profiles')
-                            .upsert([{ id: user.id, email: user.email || '', full_name: user.user_metadata?.full_name || 'Utente', credits_remaining: 10, plan: 'free' }], { onConflict: 'id' })
+                            .upsert([{ id: user.id, email: user.email || '', full_name: user.user_metadata?.full_name || 'Utente', credits_remaining: 10, plan: 'free', sommelier_level: 'Apprendista' }], { onConflict: 'id' })
                             .select().single();
                         if (upserted) profile = upserted;
                     }
@@ -571,6 +884,9 @@
 
                         if (creditsLabel) {
                             creditsLabel.innerText = isUserPremium ? "Premium" : `${profile.credits_remaining} Crediti`;
+                        }
+                        if (levelLabel) {
+                            levelLabel.innerText = `Grado: ${profile.sommelier_level || 'Apprendista'}`;
                         }
                     }
                 } catch (e) {
@@ -589,12 +905,294 @@
         let searchMode = 'dish';
         let readerPageIndex = 1;
         let isUserPremium = false;
+        let loadingTimer = null;
+        let currentTriviaData = null;
+        let currentLeaderboardType = 'monthly';
 
         const config = {
             searchWebhookUrl: 'https://cjjzpejwczllqwtquszm.supabase.co/functions/v1/Matchwine-search',
             wineSearchWebhookUrl: 'https://cjjzpejwczllqwtquszm.supabase.co/functions/v1/Matchwine-wine-search',
-            chatWebhookUrl: 'https://cjjzpejwczllqwtquszm.supabase.co/functions/v1/Matchwine-chat'
+            chatWebhookUrl: 'https://cjjzpejwczllqwtquszm.supabase.co/functions/v1/Matchwine-chat',
+            triviaWebhookUrl: 'https://cjjzpejwczllqwtquszm.supabase.co/functions/v1/Matchwine-trivia'
         };
+
+        async function toggleLeaderboardBox() {
+            const contentBox = document.getElementById('leaderboardContentBox');
+            if (!contentBox) return;
+
+            const isHidden = contentBox.classList.contains('hidden');
+            if (!isHidden) {
+                contentBox.classList.add('hidden');
+                if (window.lucide) lucide.createIcons();
+                return;
+            }
+
+            contentBox.classList.remove('hidden');
+            loadLeaderboardData(currentLeaderboardType);
+
+            setTimeout(() => {
+                contentBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function switchLeaderboardTab(type) {
+          const btnMonthly = document.getElementById('tabMonthly');
+          const btnAnnual = document.getElementById('tabAnnual');
+
+          const activeClasses = "flex-1 py-1.5 text-xs font-serif font-bold rounded-full transition-all bg-[#4A1525] text-white shadow-sm";
+          const inactiveClasses = "flex-1 py-1.5 text-xs font-serif font-medium rounded-full transition-all text-stone-700 hover:text-stone-900";
+
+          if (type === 'monthly') {
+              btnMonthly.className = activeClasses;
+              btnAnnual.className = inactiveClasses;
+          } else {
+              btnAnnual.className = activeClasses;
+              btnMonthly.className = inactiveClasses;
+          }
+
+          loadLeaderboardData(type);
+        }
+
+        async function loadLeaderboardData(type) {
+            const container = document.getElementById('leaderboardListContainer');
+            if (!container) return;
+
+            container.innerHTML = '<p class="text-xs font-serif italic text-stone-400 text-center py-3">Calcolo posizioni in cantina...</p>';
+
+            try {
+                const pointsColumn = (type === 'monthly') ? 'monthly_points' : 'annual_points';
+
+                const { data, error } = await supabaseClient
+                    .from('profiles')
+                    .select(`full_name, email, ${pointsColumn}`)
+                    .gt(pointsColumn, 0)
+                    .order(pointsColumn, { ascending: false })
+                    .limit(10);
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<p class="text-xs font-serif italic text-stone-500 text-center py-3">Nessuna degustazione registrata per questo periodo.</p>`;
+                    return;
+                }
+
+                let html = '';
+                data.forEach((user, index) => {
+                    const name = user.full_name || user.email?.split('@')[0] || 'Sommelier Anonimo';
+                    const points = user[pointsColumn] || 0;
+
+                    let rankBadge = `<span class="w-5 h-5 rounded-full bg-stone-100 text-stone-600 text-[10px] font-bold flex items-center justify-center">${index + 1}°</span>`;
+                    if (index === 0) rankBadge = `<span class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center shadow-xs">1°</span>`;
+                    if (index === 1) rankBadge = `<span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center justify-center shadow-xs">2°</span>`;
+                    if (index === 2) rankBadge = `<span class="w-5 h-5 rounded-full bg-orange-100 text-orange-800 text-[10px] font-bold flex items-center justify-center shadow-xs">3°</span>`;
+
+                    html += `
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-stone-50/70 border border-stone-200/60">
+                            <div class="flex items-center gap-2.5">
+                                ${rankBadge}
+                                <span class="font-serif font-bold text-xs text-wine-900">${name}</span>
+                            </div>
+                            <span class="text-[10px] font-serif font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/50">✦ ${points} pt</span>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+
+            } catch (err) {
+                console.error("Errore caricamento classifica:", err);
+                container.innerHTML = '<p class="text-xs font-serif italic text-red-500 text-center py-3">Impossibile caricare la classifica al momento.</p>';
+            }
+        }
+
+        async function toggleTriviaBox() {
+            if (!currentUser) {
+                showToast("Effettua l'accesso con Google per partecipare al Quiz Enologico!");
+                loginWithGoogle();
+                return;
+            }
+
+            const contentBox = document.getElementById('triviaContentBox');
+            const toggleBtn = document.getElementById('triviaToggleBtn');
+            const closeBtn = document.getElementById('triviaCloseBtn');
+            const questionEl = document.getElementById('triviaQuestionText');
+            const optionsEl = document.getElementById('triviaOptionsList');
+            const feedbackBox = document.getElementById('triviaFeedbackBox');
+            const badgeEl = document.getElementById('triviaPointsBadge');
+
+            if (!contentBox || !questionEl || !optionsEl) return;
+
+            const isHidden = contentBox.classList.contains('hidden');
+            if (!isHidden) {
+                contentBox.classList.add('hidden');
+                if (toggleBtn) toggleBtn.classList.remove('hidden');
+                if (closeBtn) closeBtn.classList.add('hidden');
+                if (window.lucide) lucide.createIcons();
+                return;
+            }
+
+            questionEl.innerHTML = '<p class="text-xs font-serif italic text-stone-400 text-center py-1">Verifica stato cantina in corso...</p>';
+            optionsEl.innerHTML = '';
+            if (feedbackBox) {
+                feedbackBox.classList.add('hidden');
+                feedbackBox.style.display = 'none';
+                feedbackBox.innerHTML = '';
+            }
+            if (badgeEl) badgeEl.classList.add('hidden');
+
+            contentBox.classList.remove('hidden');
+            if (toggleBtn) toggleBtn.classList.add('hidden');
+            if (closeBtn) closeBtn.classList.remove('hidden');
+
+            try {
+                const res = await fetch(config.triviaWebhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: currentUser.id })
+                });
+                const result = await res.json();
+                
+                if (result.status === 'success' && result.data) {
+                    currentTriviaData = result.data;
+                    const pts = currentTriviaData.points || 1;
+
+                    if (result.has_answered) {
+                        if (badgeEl) badgeEl.classList.add('hidden');
+                        
+                        questionEl.innerHTML = `
+                            <div class="py-1 px-2 text-center space-y-1.5 my-0">
+                                <div class="w-8 h-8 mx-auto rounded-full bg-[#d4af37]/15 border border-[#d4af37]/40 flex items-center justify-center text-[#d4af37] shadow-xs">
+                                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                                </div>
+                                <div class="space-y-0.5">
+                                    <p class="font-serif font-bold text-sm sm:text-base" style="color: #581c25;">Hai già risposto a questa domanda oggi.</p>
+                                    <p class="text-xs text-stone-600 italic font-light">Il sommelier ti aspetta domani per una nuova degustazione!</p>
+                                </div>
+                            </div>
+                        `;
+                        optionsEl.innerHTML = '';
+                    } else {
+                        if (badgeEl) {
+                            badgeEl.innerText = `✦ ${pts} ${pts === 1 ? 'Punto' : 'Punti'}`;
+                            badgeEl.classList.remove('hidden');
+                        }
+
+                        if (feedbackBox) {
+                            feedbackBox.innerHTML = `
+                                <p id="triviaFeedbackTitle" class="font-serif font-bold text-sm sm:text-base mb-1" style="color: #581c25;"></p>
+                                <p id="triviaExplanationText" class="text-xs sm:text-sm text-stone-600 font-light italic"></p>
+                            `;
+                        }
+
+                        questionEl.innerText = currentTriviaData.question_text;
+
+                        let optsHtml = '';
+                        currentTriviaData.options.forEach((opt, idx) => {
+                            optsHtml += `<button onclick="submitTriviaAnswer(${idx})" class="w-full text-left p-3 rounded-2xl border border-gold-400/40 hover:opacity-90 wine-card-bg text-white text-sm sm:text-base font-serif font-bold transition cursor-pointer shadow-sm">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
+                        });
+                        optionsEl.innerHTML = optsHtml;
+                    }
+
+                } else {
+                    questionEl.innerText = "Impossibile caricare il quiz del giorno.";
+                    optionsEl.innerHTML = '';
+                }
+            } catch (err) {
+                console.warn("Errore caricamento trivia:", err);
+                questionEl.innerText = "Quiz momentaneamente non disponibile.";
+                optionsEl.innerHTML = '';
+            }
+
+            setTimeout(() => {
+                contentBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        async function submitTriviaAnswer(selectedIndex) {
+            if (!currentUser) {
+                showToast("Accedi con Google per partecipare al Quiz!");
+                loginWithGoogle();
+                return;
+            }
+            if (!currentTriviaData) return;
+
+            const isCorrect = selectedIndex === currentTriviaData.correct_option_index;
+            const pts = currentTriviaData.points || 1;
+
+            const optionButtons = document.querySelectorAll('#triviaOptionsList button');
+            optionButtons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === currentTriviaData.correct_option_index) {
+                    btn.classList.remove('wine-card-bg');
+                    btn.style.backgroundColor = '#15803d';
+                    btn.style.borderColor = '#16a34a';
+                } else if (idx === selectedIndex && !isCorrect) {
+                    btn.classList.remove('wine-card-bg');
+                    btn.style.backgroundColor = '#b91c1c';
+                    btn.style.borderColor = '#dc2626';
+                } else {
+                    btn.style.opacity = '0.4';
+                }
+            });
+
+            try {
+                const { error } = await supabaseClient.rpc('record_trivia_answer', {
+                    p_user_id: currentUser.id,
+                    p_question_id: currentTriviaData.id,
+                    p_selected_option: selectedIndex,
+                    p_is_correct: isCorrect,
+                    p_points: pts
+                });
+
+                if (error) throw error;
+
+                const feedbackBox = document.getElementById('triviaFeedbackBox');
+                const fbTitle = document.getElementById('triviaFeedbackTitle');
+                const fbExp = document.getElementById('triviaExplanationText');
+
+                if (feedbackBox && fbTitle && fbExp) {
+                    fbTitle.innerText = isCorrect ? "✦ Risposta Esatta! Punto accreditato alla tua cantina." : "✗ Risposta errata. Sarà per la prossima degustazione.";
+                    fbExp.innerText = currentTriviaData.explanation || "";
+                    feedbackBox.classList.remove('hidden');
+                    feedbackBox.style.display = 'block';
+                }
+
+                setTimeout(() => {
+                    const badgeEl = document.getElementById('triviaPointsBadge');
+                    if (badgeEl) badgeEl.classList.add('hidden');
+
+                    const questionEl = document.getElementById('triviaQuestionText');
+                    const optionsEl = document.getElementById('triviaOptionsList');
+                    if (questionEl) {
+                        questionEl.innerHTML = `
+                            <div class="py-1 px-2 text-center space-y-1.5 my-0">
+                                <div class="w-8 h-8 mx-auto rounded-full bg-[#d4af37]/15 border border-[#d4af37]/40 flex items-center justify-center text-[#d4af37] shadow-xs">
+                                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                                </div>
+                                <div class="space-y-0.5">
+                                    <p class="font-serif font-bold text-sm sm:text-base" style="color: #581c25;">Hai già risposto a questa domanda oggi.</p>
+                                    <p class="text-xs text-stone-600 italic font-light">Il sommelier ti aspetta domani per una nuova degustazione!</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    if (optionsEl) optionsEl.innerHTML = '';
+                    if (window.lucide) lucide.createIcons();
+                }, 1200);
+
+                updateAuthUI(currentUser);
+                showToast(isCorrect ? "Risposta esatta! Punto registrato." : "Risposta registrata.");
+
+            } catch (err) {
+                console.error("Errore salvataggio risposta trivia:", err);
+                showToast("Hai già risposto a questo quiz oggi.");
+                toggleTriviaBox();
+            }
+        }
 
         const i18n = {
             it: {
@@ -621,44 +1219,73 @@
             }
         };
 
-        const availableDishes = [
-            "Carbonara", "Bistecca alla Fiorentina", "Spaghetti alle Vongole", "Pizza Margherita",
-            "Risotto ai Funghi Porcini", "Lasagne alla Bolognese", "Cacio e Pepe", "Ossobuco alla Milanese",
-            "Tiramisù", "Torta Sacher", "Amatriciana", "Gricia", "Pasta alla Norma", "Pesto alla Genovese"
-        ];
-
-        const availableWines = [
-            "Barolo DOCG (Ceretto)", "Brunello di Montalcino DOCG (Biondi-Santi)", "Amarone della Valpolicella DOCG (Masi)",
-            "Chianti Classico Riserva DOCG (Antinori)", "Sassicaia (Tenuta San Guido)", "Franciacorta DOCG Brut (Ca' del Bosco)"
-        ];
-
         const dishInputEl = document.getElementById('dishInput');
         const dropdownEl = document.getElementById('autocompleteDropdown');
 
         if (dishInputEl) {
+            let searchTimeout = null;
+
             dishInputEl.addEventListener('input', function() {
-                const query = this.value.trim().toLowerCase();
+                const query = this.value.trim();
                 toggleClearButton();
+                
+                if (searchTimeout) clearTimeout(searchTimeout);
+
                 if (query.length === 0) {
                     dropdownEl.classList.add('hidden');
                     dropdownEl.innerHTML = '';
                     return;
                 }
-                const dataSource = searchMode === 'dish' ? availableDishes : availableWines;
-                const matches = dataSource.filter(item => item.toLowerCase().includes(query)).slice(0, 3);
-                if (matches.length > 0) {
-                    let html = '';
-                    matches.forEach(match => {
-                        html += `<div onclick="selectSuggestedItem('${match.replace(/'/g, "\\'")}')" class="px-4 py-3 text-xs font-medium text-stone-700 hover:bg-stone-100 hover:text-wine-900 cursor-pointer transition-colors border-b border-stone-200 last:border-none flex items-center justify-between">
-                            <span>${match}</span><i data-lucide="arrow-up-left" class="w-3.5 h-3.5 text-stone-400"></i></div>`;
-                    });
-                    dropdownEl.innerHTML = html;
-                    dropdownEl.classList.remove('hidden');
-                    if (window.lucide) lucide.createIcons();
-                } else {
-                    dropdownEl.classList.add('hidden');
-                    dropdownEl.innerHTML = '';
-                }
+
+                searchTimeout = setTimeout(async () => {
+                    try {
+                        if (searchMode === 'dish') {
+                            const { data, error } = await supabaseClient
+                                .from('dishes_free')
+                                .select('dish_name')
+                                .ilike('dish_name', `%${query}%`)
+                                .limit(3);
+
+                            if (!error && data && data.length > 0) {
+                                let html = '';
+                                const uniqueDishes = [...new Set(data.map(i => i.dish_name))];
+                                uniqueDishes.slice(0, 3).forEach(dishName => {
+                                    html += `<div onclick="selectSuggestedItem('${dishName.replace(/'/g, "\\'")}')" class="px-4 py-3 text-xs font-medium text-stone-700 hover:bg-stone-100 hover:text-wine-900 cursor-pointer transition-colors border-b border-stone-200 last:border-none flex items-center justify-between">
+                                        <span>${dishName}</span><i data-lucide="arrow-up-left" class="w-3.5 h-3.5 text-stone-400"></i></div>`;
+                                });
+                                dropdownEl.innerHTML = html;
+                                dropdownEl.classList.remove('hidden');
+                                if (window.lucide) lucide.createIcons();
+                            } else {
+                                dropdownEl.classList.add('hidden');
+                                dropdownEl.innerHTML = '';
+                            }
+                        } else {
+                            const { data, error } = await supabaseClient
+                                .from('wines_free')
+                                .select('wine_name')
+                                .ilike('wine_name', `%${query}%`)
+                                .limit(5);
+
+                            if (!error && data && data.length > 0) {
+                                let html = '';
+                                const uniqueWines = [...new Set(data.map(i => i.wine_name).filter(Boolean))];
+                                uniqueWines.slice(0, 3).forEach(wineName => {
+                                    html += `<div onclick="selectSuggestedItem('${wineName.replace(/'/g, "\\'")}')" class="px-4 py-3 text-xs font-medium text-stone-700 hover:bg-stone-100 hover:text-wine-900 cursor-pointer transition-colors border-b border-stone-200 last:border-none flex items-center justify-between">
+                                        <span>${wineName}</span><i data-lucide="arrow-up-left" class="w-3.5 h-3.5 text-stone-400"></i></div>`;
+                                });
+                                dropdownEl.innerHTML = html;
+                                dropdownEl.classList.remove('hidden');
+                                if (window.lucide) lucide.createIcons();
+                            } else {
+                                dropdownEl.classList.add('hidden');
+                                dropdownEl.innerHTML = '';
+                            }
+                        }
+                    } catch (err) {
+                        console.warn("Errore autocompletamento:", err);
+                    }
+                }, 200);
             });
         }
 
@@ -769,7 +1396,7 @@
             document.getElementById('loadingSubtitle').innerText = dict.loadingSubtitle;
             document.getElementById('welcomeTitle').innerText = dict.welcomeTitle;
             document.getElementById('welcomeDesc').innerHTML = currentLang === 'it' 
-                ? "Il tuo <strong class=\"font-semibold text-[#520d1a]\">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta."
+                ? "Il tuo <strong class=\"font-semibold text-[#520d1a]\">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta." 
                 : "Let our <strong class=\"font-semibold text-[#520d1a]\">AI Sommelier</strong> guide you to the perfect wine pairing.";
             if (window.lucide) lucide.createIcons();
         }
@@ -787,17 +1414,10 @@
             toggleClearButton();
             currentData = null;
             readerPageIndex = 1;
-        }
-
-        function openSommelierInfo() {
-            const chatBox = document.getElementById('enologoChatContainer');
-            const chevron = document.getElementById('enologoChevron');
-            if (chatBox) {
-                chatBox.classList.remove('hidden');
-                if (chevron) chevron.style.transform = 'rotate(180deg)';
-                chatBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                const input = document.getElementById('aiSommelierInput');
-                if (input) input.focus();
+            
+            if (loadingTimer) {
+                clearTimeout(loadingTimer);
+                loadingTimer = null;
             }
         }
 
@@ -836,6 +1456,63 @@
 
             if (dropdownEl) dropdownEl.classList.add('hidden');
 
+            // Controllo preliminare per ospiti: verifica sul database corretto in base alla modalità (piatto o vino)
+            if (!currentUser) {
+                try {
+                    const tableName = searchMode === 'dish' ? 'dishes_free' : 'wines_free';
+                    const columnName = searchMode === 'dish' ? 'dish_name' : 'wine_name';
+
+                    const { data: freeCheck, error } = await supabaseClient
+                        .from(tableName)
+                        .select('*')
+                        .ilike(columnName, `%${inputValue}%`)
+                        .limit(1);
+
+                    if (error || !freeCheck || freeCheck.length === 0) {
+                        // Mostriamo la Card-Taccuino del Sommelier Bloccato
+                        const welcomeState = document.getElementById('welcomeState');
+                        const quickTry = document.getElementById('quickTrySection');
+                        const resultsCont = document.getElementById('resultsContainer');
+                        const contentContainer = document.getElementById('readerPageContent');
+                        const tabsBar = document.getElementById('tabsBarContainer');
+
+                        if (welcomeState) welcomeState.classList.add('hidden');
+                        if (quickTry) quickTry.classList.add('hidden');
+                        if (resultsCont) resultsCont.classList.remove('hidden');
+                        if (tabsBar) tabsBar.style.display = 'none';
+
+                        if (contentContainer) {
+                            contentContainer.innerHTML = `
+                                <div class="notebook-sheet p-6 sm:p-8 space-y-5 text-center max-w-lg mx-auto shadow-luxury">
+                                    <div class="w-12 h-12 mx-auto rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center border border-gold-400/40 shadow-sm">
+                                        <span class="text-xl">✦</span>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <span class="text-[9px] uppercase font-bold tracking-[0.25em] text-[#a37f37]">L'ARTE DEL SOMMELIER IA</span>
+                                        <h3 class="font-serif italic font-bold text-xl sm:text-2xl text-[#520d1a]">Sblocca la Consulenza d'Autore</h3>
+                                        <p class="text-xs sm:text-sm text-stone-700 font-serif italic leading-relaxed max-w-md mx-auto">
+                                            Per analizzare etichette o creazioni fuori catalogo come <strong class="font-semibold text-[#520d1a]">"${inputValue}"</strong>, il nostro Sommelier virtuale richiede l'accesso o una ricarica di crediti.
+                                        </p>
+                                    </div>
+                                    <div class="pt-2 space-y-2.5">
+                                        <button onclick="loginWithGoogle()" class="w-full inline-flex items-center justify-center gap-2.5 bg-[#d4af37] hover:bg-[#c5a030] text-wine-950 py-3 px-4 rounded-xl text-xs font-serif font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer">
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.2v3.15C3.16 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.2C.43 8.15 0 9.89 0 12s.43 3.85 1.2 5.39l4.08-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.16 2.68 1.2 6.61l4.08 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/></svg>
+                                            <span>Accedi con Google (+10 Crediti)</span>
+                                        </button>
+                                        <button onclick="openPaywall()" class="w-full wine-primary-btn text-white py-3 px-4 rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all cursor-pointer">
+                                            Scegli un Piano o Ricarica Crediti
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        return;
+                    }
+                } catch (err) {
+                    console.warn("Controllo database free fallito:", err);
+                }
+            }
+
             currentData = null;
             readerPageIndex = 1;
             showLoading(true);
@@ -858,10 +1535,43 @@
 
                 if (result && (result.paywall === true || result.success === false || response.status === 402)) {
                     showLoading(false);
-                    document.getElementById('welcomeState').classList.remove('hidden');
+                    
+                    const welcomeState = document.getElementById('welcomeState');
                     const quickTry = document.getElementById('quickTrySection');
-                    if (quickTry) quickTry.classList.remove('hidden');
-                    openPaywall();
+                    const resultsCont = document.getElementById('resultsContainer');
+                    const contentContainer = document.getElementById('readerPageContent');
+                    const tabsBar = document.getElementById('tabsBarContainer');
+
+                    if (welcomeState) welcomeState.classList.add('hidden');
+                    if (quickTry) quickTry.classList.add('hidden');
+                    if (resultsCont) resultsCont.classList.remove('hidden');
+                    if (tabsBar) tabsBar.style.display = 'none';
+
+                    if (contentContainer) {
+                        contentContainer.innerHTML = `
+                            <div class="notebook-sheet p-6 sm:p-8 space-y-5 text-center max-w-lg mx-auto shadow-luxury">
+                                <div class="w-12 h-12 mx-auto rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center border border-gold-400/40 shadow-sm">
+                                    <span class="text-xl">✦</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <span class="text-[9px] uppercase font-bold tracking-[0.25em] text-[#a37f37]">L'ARTE DEL SOMMELIER IA</span>
+                                    <h3 class="font-serif italic font-bold text-xl sm:text-2xl text-[#520d1a]">Sblocca la Consulenza d'Autore</h3>
+                                    <p class="text-xs sm:text-sm text-stone-700 font-serif italic leading-relaxed max-w-md mx-auto">
+                                        Per analizzare etichette o creazioni fuori catalogo come <strong class="font-semibold text-[#520d1a]">"${inputValue}"</strong>, il nostro Sommelier virtuale richiede l'accesso o una ricarica di crediti.
+                                    </p>
+                                </div>
+                                <div class="pt-2 space-y-2.5">
+                                    <button onclick="loginWithGoogle()" class="w-full inline-flex items-center justify-center gap-2.5 bg-[#d4af37] hover:bg-[#c5a030] text-wine-950 py-3 px-4 rounded-xl text-xs font-serif font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.2v3.15C3.16 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.2C.43 8.15 0 9.89 0 12s.43 3.85 1.2 5.39l4.08-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.16 2.68 1.2 6.61l4.08 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/></svg>
+                                        <span>Accedi con Google (+10 Crediti)</span>
+                                    </button>
+                                    <button onclick="openPaywall()" class="w-full wine-primary-btn text-white py-3 px-4 rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all cursor-pointer">
+                                        Scegli un Piano o Ricarica Crediti
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
                     return;
                 }
 
@@ -879,6 +1589,9 @@
                 if (!currentData || typeof currentData !== 'object') {
                     throw "Formato dati non valido";
                 }
+
+                const tabsBar = document.getElementById('tabsBarContainer');
+                if (tabsBar) tabsBar.style.display = 'flex';
 
                 renderTabsBar();
                 renderReaderPage();
@@ -953,21 +1666,11 @@
             renderReaderPage();
         }
 
-        function changeReaderPage(direction) {
-            const maxPage = searchMode === 'dish' ? 4 : 2;
-            const newIndex = readerPageIndex + direction;
-            if (newIndex < 1 || newIndex > maxPage) return;
-            goToPage(newIndex);
-        }
-
         function renderReaderPage() {
             if (!currentData) return;
             const d = currentData;
             
             const contentContainer = document.getElementById('readerPageContent');
-            const btnPrev = document.getElementById('btnReaderPrev');
-            const btnNext = document.getElementById('btnReaderNext');
-
             if (!contentContainer) return;
 
             renderTabsBar();
@@ -993,22 +1696,8 @@
                 }
             }
 
-            if (btnPrev) btnPrev.disabled = readerPageIndex === 1;
-            if (btnNext) {
-                if (readerPageIndex === maxPage) {
-                    btnNext.innerText = "Fine";
-                    btnNext.disabled = true;
-                    btnNext.classList.add('opacity-50');
-                } else {
-                    btnNext.innerText = "Avanti →";
-                    btnNext.disabled = false;
-                    btnNext.classList.remove('opacity-50');
-                }
-            }
-
             let html = '';
 
-            // Badge dinamico intelligente guidato dal backend (Database vs IA)
             const isFromDatabase = d.source === 'database' || d.verified === true;
             const badgeHtml = isFromDatabase 
                 ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider bg-[#faf5ec] border border-[#dcd0bc] mb-1" style="color: #a37f37;">✦ ABBINAMENTO VERIFICATO</span>`
@@ -1028,7 +1717,6 @@
                     return { winery, type, region };
                 };
 
-                // 1. CARD DEL VINO STANDARD, PLUS, PRESTIGE
                 const wineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp, priceTag) => {
                     let parts = formatWineTitleParts(wineTitle);
                     let displayGlass = wineGlass && wineGlass.trim() !== '' ? wineGlass : 'Ballon / Calice ampio';
@@ -1036,6 +1724,10 @@
 
                     return `
                     <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
+                        <button onclick="saveToFavorites('${cleanDishName.replace(/'/g, "\\'")}', '${(wineTitle || parts.winery).replace(/'/g, "\\'")}', this)" class="absolute top-4 right-4 text-[#520d1a] hover:opacity-75 transition-all cursor-pointer p-1" title="Salva nei preferiti">
+                            <span class="text-xl">♥</span>
+                        </button>
+
                         <div class="text-center space-y-0.5">
                             <span class="text-[9px] uppercase font-bold tracking-[0.25em]" style="color: #a37f37;">✦ IL VINO CHE TI CONSIGLIAMO ✦</span>
                         </div>
@@ -1096,14 +1788,17 @@
                     </div>`;
                 };
 
-                // 2. CARD DEL SOMMELIER (PAGINA 4) - BORDEAUX SCURO
                 const sommelierWineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp) => {
                     let parts = formatWineTitleParts(wineTitle);
                     let displayGlass = wineGlass && wineGlass.trim() !== '' ? wineGlass : 'Ballon / Calice ampio';
                     let displayTemp = wineTemp && wineTemp.trim() !== '' ? wineTemp : '16-18°C';
 
                     return `
-                    <div class="wine-card-bg p-4 sm:p-5 space-y-4 rounded-[2rem] border border-gold-400/40 shadow-wine-glow text-white">
+                    <div class="wine-card-bg p-4 sm:p-5 space-y-4 rounded-[2rem] border border-gold-400/40 shadow-wine-glow text-white relative">
+                        <button onclick="saveToFavorites('${cleanDishName.replace(/'/g, "\\'")}', '${(wineTitle || parts.winery).replace(/'/g, "\\'")}', this)" class="absolute top-4 right-4 text-gold-300 hover:text-white transition-all cursor-pointer p-1" title="Salva nei preferiti">
+                            <span class="text-xl">♥</span>
+                        </button>
+
                         <div class="text-center space-y-0.5">
                             <span class="text-[9px] uppercase font-bold tracking-[0.25em] text-gold-300">✦ PROPOSTA TECNICA DELL'ESPERTO ✦</span>
                         </div>
@@ -1164,7 +1859,6 @@
                     </div>`;
                 };
 
-                // 3. CARD DEL PIATTO IN BASSO
                 const dishCardHtml = `
                 <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
                     <div class="text-center space-y-0.5">
@@ -1257,7 +1951,6 @@
                     ) + dishCardHtml;
                 }
             } else {
-                // Percorso Dal Calice al Piatto (Wine to Dish)
                 const currentMatchObj = readerPageIndex === 1 ? (d.tradition || {}) : (d.gourmet || {});
                 
                 let dishTitleToUse = currentMatchObj.dish_name || currentMatchObj.trad_dish_name || currentMatchObj.gour_dish_name || "Piatto Consigliato";
@@ -1265,9 +1958,15 @@
                 let wineMatchingReason = currentMatchObj.matching_reason || currentMatchObj.trad_matching_reason || currentMatchObj.gour_matching_reason || "Questo calice sposa perfettamente il piatto grazie al perfetto bilanciamento tra struttura, acidità e persistenza aromatica.";
                 
                 let dishImageToUse = readerPageIndex === 1 ? 'images/Piattotradiz.png' : 'images/Piattogourmet.png';
+                
+                let wineTitleToUse = d.wine_name || 'Vino in cantina';
 
                 const customDishCard = `
                 <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
+                    <button onclick="saveToFavorites('${dishTitleToUse.replace(/'/g, "\\'")}', '${wineTitleToUse.replace(/'/g, "\\'")}', this)" class="absolute top-4 right-4 text-[#520d1a] hover:opacity-75 transition-all cursor-pointer p-1" title="Salva nei preferiti">
+                        <span class="text-xl">♥</span>
+                    </button>
+
                     <div class="text-center space-y-0.5">
                         <span class="text-[9px] uppercase font-bold tracking-[0.25em]" style="color: #a37f37;">✦ IL PIATTO CHE TI CONSIGLIAMO ✦</span>
                     </div>
@@ -1295,7 +1994,6 @@
                     </div>
                 </div>`;
 
-                let wineTitleToUse = dishInputEl ? dishInputEl.value.trim() : (d.wine_name || 'Vino in cantina');
                 let wineDescToUse = d.wine_description || 'Straordinaria etichetta di grande pregio, caratterizzata da una complessità olfattiva unica e da una struttura perfettamente equilibrata.';
                 
                 const userWineCard = `
@@ -1345,24 +2043,37 @@
         }
         
         function getDishIllustration(dishCategory, dishName = '', description = '') {
-            const cat = dishCategory ? dishCategory.trim().toLowerCase() : '';
-            const validCategories = ['bistecca', 'pesce', 'risotto', 'sushi', 'pizza', 'hamburger', 'mex', 'torta', 'formaggio'];
+            const text = ((dishName || '') + " " + (description || '')).toLowerCase();
             
-            if (validCategories.includes(cat)) {
-                return `images/${cat}.png`;
+            if (text.match(/pasta|spaghetti|carbonara|cacio e pepe|amatriciana|gricia|norma|pesto|lasagne|tagliatelle|ravioli|tortellini|rigatoni|penne|linguine|maccheroni|gnocchi|fregula|pizzoccheri|paccheri|trofie|orecchiette|fusilli|farfalle|cannelloni|vongole/)) {
+                return "images/Piatto.png";
             }
             
-            const text = (dishName + " " + description).toLowerCase();
+            if (text.match(/risotto|riso|paella|orzotto/)) {
+                return "images/risotto.png";
+            }
+
+            const cat = dishCategory ? dishCategory.trim().toLowerCase() : '';
             
-            if (text.match(/sushi|sashimi|nigiri|uramaki|poke|giapponese|chirashi|temaki/)) return "images/sushi.png";
-            if (text.match(/taco|tacos|burrito|fajitas|enchiladas|nachos|messicano|tex-mex/)) return "images/mex.png";
-            if (text.match(/hamburger|cheeseburger|burger|sandwich|club sandwich|wrap|hot dog|patatine/)) return "images/hamburger.png";
+            if (cat === 'pasta') return 'images/Piatto.png';
+            if (cat === 'risotto') return 'images/risotto.png';
+            if (cat === 'bistecca' || cat === 'carne') return 'images/bistecca.png';
+            if (cat === 'pesce') return 'images/pesce.png';
+            if (cat === 'sushi') return 'images/sushi.png';
+            if (cat === 'pizza') return 'images/pizza.png';
+            if (cat === 'hamburger') return 'images/hamburger.png';
+            if (cat === 'mex') return 'images/mex.png';
+            if (cat === 'formaggio') return 'images/formaggio.png';
+            if (cat === 'torta' || cat === 'dolce') return 'images/torta.png';
+            
+            if (text.match(/pesce|salmone|orata|branzino|tonno|polpo|gamberi|frittura|cozze|ostriche|baccalà|calamari|aragosta/)) return "images/pesce.png";
+            if (text.match(/carne|bistecca|cotoletta|milanese|filetto|costata|arrosto|tartare|agnello|maiale|stinco|prosciutto|spezzatino|ragù|pollo|tagliata|brasato|stufato/)) return "images/bistecca.png";
+            if (text.match(/hamburger|burger/)) return "images/hamburger.png";
+            if (text.match(/sushi|sashimi|nigiri|uramaki|poke|chirashi|temaki/)) return "images/sushi.png";
             if (text.match(/pizza|focaccia|calzone|piadina|bruschetta|panino/)) return "images/pizza.png";
-            if (text.match(/pesce|salmone|orata|branzino|tonno|polpo|gamberi|frittura|cozze|vongole|ostriche|baccalà|calamari|aragosta/)) return "images/pesce.png";
-            if (text.match(/risotto|riso|paella|pilaf|orzotto/)) return "images/risotto.png";
-            if (text.match(/carne|bistecca|filetto|costata|arrosto|tartare|agnello|maiale|stinco|prosciutto|spezzatino|ragù|pollo|tagliata|brasato|stufato/)) return "images/bistecca.png";
-            if (text.match(/formaggio|formaggi|fonduta|pecorino|parmigiano|mozzarella|burrata|gorgonzola|tagliere di formaggi/)) return "images/formaggio.png";
-            if (text.match(/torta|dolce|dessert|tiramisù|cioccolato|gelato|crostata|crep|biscotti|panna cotta|cheesecake|cannolo/)) return "images/torta.png";
+            if (text.match(/taco|tacos|burrito|fajitas|enchiladas|nachos|messicano/)) return "images/mex.png";
+            if (text.match(/formaggio|formaggi|fonduta|pecorino|parmigiano|mozzarella|burrata|gorgonzola/)) return "images/formaggio.png";
+            if (text.match(/torta|dolce|dessert|tiramisù|cioccolato|gelato|crostata|crep|panna cotta/)) return "images/torta.png";
             
             return "images/Piatto.png";
         }
@@ -1442,12 +2153,33 @@
             const quick = document.getElementById('quickTrySection');
             const results = document.getElementById('resultsContainer');
             const loading = document.getElementById('loadingState');
+            const subtitleEl = document.getElementById('loadingSubtitle');
+
+            if (loadingTimer) {
+                clearTimeout(loadingTimer);
+                loadingTimer = null;
+            }
 
             if (isLoading) {
                 if (welcome) welcome.classList.add('hidden');
                 if (quick) quick.classList.add('hidden');
                 if (results) results.classList.add('hidden');
                 if (loading) loading.classList.remove('hidden');
+
+                if (subtitleEl) {
+                    subtitleEl.innerText = currentLang === 'it' 
+                        ? "Analisi profilo organolettico in corso..." 
+                        : "Analyzing organoleptic profile...";
+                }
+
+                loadingTimer = setTimeout(() => {
+                    if (subtitleEl) {
+                        subtitleEl.innerText = currentLang === 'it' 
+                            ? "Valutazione della struttura e dei tannini..." 
+                            : "Evaluating structure and tannins...";
+                    }
+                }, 3000);
+
             } else {
                 if (loading) loading.classList.add('hidden');
             }
@@ -1463,15 +2195,92 @@
             updateUiLanguage();
         }
 
+        function handleCreditsClick() {
+            if (isUserPremium) {
+                const modal = document.getElementById('premiumStatusModal');
+                if (modal) {
+                    document.getElementById('profileModal')?.classList.add('hidden');
+                    document.getElementById('paywallModal')?.classList.add('hidden');
+                    
+                    modal.classList.toggle('hidden');
+                    if (!modal.classList.contains('hidden')) {
+                        modal.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                    if (window.lucide) lucide.createIcons();
+                }
+                return;
+            }
+            openPaywall();
+        }
+
         function openPaywall() {
             const paywall = document.getElementById('paywallModal');
-            if (paywall) paywall.classList.remove('hidden');
+            if (paywall) {
+                document.getElementById('profileModal')?.classList.add('hidden');
+                document.getElementById('premiumStatusModal')?.classList.add('hidden');
+                paywall.classList.remove('hidden');
+            }
             if (window.lucide) lucide.createIcons();
         }
 
         function closePaywall() {
             const paywall = document.getElementById('paywallModal');
             if (paywall) paywall.classList.add('hidden');
+        }
+
+        // === FUNZIONE DI PAGAMENTO STRIPE INTEGRATA ===
+        async function buyPlan(planType) {
+            if (!currentUser) {
+                showToast("Effettua l'accesso con Google per procedere con l'acquisto.");
+                loginWithGoogle();
+                return;
+            }
+
+            const priceMap = {
+                'premium': 'price_1UJG8fEVhIuUUxsw3qBJBk7B',
+                'credits_200': 'price_1UJG9BEVhIuUUxswNUyJ2tpu',
+                'credits_50': 'price_1UJG9BEVhIuUUxswNUyJ2tpu',
+                'credits_20': 'price_1UJG9BEVhIuUUxswNUyJ2tpu'
+            };
+
+            const priceId = priceMap[planType];
+            if (!priceId) {
+                alert("Prezzo non configurato.");
+                return;
+            }
+
+            // CORRETTO: Se è 'premium' usiamo 'subscription', altrimenti 'payment' per i crediti una tantum
+            const paymentMode = (planType === 'premium') ? 'subscription' : 'payment';
+
+            try {
+                showToast("Reindirizzamento al portale di pagamento sicuro...");
+                
+                const { data, error } = await supabaseClient.functions.invoke('create-checkout-session', {
+                    body: { 
+                        priceId: priceId, 
+                        userId: currentUser.id, 
+                        mode: paymentMode 
+                    }
+                });
+
+                if (error) {
+                    let errorMsg = error.message;
+                    try {
+                        const errorBody = await error.context.json();
+                        if (errorBody && errorBody.error) errorMsg = errorBody.error;
+                    } catch (e) {}
+                    throw new Error(errorMsg);
+                }
+
+                if (data && data.url) {
+                    window.location.href = data.url;
+                } else {
+                    throw new Error("URL di checkout non valido.");
+                }
+            } catch (err) {
+                console.error("Dettaglio errore:", err);
+                alert("Errore Stripe: " + err.message);
+            }
         }
 
         let deferredPrompt;
@@ -1516,22 +2325,6 @@
             }
         }
 
-        function handleCreditsClick() {
-            if (isUserPremium) {
-                const toast = document.getElementById('premiumToast');
-                if (toast) {
-                    toast.classList.remove('opacity-0', 'pointer-events-none');
-                    toast.classList.add('opacity-100');
-                    setTimeout(() => {
-                        toast.classList.remove('opacity-100');
-                        toast.classList.add('opacity-0', 'pointer-events-none');
-                    }, 3500);
-                }
-                return;
-            }
-            openPaywall();
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             const imagesToPreload = [
                 'images/Piattotradiz.png',
@@ -1561,6 +2354,8 @@
             if (paywall) paywall.classList.add('hidden');
             const profileModal = document.getElementById('profileModal');
             if (profileModal) profileModal.classList.add('hidden');
+            const premiumModal = document.getElementById('premiumStatusModal');
+            if (premiumModal) premiumModal.classList.add('hidden');
             const expansionBox = document.getElementById('installExpansionBox');
             if (expansionBox) expansionBox.classList.add('hidden');
             
