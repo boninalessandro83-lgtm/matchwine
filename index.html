@@ -1013,6 +1013,59 @@
             }
         }
 
+        async function loadDailyTrivia() {
+            const questionEl = document.getElementById('triviaQuestionText');
+            const optionsEl = document.getElementById('triviaOptionsList');
+            const badgeEl = document.getElementById('triviaPointsBadge');
+
+            if (!questionEl || !optionsEl) return;
+
+            try {
+                const res = await fetch(config.triviaWebhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: currentUser ? currentUser.id : 'anonymous' })
+                });
+                const result = await res.json();
+                
+                if (result.status === 'success' && result.data) {
+                    currentTriviaData = result.data;
+                    const pts = currentTriviaData.points || 1;
+
+                    if (result.has_answered) {
+                        if (badgeEl) badgeEl.classList.add('hidden');
+                        questionEl.innerHTML = `
+                            <div class="py-1 px-2 text-center space-y-1.5 my-0">
+                                <div class="w-8 h-8 mx-auto rounded-full bg-[#d4af37]/15 border border-[#d4af37]/40 flex items-center justify-center text-[#d4af37] shadow-xs">
+                                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                                </div>
+                                <div class="space-y-0.5">
+                                    <p class="font-serif font-bold text-sm sm:text-base" style="color: #581c25;">Hai già risposto a questa domanda oggi.</p>
+                                    <p class="text-xs text-stone-600 italic font-light">Il sommelier ti aspetta domani per una nuova degustazione!</p>
+                                </div>
+                            </div>
+                        `;
+                        optionsEl.innerHTML = '';
+                    } else {
+                        if (badgeEl) {
+                            badgeEl.innerText = `✦ ${pts} ${pts === 1 ? 'Punto' : 'Punti'}`;
+                            badgeEl.classList.remove('hidden');
+                        }
+                        questionEl.innerText = currentTriviaData.question_text;
+
+                        let optsHtml = '';
+                        currentTriviaData.options.forEach((opt, idx) => {
+                            optsHtml += `<button onclick="submitTriviaAnswer(${idx})" class="w-full text-left p-3 rounded-2xl border border-gold-400/40 hover:opacity-90 wine-card-bg text-white text-sm sm:text-base font-serif font-bold transition cursor-pointer shadow-sm">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
+                        });
+                        optionsEl.innerHTML = optsHtml;
+                    }
+                }
+            } catch (err) {
+                console.warn("Quiz del giorno non disponibile al momento.", err);
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
         async function toggleTriviaBox() {
             if (!currentUser) {
                 showToast("Effettua l'accesso con Google per partecipare al Quiz Enologico!");
@@ -1039,77 +1092,11 @@
                 return;
             }
 
-            questionEl.innerHTML = '<p class="text-xs font-serif italic text-stone-400 text-center py-1">Verifica stato cantina in corso...</p>';
-            optionsEl.innerHTML = '';
-            if (feedbackBox) {
-                feedbackBox.classList.add('hidden');
-                feedbackBox.style.display = 'none';
-                feedbackBox.innerHTML = '';
-            }
-            if (badgeEl) badgeEl.classList.add('hidden');
-
             contentBox.classList.remove('hidden');
             if (toggleBtn) toggleBtn.classList.add('hidden');
             if (closeBtn) closeBtn.classList.remove('hidden');
 
-            try {
-                const res = await fetch(config.triviaWebhookUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: currentUser.id })
-                });
-                const result = await res.json();
-                
-                if (result.status === 'success' && result.data) {
-                    currentTriviaData = result.data;
-                    const pts = currentTriviaData.points || 1;
-
-                    if (result.has_answered) {
-                        if (badgeEl) badgeEl.classList.add('hidden');
-                        
-                        questionEl.innerHTML = `
-                            <div class="py-1 px-2 text-center space-y-1.5 my-0">
-                                <div class="w-8 h-8 mx-auto rounded-full bg-[#d4af37]/15 border border-[#d4af37]/40 flex items-center justify-center text-[#d4af37] shadow-xs">
-                                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-                                </div>
-                                <div class="space-y-0.5">
-                                    <p class="font-serif font-bold text-sm sm:text-base" style="color: #581c25;">Hai già risposto a questa domanda oggi.</p>
-                                    <p class="text-xs text-stone-600 italic font-light">Il sommelier ti aspetta domani per una nuova degustazione!</p>
-                                </div>
-                            </div>
-                        `;
-                        optionsEl.innerHTML = '';
-                    } else {
-                        if (badgeEl) {
-                            badgeEl.innerText = `✦ ${pts} ${pts === 1 ? 'Punto' : 'Punti'}`;
-                            badgeEl.classList.remove('hidden');
-                        }
-
-                        if (feedbackBox) {
-                            feedbackBox.innerHTML = `
-                                <p id="triviaFeedbackTitle" class="font-serif font-bold text-sm sm:text-base mb-1" style="color: #581c25;"></p>
-                                <p id="triviaExplanationText" class="text-xs sm:text-sm text-stone-600 font-light italic"></p>
-                            `;
-                        }
-
-                        questionEl.innerText = currentTriviaData.question_text;
-
-                        let optsHtml = '';
-                        currentTriviaData.options.forEach((opt, idx) => {
-                            optsHtml += `<button onclick="submitTriviaAnswer(${idx})" class="w-full text-left p-3 rounded-2xl border border-gold-400/40 hover:opacity-90 wine-card-bg text-white text-sm sm:text-base font-serif font-bold transition cursor-pointer shadow-sm">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
-                        });
-                        optionsEl.innerHTML = optsHtml;
-                    }
-
-                } else {
-                    questionEl.innerText = "Impossibile caricare il quiz del giorno.";
-                    optionsEl.innerHTML = '';
-                }
-            } catch (err) {
-                console.warn("Errore caricamento trivia:", err);
-                questionEl.innerText = "Quiz momentaneamente non disponibile.";
-                optionsEl.innerHTML = '';
-            }
+            loadDailyTrivia();
 
             setTimeout(() => {
                 contentBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
