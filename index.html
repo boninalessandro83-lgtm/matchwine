@@ -39,21 +39,6 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <script>
-        // === METTI LA PASSWORD QUI (SUBITO ALL'INIZIO DELLO SCRIPT) ===
-        (function() {
-            const sitePassword = "sommelier2026";
-            let isAuthorized = localStorage.getItem("matchwine_auth");
-
-            if (isAuthorized !== "true") {
-                let userInput = prompt("Inserisci la password per accedere a MatchWine in fase di test:");
-                if (userInput === sitePassword) {
-                    localStorage.setItem("matchwine_auth", "true");
-                } else {
-                    document.body.innerHTML = "<div style='text-align:center; padding-top:80px; font-family:sans-serif;'><h2>Accesso Negato</h2><p>Password errata o sito in manutenzione.</p></div>";
-                    throw new Error("Accesso non autorizzato");
-                }
-            }
-        })();
         
         tailwind.config = {
             theme: {
