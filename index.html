@@ -101,6 +101,13 @@
             :root { color-scheme: light only !important; }
         }
         
+        /* Ottimizzazione rendering font per coerenza tra locale e Netlify */
+        body, html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        
         body {
             background-color: #fcfbfa !important;
             background-image: 
@@ -1456,7 +1463,6 @@
 
             if (dropdownEl) dropdownEl.classList.add('hidden');
 
-            // Controllo preliminare per ospiti: verifica sul database corretto in base alla modalità (piatto o vino)
             if (!currentUser) {
                 try {
                     const tableName = searchMode === 'dish' ? 'dishes_free' : 'wines_free';
@@ -1469,7 +1475,6 @@
                         .limit(1);
 
                     if (error || !freeCheck || freeCheck.length === 0) {
-                        // Mostriamo la Card-Taccuino del Sommelier Bloccato
                         const welcomeState = document.getElementById('welcomeState');
                         const quickTry = document.getElementById('quickTrySection');
                         const resultsCont = document.getElementById('resultsContainer');
@@ -2228,7 +2233,6 @@
             if (paywall) paywall.classList.add('hidden');
         }
 
-        // === FUNZIONE DI PAGAMENTO STRIPE INTEGRATA ===
         async function buyPlan(planType) {
             if (!currentUser) {
                 showToast("Effettua l'accesso con Google per procedere con l'acquisto.");
@@ -2249,7 +2253,6 @@
                 return;
             }
 
-            // CORRETTO: Se è 'premium' usiamo 'subscription', altrimenti 'payment' per i crediti una tantum
             const paymentMode = (planType === 'premium') ? 'subscription' : 'payment';
 
             try {
