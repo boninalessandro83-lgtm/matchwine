@@ -101,13 +101,6 @@
             :root { color-scheme: light only !important; }
         }
         
-        /* Ottimizzazione rendering font per coerenza tra locale e Netlify */
-        body, html {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: optimizeLegibility;
-        }
-        
         body {
             background-color: #fcfbfa !important;
             background-image: 
@@ -178,7 +171,7 @@
         }
     </style>
 </head>
-<body class="bg-[#faf7f2] text-stone-900 max-w-md mx-auto font-sans antialiased border-x border-stone-200 shadow-2xl relative min-h-screen flex flex-col page-container">
+<body class="bg-[#faf7f2] text-stone-900 max-w-md mx-auto font-sans antialiased shadow-2xl relative min-h-screen flex flex-col page-container">
     
    <!-- HEADER -->
     <header class="sticky top-0 z-50 px-4 py-3 flex items-center justify-between bg-white border-b border-stone-200/60 shadow-2xs relative">
@@ -227,7 +220,7 @@
                     <span class="text-amber-700 not-italic font-sans font-bold">✦ <span id="modalUserPoints">0</span> pt</span>
                  </p>
                 </div>
-        </div>
+            </div>
 
             <!-- SEZIONE TACCUINO PREFERITI -->
             <div class="space-y-2">
@@ -505,7 +498,7 @@
 
         <!-- RISULTATI -->
         <div id="resultsContainer" class="hidden space-y-4 w-full max-w-xl pb-6">
-            
+           
            <!-- BARRA TAB DINAMICA -->
             <div id="tabsBarContainer" class="w-full bg-[#fdfbf7] p-1.5 rounded-2xl border border-[#d4af37]/40 shadow-xs flex items-center justify-between gap-1 overflow-x-auto no-scrollbar"></div>
 
@@ -1963,8 +1956,6 @@
                 let wineMatchingReason = currentMatchObj.matching_reason || currentMatchObj.trad_matching_reason || currentMatchObj.gour_matching_reason || "Questo calice sposa perfettamente il piatto grazie al perfetto bilanciamento tra struttura, acidità e persistenza aromatica.";
                 
                 let dishImageToUse = readerPageIndex === 1 ? 'images/Piattotradiz.png' : 'images/Piattogourmet.png';
-                
-                let wineTitleToUse = d.wine_name || 'Vino in cantina';
 
                 const customDishCard = `
                 <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
@@ -1999,6 +1990,7 @@
                     </div>
                 </div>`;
 
+                let wineTitleToUse = dishInputEl ? dishInputEl.value.trim() : (d.wine_name || 'Vino in cantina');
                 let wineDescToUse = d.wine_description || 'Straordinaria etichetta di grande pregio, caratterizzata da una complessità olfattiva unica e da una struttura perfettamente equilibrata.';
                 
                 const userWineCard = `
