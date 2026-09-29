@@ -358,7 +358,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
                 </div>
                 
-                <input type="text" id="dishInput" autocomplete="off" placeholder="Es. Carbonara, risotto..." class="w-full bg-transparent text-[#520d1a] placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none pr-20" required />
+                <input type="text" id="dishInput" autocomplete="off" placeholder="Es. Carbonara, risotto..." class="w-full bg-transparent text-[#520d1a] placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none pr-28" required />
                 
                 <button type="button" id="clearBtn" onclick="clearInput()" class="hidden text-stone-400 hover:text-[#520d1a] p-1 transition-colors mr-2 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
                 
@@ -412,12 +412,12 @@
                       <h3 class="font-serif italic font-bold text-base sm:text-lg tracking-wide leading-tight" style="color: #581c25;">Quiz Enologico del Giorno</h3>
                       </div>
 
-                    <!-- SEZIONE DESTRA: Coppa originale e Pulsante GIOCA -->
-                       <div class="flex items-center shrink-0 relative">
-                       <!-- Bottone Classifica con coppa grande e posizionata esattamente a sinistra del Gioca -->
-                       <button onclick="toggleLeaderboardBox()" class="flex items-center justify-center transition hover:scale-110 cursor-pointer p-0 shrink-0 relative z-10 -mr-3 -my-6" title="Classifica Cantine">
-                       <img src="images/coppa1.png" alt="Classifica" style="width: 75px; height: 75px; min-width: 75px;" class="object-contain filter drop-shadow-xl" />
-                        </button>
+                    <!-- SEZIONE DESTRA: Coppa grande originale e Pulsante GIOCA -->
+                       <div class="flex items-center shrink-0">
+                       <!-- Bottone Classifica con coppa1.png grande sovrapposta a sinistra del GIOCA -->
+                      <button onclick="toggleLeaderboardBox()" class="flex items-center justify-center transition hover:scale-110 cursor-pointer p-0 shrink-0 relative z-20 -mr-3 -my-6" title="Classifica Cantine">
+                      <img src="images/coppa1.png" alt="Classifica" style="width: 75px; height: 75px; min-width: 75px;" class="object-contain filter drop-shadow-xl" />
+                      </button>
 
                         <!-- Pulsante Gioca (visibile da chiuso) -->
                         <button onclick="toggleTriviaBox()" id="triviaToggleBtn" class="inline-flex items-center gap-1.5 wine-primary-btn text-white px-5 py-3 rounded-xl text-xs font-serif font-bold tracking-wider uppercase transition cursor-pointer shadow-sm shrink-0 relative z-0">
