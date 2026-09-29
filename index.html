@@ -906,270 +906,277 @@
             triviaWebhookUrl: 'https://cjjzpejwczllqwtquszm.supabase.co/functions/v1/Matchwine-trivia'
         };
 
-        async function toggleLeaderboardBox() {
-            const contentBox = document.getElementById('leaderboardContentBox');
-            if (!contentBox) return;
-
-            const isHidden = contentBox.classList.contains('hidden');
-            if (!isHidden) {
-                contentBox.classList.add('hidden');
-                if (window.lucide) lucide.createIcons();
-                return;
-            }
-
-            contentBox.classList.remove('hidden');
-            loadLeaderboardData(currentLeaderboardType);
-
-            setTimeout(() => {
-                contentBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
-
-            if (window.lucide) lucide.createIcons();
+         // 1. Apertura / Chiusura del Box Trivia
+          async function toggleTriviaBox() {
+          if (!currentUser) {
+           showToast("Effettua l'accesso con Google per partecipare al Quiz Enologico!");
+           if (typeof loginWithGoogle === 'function') loginWithGoogle();
+           return;
         }
-
-        function switchLeaderboardTab(type) {
-          const btnMonthly = document.getElementById('tabMonthly');
-          const btnAnnual = document.getElementById('tabAnnual');
-
-          const activeClasses = "flex-1 py-1.5 text-xs font-serif font-bold rounded-full transition-all bg-[#4A1525] text-white shadow-sm";
-          const inactiveClasses = "flex-1 py-1.5 text-xs font-serif font-medium rounded-full transition-all text-stone-700 hover:text-stone-900";
-
-          if (type === 'monthly') {
-              btnMonthly.className = activeClasses;
-              btnAnnual.className = inactiveClasses;
-          } else {
-              btnAnnual.className = activeClasses;
-              btnMonthly.className = inactiveClasses;
-          }
-
-          loadLeaderboardData(type);
-        }
-
-        async function loadLeaderboardData(type) {
-            const container = document.getElementById('leaderboardListContainer');
-            if (!container) return;
-
-            container.innerHTML = '<p class="text-xs font-serif italic text-stone-400 text-center py-3">Calcolo posizioni in cantina...</p>';
-
-            try {
-                const pointsColumn = (type === 'monthly') ? 'monthly_points' : 'annual_points';
-
-                const { data, error } = await supabaseClient
-                    .from('profiles')
-                    .select(`full_name, email, ${pointsColumn}`)
-                    .gt(pointsColumn, 0)
-                    .order(pointsColumn, { ascending: false })
-                    .limit(10);
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    container.innerHTML = `<p class="text-xs font-serif italic text-stone-500 text-center py-3">Nessuna degustazione registrata per questo periodo.</p>`;
-                    return;
-                }
-
-                let html = '';
-                data.forEach((user, index) => {
-                    const name = user.full_name || user.email?.split('@')[0] || 'Sommelier Anonimo';
-                    const points = user[pointsColumn] || 0;
-
-                    let rankBadge = `<span class="w-5 h-5 rounded-full bg-stone-100 text-stone-600 text-[10px] font-bold flex items-center justify-center">${index + 1}°</span>`;
-                    if (index === 0) rankBadge = `<span class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center shadow-xs">1°</span>`;
-                    if (index === 1) rankBadge = `<span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center justify-center shadow-xs">2°</span>`;
-                    if (index === 2) rankBadge = `<span class="w-5 h-5 rounded-full bg-orange-100 text-orange-800 text-[10px] font-bold flex items-center justify-center shadow-xs">3°</span>`;
-
-                    html += `
-                        <div class="flex items-center justify-between p-2 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                            <div class="flex items-center gap-2.5">
-                                ${rankBadge}
-                                <span class="font-serif font-bold text-xs text-wine-900">${name}</span>
-                            </div>
-                            <span class="text-[10px] font-serif font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/50">✦ ${points} pt</span>
-                        </div>
-                    `;
-                });
-
-                container.innerHTML = html;
-
-            } catch (err) {
-                console.error("Errore caricamento classifica:", err);
-                container.innerHTML = '<p class="text-xs font-serif italic text-red-500 text-center py-3">Impossibile caricare la classifica al momento.</p>';
-            }
-        }
-
-        async function loadDailyTrivia() {
-            const questionEl = document.getElementById('triviaQuestionText');
-            const optionsEl = document.getElementById('triviaOptionsList');
-            const badgeEl = document.getElementById('triviaPointsBadge');
-
-            if (!questionEl || !optionsEl) return;
-
-            try {
-                const res = await fetch(config.triviaWebhookUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: currentUser ? currentUser.id : 'anonymous' })
-                });
-                const result = await res.json();
-                
-                if (result.status === 'success' && result.data) {
-                    currentTriviaData = result.data;
-                    const pts = currentTriviaData.points || 1;
-
-                    if (result.has_answered) {
-                        if (badgeEl) badgeEl.classList.add('hidden');
-                        questionEl.innerHTML = `
-                            <div class="py-1 px-2 text-center space-y-1.5 my-0">
-                                <div class="w-8 h-8 mx-auto rounded-full bg-[#d4af37]/15 border border-[#d4af37]/40 flex items-center justify-center text-[#d4af37] shadow-xs">
-                                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-                                </div>
-                                <div class="space-y-0.5">
-                                    <p class="font-serif font-bold text-sm sm:text-base" style="color: #581c25;">Hai già risposto a questa domanda oggi.</p>
-                                    <p class="text-xs text-stone-600 italic font-light">Il sommelier ti aspetta domani per una nuova degustazione!</p>
-                                </div>
-                            </div>
-                        `;
-                        optionsEl.innerHTML = '';
-                    } else {
-                        if (badgeEl) {
-                            badgeEl.innerText = `✦ ${pts} ${pts === 1 ? 'Punto' : 'Punti'}`;
-                            badgeEl.classList.remove('hidden');
-                        }
-                        questionEl.innerText = currentTriviaData.question_text;
-
-                        let optsHtml = '';
-                        currentTriviaData.options.forEach((opt, idx) => {
-                            optsHtml += `<button onclick="submitTriviaAnswer(${idx})" class="w-full text-left p-3 rounded-2xl border border-gold-400/40 hover:opacity-90 wine-card-bg text-white text-sm sm:text-base font-serif font-bold transition cursor-pointer shadow-sm">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
-                        });
-                        optionsEl.innerHTML = optsHtml;
-                    }
-                }
-            } catch (err) {
-                console.warn("Quiz del giorno non disponibile al momento.", err);
-            }
-            if (window.lucide) lucide.createIcons();
-        }
-
-        async function toggleTriviaBox() {
-            if (!currentUser) {
-                showToast("Effettua l'accesso con Google per partecipare al Quiz Enologico!");
-                loginWithGoogle();
-                return;
-            }
 
             const contentBox = document.getElementById('triviaContentBox');
             const toggleBtn = document.getElementById('triviaToggleBtn');
             const closeBtn = document.getElementById('triviaCloseBtn');
             const questionEl = document.getElementById('triviaQuestionText');
             const optionsEl = document.getElementById('triviaOptionsList');
-            const feedbackBox = document.getElementById('triviaFeedbackBox');
-            const badgeEl = document.getElementById('triviaPointsBadge');
 
             if (!contentBox || !questionEl || !optionsEl) return;
 
             const isHidden = contentBox.classList.contains('hidden');
             if (!isHidden) {
-                contentBox.classList.add('hidden');
-                if (toggleBtn) toggleBtn.classList.remove('hidden');
-                if (closeBtn) closeBtn.classList.add('hidden');
-                if (window.lucide) lucide.createIcons();
-                return;
+             contentBox.classList.add('hidden');
+              if (toggleBtn) toggleBtn.classList.remove('hidden');
+             if (closeBtn) closeBtn.classList.add('hidden');
+             if (window.lucide) lucide.createIcons();
+             return;
             }
 
-            contentBox.classList.remove('hidden');
-            if (toggleBtn) toggleBtn.classList.add('hidden');
-            if (closeBtn) closeBtn.classList.remove('hidden');
+          contentBox.classList.remove('hidden');
+          if (toggleBtn) toggleBtn.classList.add('hidden');
+          if (closeBtn) closeBtn.classList.remove('hidden');
 
-            loadDailyTrivia();
+           await loadDailyTrivia();
+         setTimeout(() => {
+            contentBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
 
-            setTimeout(() => {
-                contentBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
-
-            if (window.lucide) lucide.createIcons();
+          if (window.lucide) lucide.createIcons();
         }
 
-        async function submitTriviaAnswer(selectedIndex) {
-            if (!currentUser) {
-                showToast("Accedi con Google per partecipare al Quiz!");
-                loginWithGoogle();
-                return;
-            }
-            if (!currentTriviaData) return;
+         // 2. Caricamento della domanda del giorno (tramite webhook o backend)
+         async function loadDailyTrivia() {
+         const questionEl = document.getElementById('triviaQuestionText');
+         const optionsEl = document.getElementById('triviaOptionsList');
+         const badgeEl = document.getElementById('triviaPointsBadge');
 
-            const isCorrect = selectedIndex === currentTriviaData.correct_option_index;
+          if (!questionEl || !optionsEl) return;
+
+          try {
+           const res = await fetch(config.triviaWebhookUrl, {
+             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: currentUser ? currentUser.id : 'anonymous' })
+        });
+            const result = await res.json();
+        
+            if (result.status === 'success' && result.data) {
+            currentTriviaData = result.data;
             const pts = currentTriviaData.points || 1;
 
-            const optionButtons = document.querySelectorAll('#triviaOptionsList button');
-            optionButtons.forEach((btn, idx) => {
-                btn.disabled = true;
-                if (idx === currentTriviaData.correct_option_index) {
-                    btn.classList.remove('wine-card-bg');
-                    btn.style.backgroundColor = '#15803d';
-                    btn.style.borderColor = '#16a34a';
-                } else if (idx === selectedIndex && !isCorrect) {
-                    btn.classList.remove('wine-card-bg');
-                    btn.style.backgroundColor = '#b91c1c';
-                    btn.style.borderColor = '#dc2626';
-                } else {
-                    btn.style.opacity = '0.4';
+            if (result.has_answered) {
+                if (badgeEl) badgeEl.classList.add('hidden');
+                questionEl.innerHTML = `
+                    <div class="py-1 px-2 text-center space-y-1.5 my-0">
+                        <div class="w-8 h-8 mx-auto rounded-full bg-[#d4af37]/15 border border-[#d4af37]/40 flex items-center justify-center text-[#d4af37] shadow-xs">
+                            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                        </div>
+                        <div class="space-y-0.5">
+                            <p class="font-serif font-bold text-sm sm:text-base" style="color: #581c25;">Hai già risposto a questa domanda oggi.</p>
+                            <p class="text-xs text-stone-600 italic font-light">Il sommelier ti aspetta domani per una nuova degustazione!</p>
+                        </div>
+                    </div>
+                `;
+                optionsEl.innerHTML = '';
+            } else {
+                if (badgeEl) {
+                    badgeEl.innerText = `✦ ${pts} ${pts === 1 ? 'Punto' : 'Punti'}`;
+                    badgeEl.classList.remove('hidden');
                 }
-            });
+                questionEl.innerText = currentTriviaData.question_text;
 
-            try {
-                const { error } = await supabaseClient.rpc('record_trivia_answer', {
-                    p_user_id: currentUser.id,
-                    p_question_id: currentTriviaData.id,
-                    p_selected_option: selectedIndex,
-                    p_is_correct: isCorrect,
-                    p_points: pts
+                let optsHtml = '';
+                currentTriviaData.options.forEach((opt, idx) => {
+                    optsHtml += `<button onclick="submitTriviaAnswer(${idx})" class="w-full text-left p-3 rounded-2xl border border-gold-400/40 hover:opacity-90 wine-card-bg text-white text-sm sm:text-base font-serif font-bold transition cursor-pointer shadow-sm">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
                 });
-
-                if (error) throw error;
-
-                const feedbackBox = document.getElementById('triviaFeedbackBox');
-                const fbTitle = document.getElementById('triviaFeedbackTitle');
-                const fbExp = document.getElementById('triviaExplanationText');
-
-                if (feedbackBox && fbTitle && fbExp) {
-                    fbTitle.innerText = isCorrect ? "✦ Risposta Esatta! Punto accreditato alla tua cantina." : "✗ Risposta errata. Sarà per la prossima degustazione.";
-                    fbExp.innerText = currentTriviaData.explanation || "";
-                    feedbackBox.classList.remove('hidden');
-                    feedbackBox.style.display = 'block';
-                }
-
-                setTimeout(() => {
-                    const badgeEl = document.getElementById('triviaPointsBadge');
-                    if (badgeEl) badgeEl.classList.add('hidden');
-
-                    const questionEl = document.getElementById('triviaQuestionText');
-                    const optionsEl = document.getElementById('triviaOptionsList');
-                    if (questionEl) {
-                        questionEl.innerHTML = `
-                            <div class="py-1 px-2 text-center space-y-1.5 my-0">
-                                <div class="w-8 h-8 mx-auto rounded-full bg-[#d4af37]/15 border border-[#d4af37]/40 flex items-center justify-center text-[#d4af37] shadow-xs">
-                                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-                                </div>
-                                <div class="space-y-0.5">
-                                    <p class="font-serif font-bold text-sm sm:text-base" style="color: #581c25;">Hai già risposto a questa domanda oggi.</p>
-                                    <p class="text-xs text-stone-600 italic font-light">Il sommelier ti aspetta domani per una nuova degustazione!</p>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    if (optionsEl) optionsEl.innerHTML = '';
-                    if (window.lucide) lucide.createIcons();
-                }, 1200);
-
-                updateAuthUI(currentUser);
-                showToast(isCorrect ? "Risposta esatta! Punto registrato." : "Risposta registrata.");
-
-            } catch (err) {
-                console.error("Errore salvataggio risposta trivia:", err);
-                showToast("Hai già risposto a questo quiz oggi.");
-                toggleTriviaBox();
+                optionsEl.innerHTML = optsHtml;
             }
         }
+    } catch (err) {
+        console.warn("Quiz del giorno non disponibile al momento.", err);
+    }
+    if (window.lucide) lucide.createIcons();
+}
+
+// 3. Invio della risposta e chiamata RPC Supabase
+async function submitTriviaAnswer(selectedIndex) {
+    if (!currentUser) {
+        showToast("Accedi con Google per partecipare al Quiz!");
+        if (typeof loginWithGoogle === 'function') loginWithGoogle();
+        return;
+    }
+    if (!currentTriviaData) return;
+
+    const isCorrect = selectedIndex === currentTriviaData.correct_option_index;
+    const pts = currentTriviaData.points || 1;
+
+    const optionButtons = document.querySelectorAll('#triviaOptionsList button');
+    optionButtons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === currentTriviaData.correct_option_index) {
+            btn.classList.remove('wine-card-bg');
+            btn.style.backgroundColor = '#15803d';
+            btn.style.borderColor = '#16a34a';
+        } else if (idx === selectedIndex && !isCorrect) {
+            btn.classList.remove('wine-card-bg');
+            btn.style.backgroundColor = '#b91c1c';
+            btn.style.borderColor = '#dc2626';
+        } else {
+            btn.style.opacity = '0.4';
+        }
+    });
+
+    try {
+        const { error } = await supabaseClient.rpc('record_trivia_answer', {
+            p_user_id: currentUser.id,
+            p_question_id: currentTriviaData.id,
+            p_selected_option: selectedIndex,
+            p_is_correct: isCorrect,
+            p_points: pts
+        });
+
+        if (error) throw error;
+
+        const feedbackBox = document.getElementById('triviaFeedbackBox');
+        const fbTitle = document.getElementById('triviaFeedbackTitle');
+        const fbExp = document.getElementById('triviaExplanationText');
+
+        if (feedbackBox && fbTitle && fbExp) {
+            fbTitle.innerText = isCorrect ? "✦ Risposta Esatta! Punto accreditato alla tua cantina." : "✗ Risposta errata. Sarà per la prossima degustazione.";
+            fbExp.innerText = currentTriviaData.explanation || "";
+            feedbackBox.classList.remove('hidden');
+            feedbackBox.style.display = 'block';
+        }
+
+        setTimeout(() => {
+            const badgeEl = document.getElementById('triviaPointsBadge');
+            if (badgeEl) badgeEl.classList.add('hidden');
+
+            const questionEl = document.getElementById('triviaQuestionText');
+            const optionsEl = document.getElementById('triviaOptionsList');
+            if (questionEl) {
+                questionEl.innerHTML = `
+                    <div class="py-1 px-2 text-center space-y-1.5 my-0">
+                        <div class="w-8 h-8 mx-auto rounded-full bg-[#d4af37]/15 border border-[#d4af37]/40 flex items-center justify-center text-[#d4af37] shadow-xs">
+                            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                        </div>
+                        <div class="space-y-0.5">
+                            <p class="font-serif font-bold text-sm sm:text-base" style="color: #581c25;">Hai già risposto a questa domanda oggi.</p>
+                            <p class="text-xs text-stone-600 italic font-light">Il sommelier ti aspetta domani per una nuova degustazione!</p>
+                        </div>
+                    </div>
+                `;
+            }
+            if (optionsEl) optionsEl.innerHTML = '';
+            if (window.lucide) lucide.createIcons();
+        }, 1200);
+
+        if (typeof updateAuthUI === 'function') updateAuthUI(currentUser);
+        showToast(isCorrect ? "Risposta esatta! Punto registrato." : "Risposta registrata.");
+
+    } catch (err) {
+        console.error("Errore salvataggio risposta trivia:", err);
+        showToast("Hai già risposto a questo quiz oggi.");
+        toggleTriviaBox();
+    }
+}
+
+// 4. Apertura / Chiusura Box Classifica
+async function toggleLeaderboardBox() {
+    const contentBox = document.getElementById('leaderboardContentBox');
+    if (!contentBox) return;
+
+    const isHidden = contentBox.classList.contains('hidden');
+    if (!isHidden) {
+        contentBox.classList.add('hidden');
+        if (window.lucide) lucide.createIcons();
+        return;
+    }
+
+    contentBox.classList.remove('hidden');
+    loadLeaderboardData(currentLeaderboardType);
+
+    setTimeout(() => {
+        contentBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+
+    if (window.lucide) lucide.createIcons();
+}
+
+// 5. Cambio tab Classifica (Mensile / Annuale)
+function switchLeaderboardTab(type) {
+    currentLeaderboardType = type;
+    const btnMonthly = document.getElementById('tabMonthly');
+    const btnAnnual = document.getElementById('tabAnnual');
+
+    const activeClasses = "flex-1 py-1.5 text-xs font-serif font-bold rounded-full transition-all bg-[#4A1525] text-white shadow-sm";
+    const inactiveClasses = "flex-1 py-1.5 text-xs font-serif font-medium rounded-full transition-all text-stone-700 hover:text-stone-900";
+
+    if (type === 'monthly') {
+        btnMonthly.className = activeClasses;
+        btnAnnual.className = inactiveClasses;
+    } else {
+        btnAnnual.className = activeClasses;
+        btnMonthly.className = inactiveClasses;
+    }
+
+    loadLeaderboardData(type);
+}
+
+// 6. Caricamento dati della classifica da Supabase
+async function loadLeaderboardData(type) {
+    const container = document.getElementById('leaderboardListContainer');
+    if (!container) return;
+
+    // 1. Impostiamo un'altezza minima fissa al contenitore per evitare il "saltino" grafico
+    container.style.minHeight = '140px';
+
+    // Mostriamo il loader senza distruggere completamente il layout precedente
+    container.innerHTML = '<div class="flex items-center justify-center py-6"><p class="text-xs font-serif italic text-stone-400">Calcolo posizioni in cantina...</p></div>';
+
+    try {
+        const pointsColumn = (type === 'monthly') ? 'monthly_points' : 'annual_points';
+
+        const { data, error } = await supabaseClient
+            .from('profiles')
+            .select(`full_name, email, ${pointsColumn}`)
+            .order(pointsColumn, { ascending: false })
+            .limit(20);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            container.innerHTML = `<p class="text-xs font-serif italic text-stone-500 text-center py-3">Nessuna degustazione registrata per questo periodo.</p>`;
+            return;
+        }
+
+        let html = '';
+        data.forEach((user, index) => {
+            const name = user.full_name || user.email?.split('@')[0] || 'Sommelier Anonimo';
+            const points = user[pointsColumn] || 0;
+
+            let rankBadge = `<span class="w-5 h-5 rounded-full bg-stone-100 text-stone-600 text-[10px] font-bold flex items-center justify-center">${index + 1}°</span>`;
+            if (index === 0) rankBadge = `<span class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center shadow-xs">1°</span>`;
+            if (index === 1) rankBadge = `<span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center justify-center shadow-xs">2°</span>`;
+            if (index === 2) rankBadge = `<span class="w-5 h-5 rounded-full bg-orange-100 text-orange-800 text-[10px] font-bold flex items-center justify-center shadow-xs">3°</span>`;
+
+            html += `
+                <div class="flex items-center justify-between p-2 rounded-xl bg-stone-50/70 border border-stone-200/60">
+                    <div class="flex items-center gap-2.5">
+                        ${rankBadge}
+                        <span class="font-serif font-bold text-xs text-wine-900">${name}</span>
+                    </div>
+                    <span class="text-[10px] font-serif font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/50">✦ ${points} pt</span>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+
+    } catch (err) {
+        console.error("Errore caricamento classifica:", err);
+        container.innerHTML = '<p class="text-xs font-serif italic text-red-500 text-center py-3">Impossibile caricare la classifica al momento.</p>';
+    }
+}
 
         const i18n = {
             it: {
@@ -1648,6 +1655,9 @@
             const contentContainer = document.getElementById('readerPageContent');
             if (!contentContainer) return;
 
+// Fissiamo un'altezza minima per evitare il flash grafico durante il cambio tab
+            contentContainer.style.minHeight = '400px';
+
             renderTabsBar();
 
             const maxPage = searchMode === 'dish' ? 4 : 2;
@@ -1672,6 +1682,10 @@
             }
 
             let html = '';
+
+            // DICHIARAZIONI GLOBALI DELLA FUNZIONE (disponibili ovunque senza errori)
+            let wineTitleToUse = dishInputEl ? dishInputEl.value.trim() : (d.wine_name || 'Vino in cantina');
+            let wineDescToUse = d.wine_description || 'Straordinaria etichetta di grande pregio, caratterizzata da una complessità olfattiva unica e da una struttura perfettamente equilibrata.';
 
             const isFromDatabase = d.source === 'database' || d.verified === true;
             const badgeHtml = isFromDatabase 
@@ -1966,9 +1980,6 @@
                         </div>
                     </div>
                 </div>`;
-
-                let wineTitleToUse = dishInputEl ? dishInputEl.value.trim() : (d.wine_name || 'Vino in cantina');
-                let wineDescToUse = d.wine_description || 'Straordinaria etichetta di grande pregio, caratterizzata da una complessità olfattiva unica e da una struttura perfettamente equilibrata.';
                 
                 const userWineCard = `
                 <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
