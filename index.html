@@ -38,7 +38,6 @@
     
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-        
         tailwind.config = {
             theme: {
                 extend: {
@@ -353,21 +352,21 @@
                 </div>
             </div>
             
-            <form id="searchForm" onsubmit="handleSearch(event)" class="relative flex items-center w-full bg-[#fdfbf7] rounded-2xl border border-[#d4af37]/50 shadow-luxury px-4 py-3">
-                <div id="searchIconContainer" class="text-[#520d1a]/60 flex items-center justify-center mr-3 shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
-                </div>
-                
-                <input type="text" id="dishInput" autocomplete="off" placeholder="Es. Carbonara, risotto..." class="w-full bg-transparent text-[#520d1a] placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none pr-28" required />
-                
-                <button type="button" id="clearBtn" onclick="clearInput()" class="hidden text-stone-400 hover:text-[#520d1a] p-1 transition-colors mr-2 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
-                
-                <button type="submit" id="submitBtn" class="px-5 py-2.5 wine-primary-btn text-white rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all hover:opacity-95 flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span id="btnMatchText">Abbina</span> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                </button>
-                
-                <div id="autocompleteDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-stone-300 shadow-xl overflow-hidden z-50 max-h-52 overflow-y-auto"></div>
-            </form>
+            <form id="searchForm" onsubmit="handleSearch(event)" class="relative flex items-center w-full bg-[#fdfbf7] rounded-2xl border border-[#d4af37]/50 shadow-luxury px-3.5 py-3 gap-2">
+    <div id="searchIconContainer" class="text-[#520d1a]/60 flex items-center justify-center shrink-0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+    </div>
+    
+    <input type="text" id="dishInput" autocomplete="off" placeholder="Es. Carbonara, risotto, sushi..." class="flex-1 bg-transparent text-[#520d1a] placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none min-w-0" required />
+    
+    <button type="button" id="clearBtn" onclick="clearInput()" class="hidden text-stone-400 hover:text-[#520d1a] p-1 transition-colors shrink-0 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
+    
+    <button type="submit" id="submitBtn" class="px-4 py-2 wine-primary-btn text-white rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all hover:opacity-95 flex items-center gap-1.5 shrink-0 cursor-pointer">
+        <span id="btnMatchText">Abbina</span> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    </button>
+    
+    <div id="autocompleteDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-stone-300 shadow-xl overflow-hidden z-50 max-h-52 overflow-y-auto"></div>
+</form>
         </section>
 
         <!-- PILLOLE "PROVA SUBITO" -->
@@ -414,7 +413,7 @@
 
                     <!-- SEZIONE DESTRA: Coppa grande originale e Pulsante GIOCA -->
                        <div class="flex items-center shrink-0">
-                       <!-- Bottone Classifica con coppa1.png grande sovrapposta a sinistra del GIOCA -->
+                    <!-- Bottone Classifica con coppa1.png grande sovrapposta a sinistra del GIOCA -->
                       <button onclick="toggleLeaderboardBox()" class="flex items-center justify-center transition hover:scale-110 cursor-pointer p-0 shrink-0 relative z-20 -mr-3 -my-6" title="Classifica Cantine">
                       <img src="images/coppa1.png" alt="Classifica" style="width: 75px; height: 75px; min-width: 75px;" class="object-contain filter drop-shadow-xl" />
                       </button>
@@ -575,6 +574,7 @@
                 <span class="font-serif italic text-base sm:text-lg font-medium tracking-wide text-wine-900 group-hover:text-gold-600 transition-colors">
                     Installa MatchWine sul tuo cellulare
                 </span>
+
                 <i id="installArrowIcon" data-lucide="chevron-down" class="w-4 h-4 text-gold-600 shrink-0 transition-transform group-hover:translate-y-0.5"></i>
             </div>
 
@@ -907,11 +907,11 @@
         };
 
          // 1. Apertura / Chiusura del Box Trivia
-          async function toggleTriviaBox() {
+         async function toggleTriviaBox() {
           if (!currentUser) {
-           showToast("Effettua l'accesso con Google per partecipare al Quiz Enologico!");
-           if (typeof loginWithGoogle === 'function') loginWithGoogle();
-           return;
+            showToast("Effettua l'accesso con Google per partecipare al Quiz Enologico!");
+            if (typeof loginWithGoogle === 'function') loginWithGoogle();
+            return;
         }
 
             const contentBox = document.getElementById('triviaContentBox');
@@ -936,26 +936,26 @@
           if (closeBtn) closeBtn.classList.remove('hidden');
 
            await loadDailyTrivia();
-         setTimeout(() => {
+          setTimeout(() => {
             contentBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }, 100);
 
           if (window.lucide) lucide.createIcons();
         }
 
-         // 2. Caricamento della domanda del giorno (tramite webhook o backend)
-         async function loadDailyTrivia() {
-         const questionEl = document.getElementById('triviaQuestionText');
-         const optionsEl = document.getElementById('triviaOptionsList');
-         const badgeEl = document.getElementById('triviaPointsBadge');
+          // 2. Caricamento della domanda del giorno (tramite webhook o backend)
+          async function loadDailyTrivia() {
+          const questionEl = document.getElementById('triviaQuestionText');
+          const optionsEl = document.getElementById('triviaOptionsList');
+          const badgeEl = document.getElementById('triviaPointsBadge');
 
           if (!questionEl || !optionsEl) return;
 
           try {
            const res = await fetch(config.triviaWebhookUrl, {
-             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: currentUser ? currentUser.id : 'anonymous' })
+                method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({ user_id: currentUser ? currentUser.id : 'anonymous' })
         });
             const result = await res.json();
         
@@ -1127,10 +1127,7 @@ async function loadLeaderboardData(type) {
     const container = document.getElementById('leaderboardListContainer');
     if (!container) return;
 
-    // 1. Impostiamo un'altezza minima fissa al contenitore per evitare il "saltino" grafico
     container.style.minHeight = '140px';
-
-    // Mostriamo il loader senza distruggere completamente il layout precedente
     container.innerHTML = '<div class="flex items-center justify-center py-6"><p class="text-xs font-serif italic text-stone-400">Calcolo posizioni in cantina...</p></div>';
 
     try {
@@ -1380,7 +1377,7 @@ async function loadLeaderboardData(type) {
             document.getElementById('loadingSubtitle').innerText = dict.loadingSubtitle;
             document.getElementById('welcomeTitle').innerText = dict.welcomeTitle;
             document.getElementById('welcomeDesc').innerHTML = currentLang === 'it' 
-                ? "Il tuo <strong class=\"font-semibold text-[#520d1a]\">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta." 
+                ? "Il tuo <strong class=\"font-semibold text-[#520d1a]\">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta[cite: 1]." 
                 : "Let our <strong class=\"font-semibold text-[#520d1a]\">AI Sommelier</strong> guide you to the perfect wine pairing.";
             if (window.lucide) lucide.createIcons();
         }
@@ -1572,13 +1569,30 @@ async function loadLeaderboardData(type) {
                     throw "Formato dati non valido";
                 }
 
+                // Forza l'aggiornamento immediato dei crediti dal database dopo la ricerca
+                if (currentUser) {
+                    const { data: updatedProfile } = await supabaseClient
+                        .from('profiles')
+                        .select('credits_remaining, plan, is_active_subscription')
+                        .eq('id', currentUser.id)
+                        .single();
+                        
+                    if (updatedProfile) {
+                        const creditsLabel = document.getElementById('creditsCount');
+                        const isPrem = (updatedProfile.plan === 'monthly' || updatedProfile.plan === 'premium' || updatedProfile.plan === 'pro') && updatedProfile.is_active_subscription === true;
+                        if (creditsLabel) {
+                            creditsLabel.innerText = isPrem ? "Premium" : `${updatedProfile.credits_remaining} Crediti`;
+                        }
+                    }
+                }
+
                 const tabsBar = document.getElementById('tabsBarContainer');
                 if (tabsBar) tabsBar.style.display = 'flex';
 
                 renderTabsBar();
                 renderReaderPage();
                 showLoading(false);
-                
+
                 const welcomeState = document.getElementById('welcomeState');
                 const quickTry = document.getElementById('quickTrySection');
                 const resultsCont = document.getElementById('resultsContainer');
@@ -1655,7 +1669,6 @@ async function loadLeaderboardData(type) {
             const contentContainer = document.getElementById('readerPageContent');
             if (!contentContainer) return;
 
-// Fissiamo un'altezza minima per evitare il flash grafico durante il cambio tab
             contentContainer.style.minHeight = '400px';
 
             renderTabsBar();
@@ -1683,8 +1696,7 @@ async function loadLeaderboardData(type) {
 
             let html = '';
 
-            // DICHIARAZIONI GLOBALI DELLA FUNZIONE (disponibili ovunque senza errori)
-            let wineTitleToUse = dishInputEl ? dishInputEl.value.trim() : (d.wine_name || 'Vino in cantina');
+            let wineTitleToUse = d.wine_name || d.wine_name_corrected || (dishInputEl ? dishInputEl.value.trim() : 'Vino in cantina');
             let wineDescToUse = d.wine_description || 'Straordinaria etichetta di grande pregio, caratterizzata da una complessità olfattiva unica e da una struttura perfettamente equilibrata.';
 
             const isFromDatabase = d.source === 'database' || d.verified === true;
@@ -1696,17 +1708,16 @@ async function loadLeaderboardData(type) {
                 let cleanDishName = (d.dish_name || (dishInputEl ? dishInputEl.value.trim() : '') || 'Carbonara').replace(/([aeiouàèìòù])\1{2,}/gi, '$1');
 
                 const formatWineTitleParts = (fullTitle) => {
-                    if (!fullTitle) return { winery: 'Vino Consigliato', type: '', region: '' };
+                    if (!fullTitle) return { winery: 'Vino Consigliato', type: '' };
                     let cleaned = fullTitle.replace(/[-–—]/g, '|');
                     let parts = cleaned.split('|').map(p => p.trim()).filter(Boolean);
                     let winery = parts[0] ? parts[0].toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase()) : 'Selezionato';
                     let type = parts.length > 1 ? parts[1].toUpperCase() : '';
-                    let region = parts.length > 2 ? parts[parts.length - 1].toUpperCase() : '';
-                    if (parts.length === 1) return { winery: fullTitle, type: '', region: '' };
-                    return { winery, type, region };
+                    if (parts.length === 1) return { winery: fullTitle, type: '' };
+                    return { winery, type };
                 };
 
-                const wineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp, priceTag) => {
+                const wineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp, priceTag, regionVal, nationVal) => {
                     let parts = formatWineTitleParts(wineTitle);
                     let displayGlass = wineGlass && wineGlass.trim() !== '' ? wineGlass : 'Ballon / Calice ampio';
                     let displayTemp = wineTemp && wineTemp.trim() !== '' ? wineTemp : '16-18°C';
@@ -1740,7 +1751,14 @@ async function loadLeaderboardData(type) {
                                         <h3 class="font-serif font-bold leading-tight tracking-wide text-sm sm:text-base uppercase text-[#520d1a]">
                                             ${parts.type || parts.winery}
                                         </h3>
-                                        ${parts.region ? `<div class="text-[11px] sm:text-xs font-serif font-bold tracking-widest uppercase text-[#520d1a] pt-0.5">${parts.region}</div>` : ''}
+                                        
+                                        <!-- REGIONE E NAZIONE IN VERTICALE SOTTO AL VINO -->
+                                        ${regionVal ? `
+                                            <div class="pt-1 space-y-0.5">
+                                                <div class="text-[12px] sm:text-xs font-serif font-bold tracking-widest uppercase text-[#520d1a]">${regionVal}</div>
+                                                ${nationVal ? `<div class="text-[10px] sm:text-[11px] font-serif font-medium tracking-wider uppercase text-[#a37f37]">${nationVal}</div>` : ''}
+                                            </div>
+                                        ` : ''}
                                     </div>
                                 </div>
                                 <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-bold pt-1">
@@ -1777,7 +1795,7 @@ async function loadLeaderboardData(type) {
                     </div>`;
                 };
 
-                const sommelierWineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp) => {
+                const sommelierWineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp, regionVal, nationVal) => {
                     let parts = formatWineTitleParts(wineTitle);
                     let displayGlass = wineGlass && wineGlass.trim() !== '' ? wineGlass : 'Ballon / Calice ampio';
                     let displayTemp = wineTemp && wineTemp.trim() !== '' ? wineTemp : '16-18°C';
@@ -1811,7 +1829,12 @@ async function loadLeaderboardData(type) {
                                         <h3 class="font-serif font-bold leading-tight tracking-wide text-sm sm:text-base uppercase text-stone-100">
                                             ${parts.type || parts.winery}
                                         </h3>
-                                        ${parts.region ? `<div class="text-[11px] sm:text-xs font-serif font-bold tracking-widest uppercase text-stone-200 pt-0.5">${parts.region}</div>` : ''}
+                                        ${regionVal ? `
+                                            <div class="pt-1 space-y-0.5">
+                                                <div class="text-[12px] sm:text-xs font-serif font-bold tracking-widest uppercase text-stone-100">${regionVal}</div>
+                                                ${nationVal ? `<div class="text-[10px] sm:text-[11px] font-serif font-medium tracking-wider uppercase text-gold-300">${nationVal}</div>` : ''}
+                                            </div>
+                                        ` : ''}
                                     </div>
                                 </div>
                                 <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-stone-100 font-bold pt-1">
@@ -1924,19 +1947,48 @@ async function loadLeaderboardData(type) {
 
                 if (readerPageIndex >= 1 && readerPageIndex <= 3) {
                     const types = [
-                        { tag: 'Standard (<15€)', title: d.standard_wine, desc: d.standard_wine_desc, matching: d.standard_wine_matching, glass: d.standard_glass || d.standard_wine_glass || d.glass, temp: d.standard_temp || d.standard_wine_temp || d.temp },
-                        { tag: 'Plus (15-40€)', title: d.plus_wine, desc: d.plus_wine_desc, matching: d.plus_wine_matching, glass: d.plus_glass || d.plus_wine_glass || d.glass, temp: d.plus_temp || d.plus_wine_temp || d.temp },
-                        { tag: 'Prestige (>40€)', title: d.prestige_wine, desc: d.prestige_wine_desc, matching: d.prestige_wine_matching, glass: d.prestige_glass || d.prestige_wine_glass || d.glass, temp: d.prestige_temp || d.prestige_wine_temp || d.temp }
+                        { 
+                            tag: 'Standard (<15€)', 
+                            title: d.standard_wine, 
+                            desc: d.standard_wine_desc, 
+                            matching: d.standard_wine_matching, 
+                            glass: d.standard_glass || d.standard_wine_glass || d.glass, 
+                            temp: d.standard_temp || d.standard_wine_temp || d.temp, 
+                            region: d.standard_wine_region || d.standard_region || d.region, 
+                            nation: d.standard_wine_nation || d.standard_nazione || d.nazione 
+                        },
+                        { 
+                            tag: 'Plus (15-40€)', 
+                            title: d.plus_wine, 
+                            desc: d.plus_wine_desc, 
+                            matching: d.plus_wine_matching, 
+                            glass: d.plus_glass || d.plus_wine_glass || d.glass, 
+                            temp: d.plus_temp || d.plus_wine_temp || d.temp, 
+                            region: d.plus_wine_region || d.plus_region || d.region, 
+                            nation: d.plus_wine_nation || d.plus_nazione || d.nazione 
+                        },
+                        { 
+                            tag: 'Prestige (>40€)', 
+                            title: d.prestige_wine, 
+                            desc: d.prestige_wine_desc, 
+                            matching: d.prestige_wine_matching, 
+                            glass: d.prestige_glass || d.prestige_wine_glass || d.glass, 
+                            temp: d.prestige_temp || d.prestige_wine_temp || d.temp, 
+                            region: d.prestige_wine_region || d.prestige_region || d.region, 
+                            nation: d.prestige_wine_nation || d.prestige_nazione || d.nazione 
+                        }
                     ];
                     const wineInfo = types[readerPageIndex - 1];
-                    html = wineCardHtml(wineInfo.title, wineInfo.desc, wineInfo.matching, wineInfo.glass, wineInfo.temp, wineInfo.tag) + dishCardHtml;
+                    html = wineCardHtml(wineInfo.title, wineInfo.desc, wineInfo.matching, wineInfo.glass, wineInfo.temp, wineInfo.tag, wineInfo.region, wineInfo.nation) + dishCardHtml;
                 } else if (readerPageIndex === 4) {
                     html = sommelierWineCardHtml(
                         d.sommelier_wine, 
                         d.sommelier_wine_desc, 
                         d.sommelier_principle, 
                         d.sommelier_glass || d.sommelier_wine_glass || d.glass, 
-                        d.sommelier_temp || d.sommelier_wine_temp || d.temp
+                        d.sommelier_temp || d.sommelier_wine_temp || d.temp,
+                        d.sommelier_wine_region || d.sommelier_region || d.region,
+                        d.sommelier_wine_nation || d.sommelier_nazione || d.nazione
                     ) + dishCardHtml;
                 }
             } else {
@@ -1981,6 +2033,13 @@ async function loadLeaderboardData(type) {
                     </div>
                 </div>`;
                 
+                let rawWineRegion = d.region || d.wine_region || d.trad_region || '';
+                if (rawWineRegion.toLowerCase().includes('alta cucina') || rawWineRegion.toLowerCase().includes('innovazione')) {
+                    rawWineRegion = '';
+                }
+                const wineRegionVal = rawWineRegion;
+                const wineNationVal = d.nazione || d.wine_nation || 'Italia';
+
                 const userWineCard = `
                 <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
                     <div class="text-center space-y-0.5">
@@ -2001,6 +2060,12 @@ async function loadLeaderboardData(type) {
                                 <h3 class="font-serif font-bold leading-tight tracking-wide text-sm uppercase" style="color: #520d1a;">
                                    ${wineTitleToUse}
                                 </h3>
+                                ${wineRegionVal ? `
+                                    <div class="pt-1 space-y-0.5">
+                                        <div class="text-[12px] sm:text-xs font-serif italic font-bold tracking-widest uppercase text-[#520d1a]">${wineRegionVal}</div>
+                                        ${wineNationVal ? `<div class="text-[10px] sm:text-[11px] font-serif font-medium tracking-wider uppercase text-[#a37f37]">${wineNationVal}</div>` : ''}
+                                    </div>
+                                ` : ''}
                             </div>
                             <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-normal pt-1">
                                 ${capitalizeFirstLetter(wineDescToUse)}
@@ -2186,7 +2251,7 @@ async function loadLeaderboardData(type) {
                 if (modal) {
                     document.getElementById('profileModal')?.classList.add('hidden');
                     document.getElementById('paywallModal')?.classList.add('hidden');
-                    
+                     
                     modal.classList.toggle('hidden');
                     if (!modal.classList.contains('hidden')) {
                         modal.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -2237,7 +2302,7 @@ async function loadLeaderboardData(type) {
 
             try {
                 showToast("Reindirizzamento al portale di pagamento sicuro...");
-                
+                 
                 const { data, error } = await supabaseClient.functions.invoke('create-checkout-session', {
                     body: { 
                         priceId: priceId, 
@@ -2341,11 +2406,49 @@ async function loadLeaderboardData(type) {
             if (premiumModal) premiumModal.classList.add('hidden');
             const expansionBox = document.getElementById('installExpansionBox');
             if (expansionBox) expansionBox.classList.add('hidden');
-            
+             
             switchSearchMode('dish');
             updateUiLanguage();
             if (window.lucide) lucide.createIcons();
         });
     </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
 </body>
 </html>
