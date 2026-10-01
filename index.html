@@ -398,7 +398,7 @@
             </div>
 
             <p id="welcomeDesc" class="text-[#520d1a]/85 font-serif italic text-sm leading-relaxed max-w-md mx-auto font-light">
-                Il tuo <strong class="font-semibold text-[#520d1a]">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta[cite: 1].
+                Il tuo <strong class="font-semibold text-[#520d1a]">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta.
             </p>
 
             <!-- SEZIONE GAMING / QUIZ DEL GIORNO E CLASSIFICA -->
@@ -469,6 +469,13 @@
                 </div>
             </div>
         </div>
+
+         <!-- Frase informativa dei premi (visibile solo in home) -->
+           <div id="prizesNoticeContainer" class="w-full text-center mt-3 mb-1 px-2">
+             <p class="font-serif italic text-sm font-bold text-[#520d1a] leading-relaxed tracking-wide">
+             🎁 In palio abbonamenti mensili e annuali per i vincitori delle classifiche
+            </p>
+           </div>
 
         <!-- CARICAMENTO -->
         <div id="loadingState" class="hidden flex-1 py-14 flex flex-col items-center justify-center space-y-4 text-center my-auto">
@@ -568,7 +575,7 @@
         </div>
 
         <!-- SEZIONE INSTALLAZIONE PWA -->
-        <div id="installSectionContainer" class="w-full max-w-xl px-4 mt-2.5 mb-2.5 text-center">
+        <div id="installSectionContainer" class="w-full max-w-xl px-4 mb-2.5 text-center" style="margin-top: 40px;">
             <div onclick="toggleInstallBox()" class="inline-flex items-center gap-2.5 cursor-pointer group py-1.5 px-3 transition-all">
                 <span class="text-gold-600 text-base transition-transform group-hover:scale-125">✦</span>
                 <span class="font-serif italic text-base sm:text-lg font-medium tracking-wide text-wine-900 group-hover:text-gold-600 transition-colors">
@@ -610,10 +617,10 @@
         </div>
 
         <!-- PRIVACY -->
-        <div class="w-full text-center mt-2.5 mb-2.5">
-            <a href="privacy.html" class="text-[9px] tracking-[0.2em] text-[#8c6d33] uppercase font-medium hover:underline inline-flex items-center gap-1.5">
-                <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span> PRIVACY POLICY <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span>
-            </a>
+        <div class="w-full text-center mb-2.5" style="margin-top: 38px;">
+          <a href="privacy.html" class="text-[9px] tracking-[0.2em] text-[#8c6d33] uppercase font-medium hover:underline inline-flex items-center gap-1.5">
+          <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span> PRIVACY POLICY <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span>
+          </a>
         </div>
     </main>
 
@@ -1377,7 +1384,7 @@ async function loadLeaderboardData(type) {
             document.getElementById('loadingSubtitle').innerText = dict.loadingSubtitle;
             document.getElementById('welcomeTitle').innerText = dict.welcomeTitle;
             document.getElementById('welcomeDesc').innerHTML = currentLang === 'it' 
-                ? "Il tuo <strong class=\"font-semibold text-[#520d1a]\">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta[cite: 1]." 
+                ? "Il tuo <strong class=\"font-semibold text-[#520d1a]\">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta." 
                 : "Let our <strong class=\"font-semibold text-[#520d1a]\">AI Sommelier</strong> guide you to the perfect wine pairing.";
             if (window.lucide) lucide.createIcons();
         }
@@ -1386,11 +1393,13 @@ async function loadLeaderboardData(type) {
             const resultsCont = document.getElementById('resultsContainer');
             const welcomeState = document.getElementById('welcomeState');
             const quickTry = document.getElementById('quickTrySection');
-            
+            const prizesNotice = document.getElementById('prizesNoticeContainer');
+
             if (resultsCont) resultsCont.classList.add('hidden');
             if (welcomeState) welcomeState.classList.remove('hidden');
             if (quickTry) quickTry.classList.remove('hidden');
-            
+            if (prizesNotice) prizesNotice.classList.remove('hidden');
+
             if (dishInputEl) dishInputEl.value = '';
             toggleClearButton();
             currentData = null;
@@ -2204,6 +2213,7 @@ async function loadLeaderboardData(type) {
             const results = document.getElementById('resultsContainer');
             const loading = document.getElementById('loadingState');
             const subtitleEl = document.getElementById('loadingSubtitle');
+            const prizesNotice = document.getElementById('prizesNoticeContainer');
 
             if (loadingTimer) {
                 clearTimeout(loadingTimer);
@@ -2215,6 +2225,7 @@ async function loadLeaderboardData(type) {
                 if (quick) quick.classList.add('hidden');
                 if (results) results.classList.add('hidden');
                 if (loading) loading.classList.remove('hidden');
+                if (prizesNotice) prizesNotice.classList.add('hidden');
 
                 if (subtitleEl) {
                     subtitleEl.innerText = currentLang === 'it' 
