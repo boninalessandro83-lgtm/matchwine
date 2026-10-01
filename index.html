@@ -333,7 +333,7 @@
     </header>
     
     <!-- MAIN -->
-    <main class="px-3 py-2.5 space-y-2.5 pb-6 flex-1 flex flex-col relative z-10 items-center">
+    <main class="px-3 py-2.5 space-y-2.5 pb-12 flex-1 flex flex-col relative z-10 items-center">
         
        <!-- SELETTORE PERCORSO -->
         <div class="w-full max-w-xl text-center space-y-1">
@@ -473,9 +473,57 @@
          <!-- Frase informativa dei premi (visibile solo in home) -->
            <div id="prizesNoticeContainer" class="w-full text-center mt-3 mb-1 px-2">
              <p class="font-serif italic text-sm font-bold text-[#520d1a] leading-relaxed tracking-wide">
-             🎁 In palio abbonamenti mensili e annuali per i vincitori delle classifiche
+             🎁 In palio abbonamenti per i migliori sommelier in classifica
             </p>
            </div>
+
+        <!-- SEZIONE INSTALLAZIONE PWA -->
+<div id="installSectionContainer" class="w-full max-w-xl px-4 mt-4 mb-4 text-center">
+    <div onclick="toggleInstallBox()" class="inline-flex items-center gap-2.5 cursor-pointer group py-1.5 px-3 transition-all">
+        <span class="text-gold-600 text-base transition-transform group-hover:scale-125">✦</span>
+        <span class="font-serif italic text-base sm:text-lg font-medium tracking-wide text-wine-900 group-hover:text-gold-600 transition-colors">
+            Installa MatchWine sul tuo cellulare
+        </span>
+        <i id="installArrowIcon" data-lucide="chevron-down" class="w-4 h-4 text-gold-600 shrink-0 transition-transform group-hover:translate-y-0.5"></i>
+    </div>
+
+    <div id="installExpansionBox" class="hidden w-full mt-2 animate-in fade-in slide-in-from-top-2 duration-300 text-left">
+        <div class="bg-white rounded-2xl p-4 border border-[#d4af37]/60 shadow-luxury space-y-3 relative">
+            <button onclick="toggleInstallBox()" class="absolute top-3 right-3 text-stone-400 hover:text-wine-900 p-1 rounded-full transition cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-[#fdfbf7] border border-gold-400/40 flex items-center justify-center p-0.5 shrink-0 shadow-xs">
+                    <img src="images/LogPic.png" alt="Logo" class="w-full h-full object-contain" />
+                </div>
+                <div>
+                    <h3 class="font-serif font-bold text-base text-wine-900 leading-tight">Guida all'installazione</h3>
+                    <p class="text-[10px] text-stone-500">Aggiungi l'app alla Home del tuo smartphone</p>
+                </div>
+            </div>
+            <div class="space-y-2 text-xs text-stone-700 bg-[#faf7f2] p-3 rounded-xl border border-stone-200">
+                <div>
+                    <strong class="text-wine-900 font-serif block mb-0.5">🍏 Per iPhone (Safari):</strong>
+                    Tocca il tasto <span class="font-semibold text-gold-600">Condividi</span> (freccia in alto), scorri e seleziona <span class="font-semibold text-wine-900">"Aggiungi alla schermata Home"</span>.
+                </div>
+                <div class="pt-1.5 border-t border-stone-200">
+                    <strong class="text-wine-900 font-serif block mb-0.5">🤖 Per Android (Chrome):</strong>
+                    Tocca i <span class="font-semibold text-gold-600">tre puntini</span> in alto a destra e seleziona <span class="font-semibold text-wine-900">"Installa app"</span> o <span class="font-semibold text-wine-900">"Aggiungi a Home"</span>.
+                </div>
+            </div>
+            <button id="directInstallBtn" onclick="triggerDirectInstall()" class="w-full wine-card-bg text-white font-bold text-xs py-2.5 rounded-xl shadow-md hover:opacity-95 transition uppercase tracking-wider hidden cursor-pointer">
+                Installa Subito
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- PRIVACY -->
+<div id="privacySection" class="w-full text-center mb-2.5" style="margin-top: 38px;">
+    <a href="privacy.html" class="text-[9px] tracking-[0.2em] text-[#8c6d33] uppercase font-medium hover:underline inline-flex items-center gap-1.5">
+        <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span> PRIVACY POLICY <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span>
+    </a>
+</div>
 
         <!-- CARICAMENTO -->
         <div id="loadingState" class="hidden flex-1 py-14 flex flex-col items-center justify-center space-y-4 text-center my-auto">
@@ -511,118 +559,89 @@
                 </button>
             </nav>
 
-            <!-- CHAT ENOLOGO -->
-            <div class="space-y-3 pt-4">
-                <div onclick="toggleEnologoChat()" class="wine-card-bg text-white p-3.5 sm:p-4 rounded-3xl border border-gold-400/40 shadow-wine-glow flex items-center justify-between cursor-pointer hover:opacity-95 transition group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-gold-300 shrink-0 group-hover:scale-110 transition-transform">
-                            <span class="text-sm">✦</span>
+            <!-- CHAT ENOLOGO (TEMA CREMA ANTICA + UX OTTIMIZZATA) -->
+<div class="space-y-3 pt-4">
+    <div onclick="toggleEnologoChat()" class="wine-card-bg text-white p-3.5 sm:p-4 rounded-3xl border border-gold-400/40 shadow-wine-glow flex items-center justify-between cursor-pointer hover:opacity-95 transition group">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-gold-300 shrink-0 group-hover:scale-110 transition-transform">
+                <span class="text-sm">✦</span>
+            </div>
+            <div>
+                <h4 class="font-serif font-bold text-xs sm:text-sm text-stone-100 tracking-wide">HAI BISOGNO DI UNA CONSULENZA D'AUTORE?</h4>
+                <p class="text-[10px] text-stone-300 font-light">Approfondisci ogni dettaglio con il nostro Enologo</p>
+            </div>
+        </div>
+        <i id="enologoChevron" data-lucide="chevron-down" class="w-4 h-4 text-gold-300 shrink-0 transition-transform duration-300"></i>
+    </div>
+
+    <div id="enologoChatContainer" class="hidden space-y-3 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+        <!-- Cornice esterna dorata sfumata -->
+        <div class="p-1.5 rounded-[28px] bg-gradient-to-br from-gold-500 via-gold-600 to-gold-400 shadow-2xl relative">
+            <!-- Sfondo interno in Crema Antica/Avorio Caldo -->
+            <div class="p-1 rounded-[24px] bg-[#E6DEC9]">
+                <div class="bg-[#F7F4EC] p-5 rounded-[22px] border border-gold-500/40 space-y-4 relative overflow-hidden shadow-inner">
+                    
+                    <!-- Intestazione -->
+                    <div class="grid grid-cols-[72px_1fr] items-center gap-4 relative z-10 border-b border-gold-900/10 pb-4">
+                        <div class="w-16 h-16 flex items-center justify-center text-gold-600 shrink-0">
+                            <img src="images/TastevinDis.png" alt="Tastevin" class="w-16 h-16 object-contain filter drop-shadow-md scale-125" />
                         </div>
-                        <div>
-                            <h4 class="font-serif font-bold text-xs sm:text-sm text-stone-100 tracking-wide">HAI BISOGNO DI UNA CONSULENZA D'AUTORE?</h4>
-                            <p class="text-[10px] text-stone-300 font-light">Approfondisci ogni dettaglio con il nostro Enologo</p>
+                        <div class="space-y-0.5">
+                            <h4 class="font-serif text-xl sm:text-2xl text-[#2C1D1F] font-bold leading-tight tracking-wide">L'Enologo Risponde</h4>
+                            <p class="text-[11px] sm:text-xs text-[#5A4548] font-light tracking-wide leading-snug">
+                                Per annate rare, varianti o abbinamenti fuori carta, chiedi al nostro esperto.
+                            </p>
                         </div>
                     </div>
-                    <i id="enologoChevron" data-lucide="chevron-down" class="w-4 h-4 text-gold-300 shrink-0 transition-transform duration-300"></i>
-                </div>
 
-                <div id="enologoChatContainer" class="hidden space-y-3 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <div class="p-1.5 rounded-[28px] bg-gradient-to-br from-gold-500 via-gold-600 to-gold-400 shadow-2xl relative">
-                        <div class="p-1 rounded-[24px] bg-stone-900">
-                            <div class="bg-stone-950 p-5 rounded-[22px] border border-gold-400/40 space-y-4 relative overflow-hidden">
-                                <div class="grid grid-cols-[72px_1fr] items-center gap-4 relative z-10 border-b border-stone-800 pb-4">
-                                    <div class="w-16 h-16 flex items-center justify-center text-gold-400 shrink-0">
-                                        <img src="images/TastevinDis.png" alt="Tastevin" class="w-16 h-16 object-contain filter brightness-125 scale-125" />
-                                    </div>
-                                    <div class="space-y-0.5">
-                                        <h4 class="font-serif text-xl sm:text-2xl text-stone-100 font-bold leading-tight tracking-wide">L'Enologo Risponde</h4>
-                                        <p class="text-[11px] sm:text-xs text-stone-400 font-light tracking-wide leading-snug">
-                                            Per annate rare, varianti o abbinamenti fuori carta, chiedi al nostro esperto.
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="space-y-3 relative z-10 pt-1">
-                                    <textarea id="aiSommelierInput" rows="2" placeholder="Scrivi qui il tuo quesito enologico..." class="w-full bg-stone-900 text-stone-100 placeholder-stone-500 text-xs font-medium p-3.5 rounded-xl border border-stone-800 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 focus:outline-none transition-all resize-none shadow-inner"></textarea>
-                                    <div class="grid grid-cols-3 gap-1.5 pt-0.5 pb-1">
-                                        <button type="button" onclick="fillQuickPrompt('Spiegami l\'abbinamento')" class="px-2 py-2 bg-stone-900 hover:bg-stone-800 border border-gold-400/30 rounded-lg text-[10px] font-medium text-gold-300 transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-95 text-center leading-tight cursor-pointer">
-                                            <i data-lucide="sparkles" class="w-3 h-3 text-gold-400 shrink-0"></i><span>Spiegami</span>
-                                        </button>
-                                        <button type="button" onclick="fillQuickPrompt('Anno o annata ideale')" class="px-2 py-2 bg-stone-900 hover:bg-stone-800 border border-gold-400/30 rounded-lg text-[10px] font-medium text-gold-300 transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-95 text-center leading-tight cursor-pointer">
-                                            <i data-lucide="calendar" class="w-3 h-3 text-gold-400 shrink-0"></i><span>Annata ideale</span>
-                                        </button>
-                                        <button type="button" onclick="fillQuickPrompt('Qualche curiosità sul vitigno?')" class="px-2 py-2 bg-stone-900 hover:bg-stone-800 border border-gold-400/30 rounded-lg text-[10px] font-medium text-gold-300 transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-95 text-center leading-tight cursor-pointer">
-                                            <i data-lucide="book-open" class="w-3 h-3 text-gold-400 shrink-0"></i><span>Curiosità</span>
-                                        </button>
-                                    </div>
-                                    <button type="button" onclick="askAiSommelier()" id="btnAskAi" class="w-full py-3.5 px-5 bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-stone-950 font-serif font-bold rounded-xl text-sm italic tracking-widest transition-all shadow-xl hover:shadow-gold-glow flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
-                                        <span>CHIEDI AL SOMMELIER</span>
-                                    </button>
-                                </div>
-                                <div id="aiSommelierResponseBox" class="hidden mt-4 p-4 bg-stone-900/90 rounded-xl border border-gold-400/40 space-y-2 relative z-10 animate-in fade-in duration-300">
-                                    <div class="flex items-center justify-between text-gold-400 font-serif font-bold text-sm border-b border-stone-800 pb-2">
-                                        <div class="flex items-center gap-2">
-                                            <img src="images/TastevinDis.png" alt="Tastevin" class="w-4 h-4 object-contain scale-150" />
-                                            <span>Il Parere dell'Enologo</span>
-                                        </div>
-                                    </div>
-                                    <p id="aiSommelierReplyText" class="text-xs text-stone-200 leading-relaxed font-light italic pt-1"></p>
-                                </div>
+                    <!-- Area Interattiva con Textarea e Pulsante X di cancellazione -->
+                    <div class="space-y-3 relative z-10 pt-1">
+                        <div class="relative">
+                            <textarea id="aiSommelierInput" rows="2" placeholder="Scrivi qui il tuo quesito enologico..." class="w-full bg-[#EFECE4] text-[#2C1D1F] placeholder-stone-500 text-xs font-medium p-3.5 pr-9 rounded-xl border border-gold-900/20 focus:border-gold-600 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all resize-none shadow-inner"></textarea>
+                            <!-- Pulsante X per cancellare il testo -->
+                            <button type="button" onclick="document.getElementById('aiSommelierInput').value = ''" class="absolute top-3 right-3 text-stone-400 hover:text-[#2C1D1F] transition-colors p-1 cursor-pointer" title="Cancella testo">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Bottoni Rapidi (Ora inviano direttamente la richiesta) -->
+                        <div class="grid grid-cols-3 gap-1.5 pt-0.5 pb-1">
+                            <button type="button" onclick="quickAskAiSommelier('Spiegami l\'abbinamento')" class="px-2 py-2 bg-[#EFECE4] hover:bg-[#E4DFC1] border border-gold-900/20 rounded-lg text-[10px] font-medium text-[#4A3236] transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-95 text-center leading-tight cursor-pointer">
+                                <i data-lucide="sparkles" class="w-3 h-3 text-gold-600 shrink-0"></i><span>Spiegami</span>
+                            </button>
+                            <button type="button" onclick="quickAskAiSommelier('Anno o annata ideale')" class="px-2 py-2 bg-[#EFECE4] hover:bg-[#E4DFC1] border border-gold-900/20 rounded-lg text-[10px] font-medium text-[#4A3236] transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-95 text-center leading-tight cursor-pointer">
+                                <i data-lucide="calendar" class="w-3 h-3 text-gold-600 shrink-0"></i><span>Annata ideale</span>
+                            </button>
+                            <button type="button" onclick="quickAskAiSommelier('Qualche curiosità sul vitigno?')" class="px-2 py-2 bg-[#EFECE4] hover:bg-[#E4DFC1] border border-gold-900/20 rounded-lg text-[10px] font-medium text-[#4A3236] transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-95 text-center leading-tight cursor-pointer">
+                                <i data-lucide="book-open" class="w-3 h-3 text-gold-600 shrink-0"></i><span>Curiosità</span>
+                            </button>
+                        </div>
+
+                        <!-- Bottone Invio Tradizionale -->
+                        <button type="button" onclick="askAiSommelier()" id="btnAskAi" class="w-full py-3.5 px-5 bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-stone-950 font-serif font-bold rounded-xl text-sm italic tracking-widest transition-all shadow-xl hover:shadow-gold-glow flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
+                            <span>CHIEDI AL SOMMELIER</span>
+                        </button>
+                    </div>
+
+                    <!-- Box Risposta dell'Enologo -->
+                    <div id="aiSommelierResponseBox" class="hidden mt-4 p-4 bg-[#EFECE4] rounded-xl border border-gold-500/40 space-y-2 relative z-10 animate-in fade-in duration-300 shadow-sm">
+                        <div class="flex items-center justify-between text-[#3A2326] font-serif font-bold text-sm border-b border-gold-900/10 pb-2">
+                            <div class="flex items-center gap-2">
+                                <img src="images/TastevinDis.png" alt="Tastevin" class="w-4 h-4 object-contain scale-150 filter sepia" />
+                                <span>Il Parere dell'Enologo</span>
                             </div>
                         </div>
+                        <p id="aiSommelierReplyText" class="text-xs text-[#2C1D1F] leading-relaxed font-light italic pt-1"></p>
                     </div>
+
                 </div>
             </div>
         </div>
+    </div> <!-- Chiusura di enologoChatContainer -->
+</div> <!-- Chiusura del blocco principale .space-y-3 pt-4 -->
 
-        <!-- SEZIONE INSTALLAZIONE PWA -->
-        <div id="installSectionContainer" class="w-full max-w-xl px-4 mt-2 mb-2.5 text-center"></div>
-            <div onclick="toggleInstallBox()" class="inline-flex items-center gap-2.5 cursor-pointer group py-1.5 px-3 transition-all">
-                <span class="text-gold-600 text-base transition-transform group-hover:scale-125">✦</span>
-                <span class="font-serif italic text-base sm:text-lg font-medium tracking-wide text-wine-900 group-hover:text-gold-600 transition-colors">
-                    Installa MatchWine sul tuo cellulare
-                </span>
 
-                <i id="installArrowIcon" data-lucide="chevron-down" class="w-4 h-4 text-gold-600 shrink-0 transition-transform group-hover:translate-y-0.5"></i>
-            </div>
-
-            <div id="installExpansionBox" class="hidden w-full mt-2 animate-in fade-in slide-in-from-top-2 duration-300 text-left">
-                <div class="bg-white rounded-2xl p-4 border border-[#d4af37]/60 shadow-luxury space-y-3 relative">
-                    <button onclick="toggleInstallBox()" class="absolute top-3 right-3 text-stone-400 hover:text-wine-900 p-1 rounded-full transition cursor-pointer">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-xl bg-[#fdfbf7] border border-gold-400/40 flex items-center justify-center p-0.5 shrink-0 shadow-xs">
-                            <img src="images/LogPic.png" alt="Logo" class="w-full h-full object-contain" />
-                        </div>
-                        <div>
-                            <h3 class="font-serif font-bold text-base text-wine-900 leading-tight">Guida all'installazione</h3>
-                            <p class="text-[10px] text-stone-500">Aggiungi l'app alla Home del tuo smartphone</p>
-                        </div>
-                    </div>
-                    <div class="space-y-2 text-xs text-stone-700 bg-[#faf7f2] p-3 rounded-xl border border-stone-200">
-                        <div>
-                            <strong class="text-wine-900 font-serif block mb-0.5">🍏 Per iPhone (Safari):</strong>
-                            Tocca il tasto <span class="font-semibold text-gold-600">Condividi</span> (freccia in alto), scorri e seleziona <span class="font-semibold text-wine-900">"Aggiungi alla schermata Home"</span>.
-                        </div>
-                        <div class="pt-1.5 border-t border-stone-200">
-                            <strong class="text-wine-900 font-serif block mb-0.5">🤖 Per Android (Chrome):</strong>
-                            Tocca i <span class="font-semibold text-gold-600">tre puntini</span> in alto a destra e seleziona <span class="font-semibold text-wine-900">"Installa app"</span> o <span class="font-semibold text-wine-900">"Aggiungi a Home"</span>.
-                        </div>
-                    </div>
-                    <button id="directInstallBtn" onclick="triggerDirectInstall()" class="w-full wine-card-bg text-white font-bold text-xs py-2.5 rounded-xl shadow-md hover:opacity-95 transition uppercase tracking-wider hidden cursor-pointer">
-                        Installa Subito
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- PRIVACY -->
-        <div class="w-full text-center mb-2.5" style="margin-top: 38px;">
-          <a href="privacy.html" class="text-[9px] tracking-[0.2em] text-[#8c6d33] uppercase font-medium hover:underline inline-flex items-center gap-1.5">
-          <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span> PRIVACY POLICY <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span>
-          </a>
-        </div>
-    </main>
+</main>
 
     <!-- TOAST -->
     <div id="premiumToast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-sm bg-[#fdfbf7] text-wine-900 border border-gold-400/60 px-5 py-3.5 rounded-2xl shadow-xl text-xs font-serif italic tracking-wide text-center transition-all duration-300 opacity-0 pointer-events-none">
@@ -1400,6 +1419,12 @@ async function loadLeaderboardData(type) {
             if (quickTry) quickTry.classList.remove('hidden');
             if (prizesNotice) prizesNotice.classList.remove('hidden');
 
+            // --- RIMOSTRA INSTALLA E PRIVACY NELLA HOME ---
+            const installSec = document.getElementById('installSectionContainer');
+            const privacySec = document.getElementById('privacySection');
+            if (installSec) installSec.classList.remove('hidden');
+            if (privacySec) privacySec.classList.remove('hidden');
+            
             if (dishInputEl) dishInputEl.value = '';
             toggleClearButton();
             currentData = null;
@@ -1446,7 +1471,13 @@ async function loadLeaderboardData(type) {
 
             if (dropdownEl) dropdownEl.classList.add('hidden');
 
-            if (!currentUser) {
+            // Nasconde separatamente installazione e privacy
+    const installSec = document.getElementById('installSectionContainer');
+    const privacySec = document.getElementById('privacySection');
+    if (installSec) installSec.classList.add('hidden');
+    if (privacySec) privacySec.classList.add('hidden');
+          
+                if (!currentUser) {
                 try {
                     const tableName = searchMode === 'dish' ? 'dishes_free' : 'wines_free';
                     const columnName = searchMode === 'dish' ? 'dish_name' : 'wine_name';
@@ -1578,7 +1609,6 @@ async function loadLeaderboardData(type) {
                     throw "Formato dati non valido";
                 }
 
-                // Forza l'aggiornamento immediato dei crediti dal database dopo la ricerca
                 if (currentUser) {
                     const { data: updatedProfile } = await supabaseClient
                         .from('profiles')
@@ -2142,70 +2172,115 @@ async function loadLeaderboardData(type) {
             return val.charAt(0).toUpperCase() + val.slice(1);
         }
 
-        async function askAiSommelier() {
-            const messageInput = document.getElementById('aiSommelierInput');
-            if (!messageInput) return;
-            const message = messageInput.value.trim();
-            if (!message) return;
+async function askAiSommelier() {
+    const messageInput = document.getElementById('aiSommelierInput');
+    if (!messageInput) return;
+    const message = messageInput.value.trim();
+    if (!message) return;
 
-            const btn = document.getElementById('btnAskAi');
-            const responseBox = document.getElementById('aiSommelierResponseBox');
-            const replyText = document.getElementById('aiSommelierReplyText');
+    const btn = document.getElementById('btnAskAi');
+    const responseBox = document.getElementById('aiSommelierResponseBox');
+    const replyText = document.getElementById('aiSommelierReplyText');
 
-            if (btn) {
-                btn.disabled = true;
-                btn.style.opacity = '0.7';
+    if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+    }
+    if (replyText) replyText.innerText = "L'enologo sta analizzando la vostra richiesta...";
+    if (responseBox) responseBox.classList.remove('hidden');
+
+    const currentDish = currentData ? (currentData.dish_name || currentData.wine_name) : (dishInputEl ? dishInputEl.value : "Piatto");
+
+    try {
+        // --- RECUPERO SICURO DELLA SESSIONE SUPABASE ---
+        const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+        
+        if (sessionError || !session || !session.access_token) {
+            if (responseBox) responseBox.classList.add('hidden');
+            // Se non c'è una sessione attiva, apriamo il paywall (o il login)
+            if (typeof openPaywall === 'function') {
+                openPaywall();
             }
-            if (replyText) replyText.innerText = "L'enologo sta analizzando la vostra richiesta...";
-            if (responseBox) responseBox.classList.remove('hidden');
-
-            const currentDish = currentData ? (currentData.dish_name || currentData.wine_name) : (dishInputEl ? dishInputEl.value : "Piatto");
-
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                const token = session ? session.access_token : '';
-
-                const response = await fetch(config.chatWebhookUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({
-                        message: message,
-                        lang: currentLang,
-                        context_dish: currentDish,
-                        context_wines: {
-                            standard: currentData?.standard_wine || '',
-                            plus: currentData?.plus_wine || '',
-                            prestige: currentData?.prestige_wine || '',
-                            sommelier_choice: currentData?.sommelier_wine || ''
-                        }
-                    })
-                });
-
-                let result = await response.json();
-                if (Array.isArray(result)) result = result[0];
-
-                if (result && (result.paywall === true || result.success === false || response.status === 402)) {
-                    if (responseBox) responseBox.classList.add('hidden');
-                    openPaywall();
-                    return;
-                }
-
-                if (response.status === 429) {
-                    if (replyText) replyText.innerText = result.reply || "Troppe richieste in pochi secondi.";
-                    return;
-                }
-
-                if (replyText) replyText.innerText = result.reply || result.message || "Ecco il parere ufficiale dell'enologo.";
-            } catch (err) {
-                if (replyText) replyText.innerText = "Si è verificato un errore di connessione.";
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                }
-                if (window.lucide) lucide.createIcons();
-            }
+            return;
         }
+
+        const token = session.access_token;
+
+        const response = await fetch(config.chatWebhookUrl, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json', 
+                'Authorization': `Bearer ${token}` 
+            },
+            body: JSON.stringify({
+                message: message,
+                lang: currentLang,
+                context_dish: currentDish,
+                context_wines: {
+                    standard: currentData?.standard_wine || '',
+                    plus: currentData?.plus_wine || '',
+                    prestige: currentData?.prestige_wine || '',
+                    sommelier_choice: currentData?.sommelier_wine || ''
+                }
+            })
+        });
+
+        let result;
+        try {
+            result = await response.json();
+        } catch (e) {
+            result = {};
+        }
+        if (Array.isArray(result)) result = result[0];
+
+        // --- GESTIONE STATUS 401, 402 O PAYWALL ---
+        if (response.status === 401 || response.status === 402 || response.status === 403 || (result && (result.paywall === true || result.error_code === "CREDITS_EXHAUSTED"))) {
+            if (responseBox) responseBox.classList.add('hidden');
+            if (typeof openPaywall === 'function') {
+                openPaywall();
+            } else {
+                const paywallEl = document.getElementById('paywallModal');
+                if (paywallEl) paywallEl.classList.remove('hidden');
+            }
+            return;
+        }
+
+        if (response.status === 429) {
+            if (replyText) replyText.innerText = result.reply || "Troppe richieste in pochi secondi.";
+            return;
+        }
+
+        const rawReply = result.reply || result.message || "Ecco il parere ufficiale dell'enologo.";
+        
+        if (replyText) {
+            const formattedHtml = rawReply
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-[#2C1D1F]">$1</strong>');
+            
+            replyText.innerHTML = formattedHtml;
+        }
+
+    } catch (err) {
+        if (replyText) replyText.innerText = "Si è verificato un errore di connessione.";
+    } finally {
+        if5: {
+            if (btn) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+    }
+}
+
+// Funzione per i bottoni rapidi (Chip)
+function quickAskAiSommelier(promptText) {
+    const input = document.getElementById('aiSommelierInput');
+    if (input) {
+        input.value = promptText;
+        askAiSommelier();
+    }
+}
 
         function showLoading(isLoading) {
             const welcome = document.getElementById('welcomeState');
@@ -2350,7 +2425,7 @@ async function loadLeaderboardData(type) {
 
         if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
             if (installSectionContainer) {
-                installSectionContainer.style.display = 'none';
+                installSectionContainer.style.setProperty('display', 'none', 'important');
             }
         }
 
