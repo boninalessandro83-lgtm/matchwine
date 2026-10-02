@@ -1464,194 +1464,154 @@ async function loadLeaderboardData(type) {
         }
 
         async function handleSearch(e) {
-            if (e) e.preventDefault();
-            if (!dishInputEl) return;
-            const inputValue = dishInputEl.value.trim();
-            if (!inputValue) return;
+    if (e) e.preventDefault();
+    if (!dishInputEl) return;
+    const inputValue = dishInputEl.value.trim();
+    if (!inputValue) return;
 
-            if (dropdownEl) dropdownEl.classList.add('hidden');
+    if (dropdownEl) dropdownEl.classList.add('hidden');
 
-            // Nasconde separatamente installazione e privacy
+    // Nasconde separatamente installazione e privacy
     const installSec = document.getElementById('installSectionContainer');
     const privacySec = document.getElementById('privacySection');
     if (installSec) installSec.classList.add('hidden');
     if (privacySec) privacySec.classList.add('hidden');
-          
-                if (!currentUser) {
-                try {
-                    const tableName = searchMode === 'dish' ? 'dishes_free' : 'wines_free';
-                    const columnName = searchMode === 'dish' ? 'dish_name' : 'wine_name';
+  
+    if (!currentUser) {
+        try {
+            const tableName = searchMode === 'dish' ? 'dishes_free' : 'wines_free';
+            const columnName = searchMode === 'dish' ? 'dish_name' : 'wine_name';
 
-                    const { data: freeCheck, error } = await supabaseClient
-                        .from(tableName)
-                        .select('*')
-                        .ilike(columnName, `%${inputValue}%`)
-                        .limit(1);
+            const { data: freeCheck, error } = await supabaseClient
+                .from(tableName)
+                .select('*')
+                .ilike(columnName, `%${inputValue}%`)
+                .limit(1);
 
-                    if (error || !freeCheck || freeCheck.length === 0) {
-                        const welcomeState = document.getElementById('welcomeState');
-                        const quickTry = document.getElementById('quickTrySection');
-                        const resultsCont = document.getElementById('resultsContainer');
-                        const contentContainer = document.getElementById('readerPageContent');
-                        const tabsBar = document.getElementById('tabsBarContainer');
-
-                        if (welcomeState) welcomeState.classList.add('hidden');
-                        if (quickTry) quickTry.classList.add('hidden');
-                        if (resultsCont) resultsCont.classList.remove('hidden');
-                        if (tabsBar) tabsBar.style.display = 'none';
-
-                        if (contentContainer) {
-                            contentContainer.innerHTML = `
-                                <div class="notebook-sheet p-6 sm:p-8 space-y-5 text-center max-w-lg mx-auto shadow-luxury">
-                                    <div class="w-12 h-12 mx-auto rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center border border-gold-400/40 shadow-sm">
-                                        <span class="text-xl">✦</span>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <span class="text-[9px] uppercase font-bold tracking-[0.25em] text-[#a37f37]">L'ARTE DEL SOMMELIER IA</span>
-                                        <h3 class="font-serif italic font-bold text-xl sm:text-2xl text-[#520d1a]">Sblocca la Consulenza d'Autore</h3>
-                                        <p class="text-xs sm:text-sm text-stone-700 font-serif italic leading-relaxed max-w-md mx-auto">
-                                            Per analizzare etichette o creazioni fuori catalogo come <strong class="font-semibold text-[#520d1a]">"${inputValue}"</strong>, il nostro Sommelier virtuale richiede l'accesso o una ricarica di crediti.
-                                        </p>
-                                    </div>
-                                    <div class="pt-2 space-y-2.5">
-                                        <button onclick="loginWithGoogle()" class="w-full inline-flex items-center justify-center gap-2.5 bg-[#d4af37] hover:bg-[#c5a030] text-wine-950 py-3 px-4 rounded-xl text-xs font-serif font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer">
-                                            <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.2v3.15C3.16 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.2C.43 8.15 0 9.89 0 12s.43 3.85 1.2 5.39l4.08-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.16 2.68 1.2 6.61l4.08 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/></svg>
-                                            <span>Accedi con Google (+10 Crediti)</span>
-                                        </button>
-                                        <button onclick="openPaywall()" class="w-full wine-primary-btn text-white py-3 px-4 rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all cursor-pointer">
-                                            Scegli un Piano o Ricarica Crediti
-                                        </button>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                        return;
-                    }
-                } catch (err) {
-                    console.warn("Controllo database free fallito:", err);
-                }
-            }
-
-            currentData = null;
-            readerPageIndex = 1;
-            showLoading(true);
-
-            const targetUrl = searchMode === 'dish' ? config.searchWebhookUrl : config.wineSearchWebhookUrl;
-            const payloadKey = searchMode === 'dish' ? 'dish_name' : 'wine_name';
-
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                const token = session ? session.access_token : '';
-
-                const response = await fetch(targetUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ [payloadKey]: inputValue, lang: currentLang })
-                });
-
-                let result = await response.json();
-                if (Array.isArray(result)) result = result[0];
-
-                if (result && (result.paywall === true || result.success === false || response.status === 402)) {
-                    showLoading(false);
-                    
-                    const welcomeState = document.getElementById('welcomeState');
-                    const quickTry = document.getElementById('quickTrySection');
-                    const resultsCont = document.getElementById('resultsContainer');
-                    const contentContainer = document.getElementById('readerPageContent');
-                    const tabsBar = document.getElementById('tabsBarContainer');
-
-                    if (welcomeState) welcomeState.classList.add('hidden');
-                    if (quickTry) quickTry.classList.add('hidden');
-                    if (resultsCont) resultsCont.classList.remove('hidden');
-                    if (tabsBar) tabsBar.style.display = 'none';
-
-                    if (contentContainer) {
-                        contentContainer.innerHTML = `
-                            <div class="notebook-sheet p-6 sm:p-8 space-y-5 text-center max-w-lg mx-auto shadow-luxury">
-                                <div class="w-12 h-12 mx-auto rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center border border-gold-400/40 shadow-sm">
-                                    <span class="text-xl">✦</span>
-                                </div>
-                                <div class="space-y-2">
-                                    <span class="text-[9px] uppercase font-bold tracking-[0.25em] text-[#a37f37]">L'ARTE DEL SOMMELIER IA</span>
-                                    <h3 class="font-serif italic font-bold text-xl sm:text-2xl text-[#520d1a]">Sblocca la Consulenza d'Autore</h3>
-                                    <p class="text-xs sm:text-sm text-stone-700 font-serif italic leading-relaxed max-w-md mx-auto">
-                                        Per analizzare etichette o creazioni fuori catalogo come <strong class="font-semibold text-[#520d1a]">"${inputValue}"</strong>, il nostro Sommelier virtuale richiede l'accesso o una ricarica di crediti.
-                                    </p>
-                                </div>
-                                <div class="pt-2 space-y-2.5">
-                                    <button onclick="loginWithGoogle()" class="w-full inline-flex items-center justify-center gap-2.5 bg-[#d4af37] hover:bg-[#c5a030] text-wine-950 py-3 px-4 rounded-xl text-xs font-serif font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.2v3.15C3.16 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.2C.43 8.15 0 9.89 0 12s.43 3.85 1.2 5.39l4.08-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.16 2.68 1.2 6.61l4.08 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/></svg>
-                                        <span>Accedi con Google (+10 Crediti)</span>
-                                    </button>
-                                    <button onclick="openPaywall()" class="w-full wine-primary-btn text-white py-3 px-4 rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all cursor-pointer">
-                                        Scegli un Piano o Ricarica Crediti
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    return;
-                }
-
-                if (response.status === 429) {
-                    showLoading(false);
-                    document.getElementById('welcomeState').classList.remove('hidden');
-                    const quickTry = document.getElementById('quickTrySection');
-                    if (quickTry) quickTry.classList.remove('hidden');
-                    alert(result.message || "Troppe richieste in pochi secondi.");
-                    return;
-                }
-
-                currentData = result.data || result.result || result;
-
-                if (!currentData || typeof currentData !== 'object') {
-                    throw "Formato dati non valido";
-                }
-
-                if (currentUser) {
-                    const { data: updatedProfile } = await supabaseClient
-                        .from('profiles')
-                        .select('credits_remaining, plan, is_active_subscription')
-                        .eq('id', currentUser.id)
-                        .single();
-                        
-                    if (updatedProfile) {
-                        const creditsLabel = document.getElementById('creditsCount');
-                        const isPrem = (updatedProfile.plan === 'monthly' || updatedProfile.plan === 'premium' || updatedProfile.plan === 'pro') && updatedProfile.is_active_subscription === true;
-                        if (creditsLabel) {
-                            creditsLabel.innerText = isPrem ? "Premium" : `${updatedProfile.credits_remaining} Crediti`;
-                        }
-                    }
-                }
-
-                const tabsBar = document.getElementById('tabsBarContainer');
-                if (tabsBar) tabsBar.style.display = 'flex';
-
-                renderTabsBar();
-                renderReaderPage();
-                showLoading(false);
-
+            if (error || !freeCheck || freeCheck.length === 0) {
+                // Ripristiniamo la visualizzazione della home
                 const welcomeState = document.getElementById('welcomeState');
                 const quickTry = document.getElementById('quickTrySection');
                 const resultsCont = document.getElementById('resultsContainer');
 
-                if (welcomeState) welcomeState.classList.add('hidden');
-                if (quickTry) quickTry.classList.add('hidden');
-                if (resultsCont) resultsCont.classList.remove('hidden');
-
-            } catch (err) {
-                console.warn('Errore ricerca:', err);
-                showLoading(false);
-                
-                const welcomeState = document.getElementById('welcomeState');
-                const quickTry = document.getElementById('quickTrySection');
                 if (welcomeState) welcomeState.classList.remove('hidden');
                 if (quickTry) quickTry.classList.remove('hidden');
+                if (resultsCont) resultsCont.classList.add('hidden');
+
+                // Apriamo il modale fluttuante in primo piano con la card elegante
+                if (typeof openPaywall === 'function') {
+                    openPaywall();
+                } else {
+                    const paywallEl = document.getElementById('paywallModal');
+                    if (paywallEl) paywallEl.classList.remove('hidden');
+                }
+                return;
+            }
+        } catch (err) {
+            console.warn("Controllo database free fallito:", err);
+        }
+    }
+
+    currentData = null;
+    readerPageIndex = 1;
+    showLoading(true);
+
+    const targetUrl = searchMode === 'dish' ? config.searchWebhookUrl : config.wineSearchWebhookUrl;
+    const payloadKey = searchMode === 'dish' ? 'dish_name' : 'wine_name';
+
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const token = session ? session.access_token : '';
+
+        const response = await fetch(targetUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ [payloadKey]: inputValue, lang: currentLang })
+        });
+
+        let result = await response.json();
+        if (Array.isArray(result)) result = result[0];
+
+        if (result && (result.paywall === true || result.success === false || response.status === 402)) {
+            showLoading(false);
+            
+            // Ripristiniamo la visualizzazione della home
+            const welcomeState = document.getElementById('welcomeState');
+            const quickTry = document.getElementById('quickTrySection');
+            const resultsCont = document.getElementById('resultsContainer');
+
+            if (welcomeState) welcomeState.classList.remove('hidden');
+            if (quickTry) quickTry.classList.remove('hidden');
+            if (resultsCont) resultsCont.classList.add('hidden');
+
+            // Apriamo il modale fluttuante in primo piano con la card elegante
+            if (typeof openPaywall === 'function') {
+                openPaywall();
+            } else {
+                const paywallEl = document.getElementById('paywallModal');
+                if (paywallEl) paywallEl.classList.remove('hidden');
+            }
+            return;
+        }
+
+        if (response.status === 429) {
+            showLoading(false);
+            document.getElementById('welcomeState').classList.remove('hidden');
+            const quickTry = document.getElementById('quickTrySection');
+            if (quickTry) quickTry.classList.remove('hidden');
+            alert(result.message || "Troppe richieste in pochi secondi.");
+            return;
+        }
+
+        currentData = result.data || result.result || result;
+
+        if (!currentData || typeof currentData !== 'object') {
+            throw "Formato dati non valido";
+        }
+
+        if (currentUser) {
+            const { data: updatedProfile } = await supabaseClient
+                .from('profiles')
+                .select('credits_remaining, plan, is_active_subscription')
+                .eq('id', currentUser.id)
+                .single();
                 
-                alert('Errore di comunicazione con il server. Riprova tra poco.');
+            if (updatedProfile) {
+                const creditsLabel = document.getElementById('creditsCount');
+                const isPrem = (updatedProfile.plan === 'monthly' || updatedProfile.plan === 'premium' || updatedProfile.plan === 'pro') && updatedProfile.is_active_subscription === true;
+                if (creditsLabel) {
+                    creditsLabel.innerText = isPrem ? "Premium" : `${updatedProfile.credits_remaining} Crediti`;
+                }
             }
         }
+
+        const tabsBar = document.getElementById('tabsBarContainer');
+        if (tabsBar) tabsBar.style.display = 'flex';
+
+        renderTabsBar();
+        renderReaderPage();
+        showLoading(false);
+
+        const welcomeState = document.getElementById('welcomeState');
+        const quickTry = document.getElementById('quickTrySection');
+        const resultsCont = document.getElementById('resultsContainer');
+
+        if (welcomeState) welcomeState.classList.add('hidden');
+        if (quickTry) quickTry.classList.add('hidden');
+        if (resultsCont) resultsCont.classList.remove('hidden');
+
+    } catch (err) {
+        console.warn('Errore ricerca:', err);
+        showLoading(false);
+        
+        const welcomeState = document.getElementById('welcomeState');
+        const quickTry = document.getElementById('quickTrySection');
+        if (welcomeState) welcomeState.classList.remove('hidden');
+        if (quickTry) quickTry.classList.remove('hidden');
+        
+        alert('Errore di comunicazione con il server. Riprova tra poco.');
+    }
+}
 
         function renderTabsBar() {
             const tabsBar = document.getElementById('tabsBarContainer');
@@ -2172,7 +2132,7 @@ async function loadLeaderboardData(type) {
             return val.charAt(0).toUpperCase() + val.slice(1);
         }
 
-async function askAiSommelier() {
+        async function askAiSommelier() {
     const messageInput = document.getElementById('aiSommelierInput');
     if (!messageInput) return;
     const message = messageInput.value.trim();
@@ -2197,7 +2157,7 @@ async function askAiSommelier() {
         
         if (sessionError || !session || !session.access_token) {
             if (responseBox) responseBox.classList.add('hidden');
-            // Se non c'è una sessione attiva, apriamo il paywall (o il login)
+            // Se manca la sessione, apre il paywall in primo piano
             if (typeof openPaywall === 'function') {
                 openPaywall();
             }
@@ -2237,6 +2197,8 @@ async function askAiSommelier() {
         // --- GESTIONE STATUS 401, 402 O PAYWALL ---
         if (response.status === 401 || response.status === 402 || response.status === 403 || (result && (result.paywall === true || result.error_code === "CREDITS_EXHAUSTED"))) {
             if (responseBox) responseBox.classList.add('hidden');
+            
+            // Apre il modale fluttuante in primo piano con la card elegante
             if (typeof openPaywall === 'function') {
                 openPaywall();
             } else {
@@ -2263,13 +2225,11 @@ async function askAiSommelier() {
     } catch (err) {
         if (replyText) replyText.innerText = "Si è verificato un errore di connessione.";
     } finally {
-        if5: {
-            if (btn) {
-                btn.disabled = false;
-                btn.style.opacity = '1';
-            }
-            if (window.lucide) lucide.createIcons();
+        if (btn) {
+            btn.disabled = false;
+            btn.style.opacity = '1';
         }
+        if (window.lucide) lucide.createIcons();
     }
 }
 
@@ -2350,19 +2310,53 @@ function quickAskAiSommelier(promptText) {
         }
 
         function openPaywall() {
-            const paywall = document.getElementById('paywallModal');
-            if (paywall) {
-                document.getElementById('profileModal')?.classList.add('hidden');
-                document.getElementById('premiumStatusModal')?.classList.add('hidden');
-                paywall.classList.remove('hidden');
-            }
-            if (window.lucide) lucide.createIcons();
-        }
+    const paywall = document.getElementById('paywallModal');
+    if (paywall) {
+        document.getElementById('profileModal')?.classList.add('hidden');
+        document.getElementById('premiumStatusModal')?.classList.add('hidden');
+        
+        // Inseriamo la card elegante all'interno del modale fluttuante
+        paywall.innerHTML = `
+            <div class="relative w-full max-w-lg p-4 animate-scaleUp mx-auto my-auto flex items-center justify-center min-h-screen">
+                <!-- Pulsante di chiusura X -->
+                <button onclick="closePaywall()" class="absolute top-6 right-6 w-8 h-8 rounded-full bg-[#520d1a] text-gold-300 border border-gold-400/40 flex items-center justify-center shadow-md hover:bg-[#3d0912] transition-colors cursor-pointer z-20">
+                    ✕
+                </button>
+                
+                <!-- Card Stile Taccuino -->
+                <div class="notebook-sheet p-6 sm:p-8 space-y-5 text-center shadow-2xl border border-gold-400/30 bg-[#fdfbf7] rounded-2xl w-full">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center border border-gold-400/40 shadow-sm">
+                        <span class="text-xl">✦</span>
+                    </div>
+                    <div class="space-y-2">
+                        <span class="text-[9px] uppercase font-bold tracking-[0.25em] text-[#a37f37]">L'ARTE DEL SOMMELIER IA</span>
+                        <h3 class="font-serif italic font-bold text-xl sm:text-2xl text-[#520d1a]">Sblocca la Consulenza d'Autore</h3>
+                        <p class="text-xs sm:text-sm text-stone-700 font-serif italic leading-relaxed max-w-md mx-auto">
+                            Per dialogare con il nostro Sommelier virtuale e ricevere analisi approfondite, è richiesto l'accesso o una ricarica di crediti.
+                        </p>
+                    </div>
+                    <div class="pt-2 space-y-2.5">
+                        <button onclick="loginWithGoogle()" class="w-full inline-flex items-center justify-center gap-2.5 bg-[#d4af37] hover:bg-[#c5a030] text-wine-950 py-3 px-4 rounded-xl text-xs font-serif font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.2v3.15C3.16 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.2C.43 8.15 0 9.89 0 12s.43 3.85 1.2 5.39l4.08-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.16 2.68 1.2 6.61l4.08 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/></svg>
+                            <span>Accedi con Google (+10 Crediti)</span>
+                        </button>
+                        <button onclick="openPlansView()" class="w-full wine-primary-btn text-white py-3 px-4 rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all cursor-pointer">
+                            Scegli un Piano o Ricarica Crediti
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
 
-        function closePaywall() {
-            const paywall = document.getElementById('paywallModal');
-            if (paywall) paywall.classList.add('hidden');
-        }
+        paywall.classList.remove('hidden');
+    }
+    if (window.lucide) lucide.createIcons();
+}
+
+function closePaywall() {
+    const paywall = document.getElementById('paywallModal');
+    if (paywall) paywall.classList.add('hidden');
+}
 
         async function buyPlan(planType) {
             if (!currentUser) {
