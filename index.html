@@ -268,10 +268,46 @@
             </div>
         </div>
        
-        <!-- PAYWALL / CREDITI MODALE -->
+        <!-- 1. PAYWALL GENERALE (Quello dello screenshot con Google e tasto bordeaux) -->
         <div id="paywallModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-xs animate-in fade-in duration-200">
+            <div class="w-full max-w-sm bg-white rounded-3xl p-6 border border-stone-200 space-y-5 text-center shadow-2xl animate-in zoom-in-95 duration-200 relative overflow-hidden">
+                <button onclick="closePaywall()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 p-1.5 rounded-full hover:bg-stone-100 transition-colors cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                
+                <!-- Icona tonda bordeaux con stella -->
+                <div class="w-14 h-14 mx-auto rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center shadow-md">
+                    <span class="text-xl">✦</span>
+                </div>                
+                
+                <div class="space-y-1">
+                    <p class="text-[9px] uppercase font-bold tracking-[0.25em] text-[#a37f37]">L'ARTE DEL SOMMELIER IA</p>
+                    <h3 class="font-serif font-bold text-2xl text-wine-900">Sblocca la Consulenza d'Autore</h3>
+                    <p class="text-xs text-stone-500 leading-relaxed font-normal">
+                        Per dialogare con il nostro Sommelier virtuale e ricevere analisi approfondite, è richiesto l'accesso o una ricarica di crediti.
+                    </p>
+                </div>
+
+                <div class="space-y-2.5 pt-1">
+                    <button onclick="loginWithGoogle()" class="w-full bg-[#d4af37]/85 hover:bg-[#c5a030] text-wine-950 py-3 px-4 rounded-xl text-xs font-serif font-bold shadow-sm transition flex items-center justify-center gap-2 border border-[#b89728]/70 cursor-pointer">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.2v3.15C3.16 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.2C.43 8.15 0 9.89 0 12s.43 3.85 1.2 5.39l4.08-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.16 2.68 1.2 6.61l4.08 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/></svg>
+                        <span>ACCEDI CON GOOGLE (+10 CREDITI)</span>
+                    </button>
+                    
+                    <!-- Questo pulsante apre la card dei 4 piani -->
+                    <button onclick="openPlansModal()" class="w-full wine-card-bg text-gold-300 py-3 px-4 rounded-xl text-xs font-serif font-bold shadow-sm transition hover:opacity-95 border border-gold-400/40 cursor-pointer">
+                        SCEGLI UN PIANO O RICARICA CREDITI
+                    </button>
+                </div>
+                
+                <p class="text-[11px] font-serif italic text-stone-500 pt-1">🎁 In palio abbonamenti per i migliori sommelier in classifica</p>
+            </div>
+        </div>
+
+        <!-- 2. LA CARD CON I 4 PIANI DI PAGAMENTO -->
+        <div id="plansModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-xs animate-in fade-in duration-200">
             <div class="w-full max-w-sm bg-[#fcfbfa] rounded-3xl p-6 border border-[#d4af37]/60 shadow-2xl space-y-4 text-left relative scale-100 transition-all">
-                <button onclick="closePaywall()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 p-1.5 rounded-full hover:bg-stone-200/60 transition-colors cursor-pointer">
+                <button onclick="closePlansModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 p-1.5 rounded-full hover:bg-stone-200/60 transition-colors cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
 
@@ -287,7 +323,7 @@
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="font-serif font-bold text-wine-900 text-sm">Piano Premium</span>
-                            <span class="text-base font-bold text-wine-900">1,99 € <span class="text-[10px] font-normal text-stone-500">/ mese</span></span>
+                            <span class="text-base font-bold text-wine-900">2,49 € <span class="text-[10px] font-normal text-stone-500">/ mese</span></span>
                         </div>
                         <p class="text-xs text-stone-500 leading-tight">Richieste illimitate e funzioni avanzate senza pensieri.</p>
                         <button onclick="buyPlan('premium')" class="w-full wine-card-bg text-stone-100 font-bold text-xs py-2.5 rounded-xl shadow-xs hover:opacity-95 transition-all uppercase tracking-wider cursor-pointer">
@@ -300,31 +336,31 @@
                             ✦ Il Sommelier Consiglia
                         </div>
                         <div class="pt-0.5">
-                            <p class="font-serif font-bold text-wine-900 text-base">200 Crediti</p>
+                            <p class="font-serif font-bold text-wine-900 text-base">100 Crediti</p>
                             <p class="text-[10px] text-stone-500">Massima convenienza</p>
                         </div>
-                        <button onclick="buyPlan('credits_200')" class="bg-[#520d1a] hover:bg-[#33060f] text-gold-300 font-serif font-bold text-base px-4 py-2.5 rounded-xl transition-all shadow-xs cursor-pointer">
+                        <button onclick="buyPlan('credits_100')" class="bg-[#520d1a] hover:bg-[#33060f] text-gold-300 font-serif font-bold text-base px-4 py-2.5 rounded-xl transition-all shadow-xs cursor-pointer">
                             5,00 €
                         </button>
                     </div>
 
                     <div class="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#d4af37]/60 transition-all flex items-center justify-between">
                         <div>
-                            <p class="font-serif font-bold text-wine-900 text-base">50 Crediti</p>
+                            <p class="font-serif font-bold text-wine-900 text-base">25 Crediti</p>
                             <p class="text-[10px] text-stone-500">Ideale per iniziare</p>
                         </div>
-                        <button onclick="buyPlan('credits_50')" class="bg-[#520d1a] hover:bg-[#33060f] text-gold-300 font-serif font-bold text-base px-4 py-2.5 rounded-xl transition-all shadow-xs cursor-pointer">
+                        <button onclick="buyPlan('credits_25')" class="bg-[#520d1a] hover:bg-[#33060f] text-gold-300 font-serif font-bold text-base px-4 py-2.5 rounded-xl transition-all shadow-xs cursor-pointer">
                             2,00 €
                         </button>
                     </div>
 
                     <div class="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#d4af37]/60 transition-all flex items-center justify-between">
                         <div>
-                            <p class="font-serif font-bold text-wine-900 text-base">20 Crediti</p>
+                            <p class="font-serif font-bold text-wine-900 text-base">10 Crediti</p>
                             <p class="text-[10px] text-stone-500">Ricarica rapida</p>
                         </div>
-                        <button onclick="buyPlan('credits_20')" class="bg-[#520d1a] hover:bg-[#33060f] text-gold-300 font-serif font-bold text-base px-4 py-2.5 rounded-xl transition-all shadow-xs cursor-pointer">
-                            0,99 €
+                        <button onclick="buyPlan('credits_10')" class="bg-[#520d1a] hover:bg-[#33060f] text-gold-300 font-serif font-bold text-base px-4 py-2.5 rounded-xl transition-all shadow-xs cursor-pointer">
+                            1,00 €
                         </button>
                     </div>
                 </div>
@@ -2093,38 +2129,33 @@ async function loadLeaderboardData(type) {
         
         function getDishIllustration(dishCategory, dishName = '', description = '') {
             const text = ((dishName || '') + " " + (description || '')).toLowerCase();
-            
-            if (text.match(/pasta|spaghetti|carbonara|cacio e pepe|amatriciana|gricia|norma|pesto|lasagne|tagliatelle|ravioli|tortellini|rigatoni|penne|linguine|maccheroni|gnocchi|fregula|pizzoccheri|paccheri|trofie|orecchiette|fusilli|farfalle|cannelloni|vongole/)) {
-                return "images/Piatto.png";
-            }
-            
-            if (text.match(/risotto|riso|paella|orzotto/)) {
-                return "images/risotto.png";
-            }
-
             const cat = dishCategory ? dishCategory.trim().toLowerCase() : '';
             
-            if (cat === 'pasta') return 'images/Piatto.png';
-            if (cat === 'risotto') return 'images/risotto.png';
-            if (cat === 'bistecca' || cat === 'carne') return 'images/bistecca.png';
-            if (cat === 'pesce') return 'images/pesce.png';
-            if (cat === 'sushi') return 'images/sushi.png';
-            if (cat === 'pizza') return 'images/pizza.png';
-            if (cat === 'hamburger') return 'images/hamburger.png';
-            if (cat === 'mex') return 'images/mex.png';
-            if (cat === 'formaggio') return 'images/formaggio.png';
-            if (cat === 'torta' || cat === 'dolce') return 'images/torta.png';
+            // 1. MATCH BASATO SUL TESTO (Nome e Descrizione - Altamente Affidabile)
+            if (text.match(/\b(pasta|spaghetti|carbonara|cacio e pepe|amatriciana|gricia|norma|pesto|lasagne|tagliatelle|ravioli|tortellini|rigatoni|penne|linguine|maccheroni|gnocchi|fregula|pizzoccheri|paccheri|trofie|orecchiette|fusilli|farfalle|cannelloni|vongole)\b/)) return "images/Piatto.png";
+            if (text.match(/\b(risotto|riso|paella|orzotto)\b/)) return "images/risotto.png";
+            if (text.match(/\b(carne|bistecca|cotoletta|milanese|filetto|costata|arrosto|tartare|agnello|maiale|stinco|prosciutto|spezzatino|ragù|pollo|tagliata|brasato|stufato)\b/)) return "images/bistecca.png";
+            if (text.match(/\b(pesce|salmone|orata|branzino|tonno|polpo|gamberi|frittura|cozze|ostriche|baccalà|calamari|aragosta)\b/)) return "images/pesce.png";
+            if (text.match(/\b(sushi|sashimi|nigiri|uramaki|poke|chirashi|temaki)\b/)) return "images/sushi.png";
+            if (text.match(/\b(pizza|focaccia|calzone|piadina|bruschetta|panino)\b/)) return "images/pizza.png";
+            if (text.match(/\b(hamburger|burger)\b/)) return "images/hamburger.png";
+            if (text.match(/\b(taco|tacos|burrito|fajitas|enchiladas|nachos|messicano)\b/)) return "images/mex.png";
+            if (text.match(/\b(formaggio|formaggi|fonduta|pecorino|parmigiano|mozzarella|burrata|gorgonzola)\b/)) return "images/formaggio.png";
+            if (text.match(/\b(torta|dolce|dessert|tiramisù|cioccolato|gelato|crostata|crep|panna cotta)\b/)) return "images/torta.png";
+
+            // 2. CATEGORIA DAL DATABASE (Solo se esplicita, ma escludendo "pasta" per evitare falsi positivi)
+            if (cat === 'risotto') return "images/risotto.png";
+            if (cat === 'bistecca' || cat === 'carne') return "images/bistecca.png";
+            if (cat === 'pesce') return "images/pesce.png";
+            if (cat === 'sushi') return "images/sushi.png";
+            if (cat === 'pizza') return "images/pizza.png";
+            if (cat === 'hamburger') return "images/hamburger.png";
+            if (cat === 'mex') return "images/mex.png";
+            if (cat === 'formaggio') return "images/formaggio.png";
+            if (cat === 'torta' || cat === 'dolce') return "images/torta.png";
             
-            if (text.match(/pesce|salmone|orata|branzino|tonno|polpo|gamberi|frittura|cozze|ostriche|baccalà|calamari|aragosta/)) return "images/pesce.png";
-            if (text.match(/carne|bistecca|cotoletta|milanese|filetto|costata|arrosto|tartare|agnello|maiale|stinco|prosciutto|spezzatino|ragù|pollo|tagliata|brasato|stufato/)) return "images/bistecca.png";
-            if (text.match(/hamburger|burger/)) return "images/hamburger.png";
-            if (text.match(/sushi|sashimi|nigiri|uramaki|poke|chirashi|temaki/)) return "images/sushi.png";
-            if (text.match(/pizza|focaccia|calzone|piadina|bruschetta|panino/)) return "images/pizza.png";
-            if (text.match(/taco|tacos|burrito|fajitas|enchiladas|nachos|messicano/)) return "images/mex.png";
-            if (text.match(/formaggio|formaggi|fonduta|pecorino|parmigiano|mozzarella|burrata|gorgonzola/)) return "images/formaggio.png";
-            if (text.match(/torta|dolce|dessert|tiramisù|cioccolato|gelato|crostata|crep|panna cotta/)) return "images/torta.png";
-            
-            return "images/Piatto.png";
+            // 3. FALLBACK GENERALE AUTOMATICO PER QUALSIASI ALTRO PIATTO (Uova, flan, verdure, zuppe, ecc.)
+            return "images/PiattoMW.png"; 
         }
      
         function capitalizeFirstLetter(val) {
@@ -2291,12 +2322,14 @@ function quickAskAiSommelier(promptText) {
             updateUiLanguage();
         }
 
+        // Cliccando sui crediti in alto nell'header si apre direttamente la card con i 4 piani
         function handleCreditsClick() {
             if (isUserPremium) {
                 const modal = document.getElementById('premiumStatusModal');
                 if (modal) {
                     document.getElementById('profileModal')?.classList.add('hidden');
                     document.getElementById('paywallModal')?.classList.add('hidden');
+                    document.getElementById('plansModal')?.classList.add('hidden');
                      
                     modal.classList.toggle('hidden');
                     if (!modal.classList.contains('hidden')) {
@@ -2306,57 +2339,43 @@ function quickAskAiSommelier(promptText) {
                 }
                 return;
             }
-            openPaywall();
+            // Apre direttamente i 4 piani quando clicchi sui crediti in alto
+            openPlansModal();
         }
 
+        // Apre il paywall generale (dello screenshot) quando finiscono i crediti
         function openPaywall() {
-    const paywall = document.getElementById('paywallModal');
-    if (paywall) {
-        document.getElementById('profileModal')?.classList.add('hidden');
-        document.getElementById('premiumStatusModal')?.classList.add('hidden');
-        
-        // Inseriamo la card elegante all'interno del modale fluttuante
-        paywall.innerHTML = `
-            <div class="relative w-full max-w-lg p-4 animate-scaleUp mx-auto my-auto flex items-center justify-center min-h-screen">
-                <!-- Pulsante di chiusura X -->
-                <button onclick="closePaywall()" class="absolute top-6 right-6 w-8 h-8 rounded-full bg-[#520d1a] text-gold-300 border border-gold-400/40 flex items-center justify-center shadow-md hover:bg-[#3d0912] transition-colors cursor-pointer z-20">
-                    ✕
-                </button>
-                
-                <!-- Card Stile Taccuino -->
-                <div class="notebook-sheet p-6 sm:p-8 space-y-5 text-center shadow-2xl border border-gold-400/30 bg-[#fdfbf7] rounded-2xl w-full">
-                    <div class="w-12 h-12 mx-auto rounded-full bg-[#520d1a] text-gold-300 flex items-center justify-center border border-gold-400/40 shadow-sm">
-                        <span class="text-xl">✦</span>
-                    </div>
-                    <div class="space-y-2">
-                        <span class="text-[9px] uppercase font-bold tracking-[0.25em] text-[#a37f37]">L'ARTE DEL SOMMELIER IA</span>
-                        <h3 class="font-serif italic font-bold text-xl sm:text-2xl text-[#520d1a]">Sblocca la Consulenza d'Autore</h3>
-                        <p class="text-xs sm:text-sm text-stone-700 font-serif italic leading-relaxed max-w-md mx-auto">
-                            Per dialogare con il nostro Sommelier virtuale e ricevere analisi approfondite, è richiesto l'accesso o una ricarica di crediti.
-                        </p>
-                    </div>
-                    <div class="pt-2 space-y-2.5">
-                        <button onclick="loginWithGoogle()" class="w-full inline-flex items-center justify-center gap-2.5 bg-[#d4af37] hover:bg-[#c5a030] text-wine-950 py-3 px-4 rounded-xl text-xs font-serif font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.2v3.15C3.16 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.2C.43 8.15 0 9.89 0 12s.43 3.85 1.2 5.39l4.08-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.16 2.68 1.2 6.61l4.08 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/></svg>
-                            <span>Accedi con Google (+10 Crediti)</span>
-                        </button>
-                        <button onclick="openPlansView()" class="w-full wine-primary-btn text-white py-3 px-4 rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all cursor-pointer">
-                            Scegli un Piano o Ricarica Crediti
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
+            const paywall = document.getElementById('paywallModal');
+            if (paywall) {
+                document.getElementById('profileModal')?.classList.add('hidden');
+                document.getElementById('premiumStatusModal')?.classList.add('hidden');
+                document.getElementById('plansModal')?.classList.add('hidden');
+                paywall.classList.remove('hidden');
+            }
+            if (window.lucide) lucide.createIcons();
+        }
 
-        paywall.classList.remove('hidden');
-    }
-    if (window.lucide) lucide.createIcons();
-}
+        function closePaywall() {
+            const paywall = document.getElementById('paywallModal');
+            if (paywall) paywall.classList.add('hidden');
+        }
 
-function closePaywall() {
-    const paywall = document.getElementById('paywallModal');
-    if (paywall) paywall.classList.add('hidden');
-}
+        // Apre la card con i 4 piani
+        function openPlansModal() {
+            const modal = document.getElementById('plansModal');
+            if (modal) {
+                document.getElementById('profileModal')?.classList.add('hidden');
+                document.getElementById('premiumStatusModal')?.classList.add('hidden');
+                document.getElementById('paywallModal')?.classList.add('hidden');
+                modal.classList.remove('hidden');
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closePlansModal() {
+            const modal = document.getElementById('plansModal');
+            if (modal) modal.classList.add('hidden');
+        }
 
         async function buyPlan(planType) {
             if (!currentUser) {
