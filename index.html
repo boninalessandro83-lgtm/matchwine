@@ -506,13 +506,16 @@
             </div>
         </div>
 
-         <!-- Frase informativa dei premi (visibile solo in home) -->
-           <div id="prizesNoticeContainer" class="w-full text-center mt-3 mb-1 px-2">
-             <p class="font-serif italic text-sm font-bold text-[#520d1a] leading-relaxed tracking-wide">
-             🎁 In palio abbonamenti per i migliori sommelier in classifica
-            </p>
-           </div>
-
+        <!-- FRASE CLICCABILE SCOPRI MATCHWINE (Allineata e centrata correttamente) -->
+<div onclick="openAboutModal()" class="w-full text-center mt-3 mb-1 px-2 cursor-pointer group py-1.5 transition-all">
+    <div class="inline-flex items-center justify-center gap-2 group-hover:opacity-80 transition-opacity">
+        <span class="font-serif italic text-sm sm:text-base font-bold text-[#520d1a]">
+            Tutto quello che devi sapere sul tuo Sommelier Personale
+        </span>
+        <i data-lucide="arrow-right" class="w-4 h-4 text-[#520d1a] shrink-0 transition-transform group-hover:translate-x-1"></i>
+    </div>
+</div>
+      
         <!-- SEZIONE INSTALLAZIONE PWA -->
 <div id="installSectionContainer" class="w-full max-w-xl px-4 mt-4 mb-4 text-center">
     <div onclick="toggleInstallBox()" class="inline-flex items-center gap-2.5 cursor-pointer group py-1.5 px-3 transition-all">
@@ -551,6 +554,120 @@
                 Installa Subito
             </button>
         </div>
+    </div>
+</div>
+
+<!-- MODALE ABOUT MATCHWINE (Completo di tutti i dettagli e stile coerente) -->
+<div id="aboutModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div class="relative w-full max-w-md bg-[#fcfbfa] rounded-3xl p-6 border border-[#d4af37]/60 shadow-2xl space-y-4 text-left">
+        
+        <!-- Pulsante X di chiusura -->
+        <button onclick="closeAboutModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 p-1.5 rounded-full hover:bg-stone-200/60 transition-colors cursor-pointer">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+        <!-- Intestazione -->
+        <div class="border-b border-[#d4af37]/30 pb-3 pr-6">
+            <p class="text-[10px] uppercase font-bold tracking-widest text-[#a37f37]">IL SOMMELIER DIGITALE</p>
+            <h3 class="font-serif font-bold text-xl text-wine-900">Come Funziona MatchWine</h3>
+        </div>
+
+        <!-- Contenuto scrollabile con tutti i punti completi -->
+        <div class="space-y-3.5 max-h-[58vh] overflow-y-auto pr-1 no-scrollbar text-xs text-stone-700">
+            
+            <div class="bg-white p-3 rounded-xl border border-stone-200/80 space-y-1">
+                <p class="font-serif font-bold text-wine-900 text-sm">1. 🍷 Dal Piatto al Calice</p>
+                <p class="text-[11px] text-stone-600 leading-relaxed">
+                    Scrivi il piatto che vuoi mangiare e scopri <strong>4 vini abbinati</strong>, organizzati in quattro fasce di prezzo: <em>sotto 15 € · 15–40 € · oltre 40 € · Il consiglio del Sommelier</em>.<br>
+                    Ogni vino viene accompagnato da una spiegazione dell'abbinamento.
+                </p>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-stone-200/80 space-y-1">
+                <p class="font-serif font-bold text-wine-900 text-sm">2. 🍾 Dal Calice al Piatto</p>
+                <p class="text-[11px] text-stone-600 leading-relaxed">
+                    Hai già una bottiglia? Inserisci il vino e scopri <strong>2 proposte gastronomiche</strong>: un piatto della tradizione e un piatto gourmet.
+                </p>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-stone-200/80 space-y-1">
+                <p class="font-serif font-bold text-wine-900 text-sm">3. ⭐ Abbinamenti MatchWine</p>
+                <p class="text-[11px] text-stone-600 leading-relaxed">
+                    Puoi esplorare gratuitamente una selezione di <strong>50 piatti e 50 vini</strong>, con abbinamenti curati direttamente dai Sommelier di MatchWine.
+                </p>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-stone-200/80 space-y-1">
+                <p class="font-serif font-bold text-wine-900 text-sm">4. 🤖 Vuoi un nuovo abbinamento?</p>
+                <p class="text-[11px] text-stone-600 leading-relaxed">
+                    Cerca qualsiasi altro piatto o vino e lascia che l'IA di MatchWine elabori per te un nuovo abbinamento personalizzato.
+                </p>
+                <p class="text-[10px] font-semibold text-[#a37f37] mt-0.5">
+                    1 nuovo abbinamento = 1 credito
+                </p>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-stone-200/80 space-y-1">
+                <p class="font-serif font-bold text-wine-900 text-sm">5. 🧑‍🍳 Parla con l'Enologo</p>
+                <p class="text-[11px] text-stone-600 leading-relaxed">
+                    Hai una domanda sul vino? Puoi parlare direttamente con l'enologo in una sessione di chat di <strong>30 minuti</strong>.
+                </p>
+                <p class="text-[10px] font-semibold text-[#a37f37] mt-0.5">
+                    1 sessione di 30 minuti = 1 credito
+                </p>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-stone-200/80 space-y-1">
+                <p class="font-serif font-bold text-wine-900 text-sm">6. 🎁 Inizia Gratis</p>
+                <p class="text-[11px] text-stone-600 leading-relaxed">
+                    Registrati con Google e ricevi subito <strong>10 crediti gratuiti</strong>.
+                </p>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-stone-200/80 space-y-1">
+                <p class="font-serif font-bold text-wine-900 text-sm">7. ❤️ Salva i tuoi Preferiti</p>
+                <p class="text-[11px] text-stone-600 leading-relaxed">
+                    Trova un abbinamento che ti piace? Salvalo nel tuo profilo e ritrovalo quando vuoi.
+                </p>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-stone-200/80 space-y-2">
+                <p class="font-serif font-bold text-wine-900 text-sm">8. 🧠 Mettiti alla prova</p>
+                <p class="text-[11px] text-stone-600 leading-relaxed">
+                    Sfida la tua conoscenza del vino e scala la classifica. Partecipa ai quiz di MatchWine, accumula punti e confrontati con gli altri utenti.
+                </p>
+                
+                <div class="space-y-1.5 pt-1">
+                    <div class="flex items-start gap-2 bg-[#fdfbf7] p-2 rounded-lg border border-[#d4af37]/30">
+                        <span class="text-sm">🏆</span>
+                        <div class="text-[11px]">
+                            <strong class="text-wine-900">1° classificato del mese</strong>
+                            <div class="text-stone-600">→ riceve <strong>1 mese di abbonamento Premium</strong></div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2 bg-[#fdfbf7] p-2 rounded-lg border border-[#d4af37]/30">
+                        <span class="text-sm">🏆</span>
+                        <div class="text-[11px]">
+                            <strong class="text-wine-900">1° classificato dell'anno</strong>
+                            <div class="text-stone-600">→ riceve <strong>1 anno di abbonamento Premium</strong></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="font-serif italic text-[11px] text-[#a37f37] font-semibold text-center pt-1">
+                    Più giochi, più sali. Più conosci il vino, più puoi vincere.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Pulsante di chiusura in basso -->
+        <div class="pt-2 border-t border-stone-100">
+            <button onclick="closeAboutModal()" class="w-full bg-[#520d1a] hover:bg-[#33060f] text-gold-300 font-serif italic text-xs py-2.5 rounded-xl shadow-xs transition-all uppercase tracking-wider cursor-pointer text-center font-bold">
+                Chiudi
+            </button>
+        </div>
+
     </div>
 </div>
 
@@ -595,6 +712,8 @@
                 </button>
             </nav>
 
+         
+           
             <!-- CHAT ENOLOGO (TEMA CREMA ANTICA + UX OTTIMIZZATA) -->
 <div class="space-y-3 pt-4">
     <div onclick="toggleEnologoChat()" class="wine-card-bg text-white p-3.5 sm:p-4 rounded-3xl border border-gold-400/40 shadow-wine-glow flex items-center justify-between cursor-pointer hover:opacity-95 transition group">
@@ -968,67 +1087,44 @@
             triviaWebhookUrl: 'https://cjjzpejwczllqwtquszm.supabase.co/functions/v1/Matchwine-trivia'
         };
 
-         // 1. Apertura / Chiusura del Box Trivia
-         async function toggleTriviaBox() {
-          if (!currentUser) {
-            showToast("Effettua l'accesso con Google per partecipare al Quiz Enologico!");
-            if (typeof loginWithGoogle === 'function') loginWithGoogle();
-            return;
-        }
+        // 1. Apertura / Chiusura del Box Trivia
+        async function toggleTriviaBox() {
+            if (!currentUser) {
+                showToast("Effettua l'accesso con Google per partecipare al Quiz Enologico!");
+                if (typeof loginWithGoogle === 'function') loginWithGoogle();
+                return;
+            }
 
             const contentBox = document.getElementById('triviaContentBox');
             const toggleBtn = document.getElementById('triviaToggleBtn');
             const closeBtn = document.getElementById('triviaCloseBtn');
             const questionEl = document.getElementById('triviaQuestionText');
             const optionsEl = document.getElementById('triviaOptionsList');
+            const badgeEl = document.getElementById('triviaPointsBadge');
+            const feedbackBox = document.getElementById('triviaFeedbackBox');
 
             if (!contentBox || !questionEl || !optionsEl) return;
 
             const isHidden = contentBox.classList.contains('hidden');
             if (!isHidden) {
-             contentBox.classList.add('hidden');
-              if (toggleBtn) toggleBtn.classList.remove('hidden');
-             if (closeBtn) closeBtn.classList.add('hidden');
-             if (window.lucide) lucide.createIcons();
-             return;
+                contentBox.classList.add('hidden');
+                if (toggleBtn) toggleBtn.classList.remove('hidden');
+                if (closeBtn) closeBtn.classList.add('hidden');
+                if (window.lucide) lucide.createIcons();
+                return;
             }
 
-          contentBox.classList.remove('hidden');
-          if (toggleBtn) toggleBtn.classList.add('hidden');
-          if (closeBtn) closeBtn.classList.remove('hidden');
+            contentBox.classList.remove('hidden');
+            if (toggleBtn) toggleBtn.classList.add('hidden');
+            if (closeBtn) closeBtn.classList.remove('hidden');
 
-           await loadDailyTrivia();
-          setTimeout(() => {
-            contentBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 100);
-
-          if (window.lucide) lucide.createIcons();
-        }
-
-          // 2. Caricamento della domanda del giorno (tramite webhook o backend)
-          async function loadDailyTrivia() {
-          const questionEl = document.getElementById('triviaQuestionText');
-          const optionsEl = document.getElementById('triviaOptionsList');
-          const badgeEl = document.getElementById('triviaPointsBadge');
-
-          if (!questionEl || !optionsEl) return;
-
-          try {
-           const res = await fetch(config.triviaWebhookUrl, {
-                method: 'POST',
-               headers: { 'Content-Type': 'application/json' },
-               body: JSON.stringify({ user_id: currentUser ? currentUser.id : 'anonymous' })
-        });
-            const result = await res.json();
-        
-            if (result.status === 'success' && result.data) {
-            currentTriviaData = result.data;
-            const pts = currentTriviaData.points || 1;
-
-            if (result.has_answered) {
+            // SE HA GIÀ RISPOSTO IN PASSATO E CLICCA GIOCA -> MOSTRHIAMO L'AVVISO
+            if (userHasAnsweredToday) {
                 if (badgeEl) badgeEl.classList.add('hidden');
+                if (feedbackBox) feedbackBox.classList.add('hidden');
+                
                 questionEl.innerHTML = `
-                    <div class="py-1 px-2 text-center space-y-1.5 my-0">
+                    <div class="py-2 px-2 text-center space-y-1.5 my-0">
                         <div class="w-8 h-8 mx-auto rounded-full bg-[#d4af37]/15 border border-[#d4af37]/40 flex items-center justify-center text-[#d4af37] shadow-xs">
                             <i data-lucide="graduation-cap" class="w-4 h-4"></i>
                         </div>
@@ -1040,107 +1136,128 @@
                 `;
                 optionsEl.innerHTML = '';
             } else {
-                if (badgeEl) {
-                    badgeEl.innerText = `✦ ${pts} ${pts === 1 ? 'Punto' : 'Punti'}`;
-                    badgeEl.classList.remove('hidden');
-                }
-                questionEl.innerText = currentTriviaData.question_text;
-
-                let optsHtml = '';
-                currentTriviaData.options.forEach((opt, idx) => {
-                    optsHtml += `<button onclick="submitTriviaAnswer(${idx})" class="w-full text-left p-3 rounded-2xl border border-gold-400/40 hover:opacity-90 wine-card-bg text-white text-sm sm:text-base font-serif font-bold transition cursor-pointer shadow-sm">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
-                });
-                optionsEl.innerHTML = optsHtml;
+                // Altrimenti carica normalmente il quiz del giorno
+                await loadDailyTrivia();
             }
-        }
-    } catch (err) {
-        console.warn("Quiz del giorno non disponibile al momento.", err);
-    }
-    if (window.lucide) lucide.createIcons();
-}
 
-// 3. Invio della risposta e chiamata RPC Supabase
-async function submitTriviaAnswer(selectedIndex) {
-    if (!currentUser) {
-        showToast("Accedi con Google per partecipare al Quiz!");
-        if (typeof loginWithGoogle === 'function') loginWithGoogle();
-        return;
-    }
-    if (!currentTriviaData) return;
+            setTimeout(() => {
+                contentBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
 
-    const isCorrect = selectedIndex === currentTriviaData.correct_option_index;
-    const pts = currentTriviaData.points || 1;
-
-    const optionButtons = document.querySelectorAll('#triviaOptionsList button');
-    optionButtons.forEach((btn, idx) => {
-        btn.disabled = true;
-        if (idx === currentTriviaData.correct_option_index) {
-            btn.classList.remove('wine-card-bg');
-            btn.style.backgroundColor = '#15803d';
-            btn.style.borderColor = '#16a34a';
-        } else if (idx === selectedIndex && !isCorrect) {
-            btn.classList.remove('wine-card-bg');
-            btn.style.backgroundColor = '#b91c1c';
-            btn.style.borderColor = '#dc2626';
-        } else {
-            btn.style.opacity = '0.4';
-        }
-    });
-
-    try {
-        const { error } = await supabaseClient.rpc('record_trivia_answer', {
-            p_user_id: currentUser.id,
-            p_question_id: currentTriviaData.id,
-            p_selected_option: selectedIndex,
-            p_is_correct: isCorrect,
-            p_points: pts
-        });
-
-        if (error) throw error;
-
-        const feedbackBox = document.getElementById('triviaFeedbackBox');
-        const fbTitle = document.getElementById('triviaFeedbackTitle');
-        const fbExp = document.getElementById('triviaExplanationText');
-
-        if (feedbackBox && fbTitle && fbExp) {
-            fbTitle.innerText = isCorrect ? "✦ Risposta Esatta! Punto accreditato alla tua cantina." : "✗ Risposta errata. Sarà per la prossima degustazione.";
-            fbExp.innerText = currentTriviaData.explanation || "";
-            feedbackBox.classList.remove('hidden');
-            feedbackBox.style.display = 'block';
+            if (window.lucide) lucide.createIcons();
         }
 
-        setTimeout(() => {
-            const badgeEl = document.getElementById('triviaPointsBadge');
-            if (badgeEl) badgeEl.classList.add('hidden');
-
+        // 2. Caricamento della domanda del giorno
+        async function loadDailyTrivia() {
             const questionEl = document.getElementById('triviaQuestionText');
             const optionsEl = document.getElementById('triviaOptionsList');
-            if (questionEl) {
-                questionEl.innerHTML = `
-                    <div class="py-1 px-2 text-center space-y-1.5 my-0">
-                        <div class="w-8 h-8 mx-auto rounded-full bg-[#d4af37]/15 border border-[#d4af37]/40 flex items-center justify-center text-[#d4af37] shadow-xs">
-                            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-                        </div>
-                        <div class="space-y-0.5">
-                            <p class="font-serif font-bold text-sm sm:text-base" style="color: #581c25;">Hai già risposto a questa domanda oggi.</p>
-                            <p class="text-xs text-stone-600 italic font-light">Il sommelier ti aspetta domani per una nuova degustazione!</p>
-                        </div>
-                    </div>
-                `;
+            const badgeEl = document.getElementById('triviaPointsBadge');
+            const feedbackBox = document.getElementById('triviaFeedbackBox');
+
+            if (!questionEl || !optionsEl) return;
+
+            try {
+                const res = await fetch(config.triviaWebhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: currentUser ? currentUser.id : 'anonymous' })
+                });
+                const result = await res.json();
+            
+                if (result.status === 'success' && result.data) {
+                    currentTriviaData = result.data;
+                    const pts = currentTriviaData.points || 1;
+                    
+                    userHasAnsweredToday = result.has_answered;
+
+                    // Se non ha ancora risposto, mostra la domanda normalmente
+                    if (!userHasAnsweredToday) {
+                        if (feedbackBox) feedbackBox.classList.add('hidden');
+                        if (badgeEl) {
+                            badgeEl.innerText = `✦ ${pts} ${pts === 1 ? 'Punto' : 'Punti'}`;
+                            badgeEl.classList.remove('hidden');
+                        }
+                        questionEl.innerText = currentTriviaData.question_text;
+
+                        let optsHtml = '';
+                        currentTriviaData.options.forEach((opt, idx) => {
+                            optsHtml += `<button onclick="submitTriviaAnswer(${idx})" class="w-full text-left p-3 rounded-2xl border border-gold-400/40 hover:opacity-90 wine-card-bg text-white text-sm sm:text-base font-serif font-bold transition cursor-pointer shadow-sm">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
+                        });
+                        optionsEl.innerHTML = optsHtml;
+                    }
+                }
+            } catch (err) {
+                console.warn("Quiz del giorno non disponibile al momento.", err);
             }
-            if (optionsEl) optionsEl.innerHTML = '';
             if (window.lucide) lucide.createIcons();
-        }, 1200);
+        }
 
-        if (typeof updateAuthUI === 'function') updateAuthUI(currentUser);
-        showToast(isCorrect ? "Risposta esatta! Punto registrato." : "Risposta registrata.");
+        // 3. Invio della risposta (Mostra la spiegazione e imposta il flag senza mostrare l'avviso "già risposto")
+        async function submitTriviaAnswer(selectedIndex) {
+            if (!currentUser) {
+                showToast("Accedi con Google per partecipare al Quiz!");
+                if (typeof loginWithGoogle === 'function') loginWithGoogle();
+                return;
+            }
+            if (!currentTriviaData) return;
 
-    } catch (err) {
-        console.error("Errore salvataggio risposta trivia:", err);
-        showToast("Hai già risposto a questo quiz oggi.");
-        toggleTriviaBox();
-    }
-}
+            const isCorrect = selectedIndex === currentTriviaData.correct_option_index;
+            const pts = currentTriviaData.points || 1;
+
+            const optionButtons = document.querySelectorAll('#triviaOptionsList button');
+            optionButtons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === currentTriviaData.correct_option_index) {
+                    btn.classList.remove('wine-card-bg');
+                    btn.style.backgroundColor = '#15803d';
+                    btn.style.borderColor = '#16a34a';
+                } else if (idx === selectedIndex && !isCorrect) {
+                    btn.classList.remove('wine-card-bg');
+                    btn.style.backgroundColor = '#b91c1c';
+                    btn.style.borderColor = '#dc2626';
+                } else {
+                    btn.style.opacity = '0.4';
+                }
+            });
+
+            try {
+                const { error } = await supabaseClient.rpc('record_trivia_answer', {
+                    p_user_id: currentUser.id,
+                    p_question_id: currentTriviaData.id,
+                    p_selected_option: selectedIndex,
+                    p_is_correct: isCorrect,
+                    p_points: pts
+                });
+
+                if (error) throw error;
+
+                // Segnamo che adesso ha risposto, così se dovesse ricliccare in futuro vedrà l'avviso
+                userHasAnsweredToday = true;
+
+                // Mostriamo subito il feedback e la spiegazione (SENZA l'avviso "Hai già risposto")
+                const feedbackBox = document.getElementById('triviaFeedbackBox');
+                const fbTitle = document.getElementById('triviaFeedbackTitle');
+                const fbExp = document.getElementById('triviaExplanationText');
+                const badgeEl = document.getElementById('triviaPointsBadge');
+
+                if (badgeEl) badgeEl.classList.add('hidden');
+
+                if (feedbackBox && fbTitle && fbExp) {
+                    fbTitle.innerText = isCorrect ? "✦ Risposta Esatta! Punto accreditato alla tua cantina." : "✗ Risposta errata. Sarà per la prossima degustazione.";
+                    fbExp.innerText = currentTriviaData.explanation || "";
+                    feedbackBox.classList.remove('hidden');
+                    feedbackBox.style.display = 'block';
+                }
+
+                if (typeof updateAuthUI === 'function') updateAuthUI(currentUser);
+                showToast(isCorrect ? "Risposta esatta! Punto registrato." : "Risposta registrata.");
+
+            } catch (err) {
+                console.error("Errore salvataggio risposta trivia:", err);
+                showToast("Hai già risposto a questo quiz oggi.");
+                userHasAnsweredToday = true;
+            }
+        }
 
 // 4. Apertura / Chiusura Box Classifica
 async function toggleLeaderboardBox() {
@@ -1184,58 +1301,69 @@ function switchLeaderboardTab(type) {
     loadLeaderboardData(type);
 }
 
-// 6. Caricamento dati della classifica da Supabase
-async function loadLeaderboardData(type) {
-    const container = document.getElementById('leaderboardListContainer');
-    if (!container) return;
-
-    container.style.minHeight = '140px';
-    container.innerHTML = '<div class="flex items-center justify-center py-6"><p class="text-xs font-serif italic text-stone-400">Calcolo posizioni in cantina...</p></div>';
-
-    try {
-        const pointsColumn = (type === 'monthly') ? 'monthly_points' : 'annual_points';
-
-        const { data, error } = await supabaseClient
-            .from('profiles')
-            .select(`full_name, email, ${pointsColumn}`)
-            .order(pointsColumn, { ascending: false })
-            .limit(20);
-
-        if (error) throw error;
-
-        if (!data || data.length === 0) {
-            container.innerHTML = `<p class="text-xs font-serif italic text-stone-500 text-center py-3">Nessuna degustazione registrata per questo periodo.</p>`;
-            return;
+function formatNamePrivacy(fullName) {
+            if (!fullName) return 'Sommelier Anonimo';
+            let cleanName = fullName.includes('@') ? fullName.split('@')[0].replace(/[._-]/g, ' ') : fullName;
+            const parts = cleanName.trim().split(/\s+/);
+            if (parts.length === 1) return parts[0];
+            const firstName = parts[0];
+            const lastNameInitial = parts[parts.length - 1].charAt(0).toUpperCase();
+            return `${firstName} ${lastNameInitial}.`;
         }
 
-        let html = '';
-        data.forEach((user, index) => {
-            const name = user.full_name || user.email?.split('@')[0] || 'Sommelier Anonimo';
-            const points = user[pointsColumn] || 0;
+// 6. Caricamento dati della classifica da Supabase
+async function loadLeaderboardData(type) {
+            const container = document.getElementById('leaderboardListContainer');
+            if (!container) return;
 
-            let rankBadge = `<span class="w-5 h-5 rounded-full bg-stone-100 text-stone-600 text-[10px] font-bold flex items-center justify-center">${index + 1}°</span>`;
-            if (index === 0) rankBadge = `<span class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center shadow-xs">1°</span>`;
-            if (index === 1) rankBadge = `<span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center justify-center shadow-xs">2°</span>`;
-            if (index === 2) rankBadge = `<span class="w-5 h-5 rounded-full bg-orange-100 text-orange-800 text-[10px] font-bold flex items-center justify-center shadow-xs">3°</span>`;
+            container.style.minHeight = '140px';
+            container.innerHTML = '<div class="flex items-center justify-center py-6"><p class="text-xs font-serif italic text-stone-400">Calcolo posizioni in cantina...</p></div>';
 
-            html += `
-                <div class="flex items-center justify-between p-2 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                    <div class="flex items-center gap-2.5">
-                        ${rankBadge}
-                        <span class="font-serif font-bold text-xs text-wine-900">${name}</span>
-                    </div>
-                    <span class="text-[10px] font-serif font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/50">✦ ${points} pt</span>
-                </div>
-            `;
-        });
+            try {
+                const pointsColumn = (type === 'monthly') ? 'monthly_points' : 'annual_points';
 
-        container.innerHTML = html;
+                const { data, error } = await supabaseClient
+                    .from('profiles')
+                    .select(`full_name, email, ${pointsColumn}`)
+                    .order(pointsColumn, { ascending: false })
+                    .limit(20);
 
-    } catch (err) {
-        console.error("Errore caricamento classifica:", err);
-        container.innerHTML = '<p class="text-xs font-serif italic text-red-500 text-center py-3">Impossibile caricare la classifica al momento.</p>';
-    }
-}
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<p class="text-xs font-serif italic text-stone-500 text-center py-3">Nessuna degustazione registrata per questo periodo.</p>`;
+                    return;
+                }
+
+                let html = '';
+                data.forEach((user, index) => {
+                    const rawName = user.full_name || user.email?.split('@')[0] || 'Sommelier Anonimo';
+                    const name = formatNamePrivacy(rawName); // ✦ APPLICHIAMO LA PRIVACY QUI
+                    const points = user[pointsColumn] || 0;
+
+                    let rankBadge = `<span class="w-5 h-5 rounded-full bg-stone-100 text-stone-600 text-[10px] font-bold flex items-center justify-center">${index + 1}°</span>`;
+                    if (index === 0) rankBadge = `<span class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center shadow-xs">1°</span>`;
+                    if (index === 1) rankBadge = `<span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center justify-center shadow-xs">2°</span>`;
+                    if (index === 2) rankBadge = `<span class="w-5 h-5 rounded-full bg-orange-100 text-orange-800 text-[10px] font-bold flex items-center justify-center shadow-xs">3°</span>`;
+
+                    html += `
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-stone-50/70 border border-stone-200/60">
+                            <div class="flex items-center gap-2.5">
+                                ${rankBadge}
+                                <span class="font-serif font-bold text-xs text-wine-900">${name}</span>
+                            </div>
+                            <span class="text-[10px] font-serif font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/50">✦ ${points} pt</span>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+
+            } catch (err) {
+                console.error("Errore caricamento classifica:", err);
+                container.innerHTML = '<p class="text-xs font-serif italic text-red-500 text-center py-3">Impossibile caricare la classifica al momento.</p>';
+            }
+        }
 
         const i18n = {
             it: {
@@ -2360,6 +2488,28 @@ function quickAskAiSommelier(promptText) {
             if (paywall) paywall.classList.add('hidden');
         }
 
+        // Funzione per aprire il modale
+function openAboutModal() {
+    const modal = document.getElementById('aboutModal');
+    if (modal) {
+        // Chiude eventuali altri modali aperti (come fa il paywall)
+        document.getElementById('profileModal')?.classList.add('hidden');
+        document.getElementById('premiumStatusModal')?.classList.add('hidden');
+        document.getElementById('paywallModal')?.classList.add('hidden');
+        document.getElementById('plansModal')?.classList.add('hidden');
+        
+        modal.classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+    }
+}
+
+function closeAboutModal() {
+    const modal = document.getElementById('aboutModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+        
         // Apre la card con i 4 piani
         function openPlansModal() {
             const modal = document.getElementById('plansModal');
