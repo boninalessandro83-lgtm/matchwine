@@ -437,6 +437,8 @@
                 Il tuo <strong class="font-semibold text-[#520d1a]">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta.
             </p>
 
+            
+            
             <!-- SEZIONE GAMING / QUIZ DEL GIORNO E CLASSIFICA -->
             <div id="triviaWidgetContainer" class="w-full max-w-xl bg-[#fffefb] rounded-2xl border border-[#d4af37]/60 shadow-luxury px-4 py-3.5 space-y-3 mt-3 text-left">
                 <div class="flex items-center justify-between w-full">
@@ -506,8 +508,8 @@
             </div>
         </div>
 
-        <!-- FRASE CLICCABILE SCOPRI MATCHWINE (Allineata e centrata correttamente) -->
-<div onclick="openAboutModal()" class="w-full text-center mt-3 mb-1 px-2 cursor-pointer group py-1.5 transition-all">
+        <!-- FRASE CLICCABILE SCOPRI MATCHWINE -->
+<div id="aboutSectionContainer" onclick="openAboutModal()" class="w-full text-center mt-3 mb-1 px-2 cursor-pointer group py-1.5 transition-all">
     <div class="inline-flex items-center justify-center gap-2 group-hover:opacity-80 transition-opacity">
         <span class="font-serif italic text-sm sm:text-base font-bold text-[#520d1a]">
             Tutto quello che devi sapere sul tuo Sommelier Personale
@@ -1053,7 +1055,14 @@
                         .eq('id', user.id)
                         .single();
 
-                    if (error || !profile) {
+                    // SE C'È UN ERRORE DI RETE O TIMEOUT, NON TOCCARE MAI IL DATABASE CON UN UPSERT DI EMERGENZA!
+                    if (error && error.code !== 'PGRST116') {
+                        console.warn("Errore di rete temporaneo nel recupero profilo:", error);
+                        return; // Esce senza fare danni e senza azzerare nulla
+                    }
+
+                    if (!profile) {
+                        // Il profilo esiste davvero solo se l'errore è PGRST116 (record non trovato)
                         const { data: upserted } = await supabaseClient
                             .from('profiles')
                             .upsert([{ id: user.id, email: user.email || '', full_name: user.user_metadata?.full_name || 'Utente', credits_remaining: 10, plan: 'free', sommelier_level: 'Apprendista' }], { onConflict: 'id' })
@@ -1076,7 +1085,6 @@
                     }
                 } catch (e) {
                     console.warn("Errore lettura profilo:", e);
-                    if (creditsLabel) creditsLabel.innerText = "10 Crediti";
                 }
             } else {
                 if (loginBtn) loginBtn.classList.remove('hidden');
@@ -1587,32 +1595,30 @@ async function loadLeaderboardData(type) {
         }
 
         function resetToHome() {
-            const resultsCont = document.getElementById('resultsContainer');
-            const welcomeState = document.getElementById('welcomeState');
-            const quickTry = document.getElementById('quickTrySection');
-            const prizesNotice = document.getElementById('prizesNoticeContainer');
+    const resultsCont = document.getElementById('resultsContainer');
+    const welcomeState = document.getElementById('welcomeState');
+    const quickTry = document.getElementById('quickTrySection');
+    const installSec = document.getElementById('installSectionContainer');
+    const privacySec = document.getElementById('privacySection');
+    const aboutSec = document.getElementById('aboutSectionContainer'); // <-- Il blocco nuovo
 
-            if (resultsCont) resultsCont.classList.add('hidden');
-            if (welcomeState) welcomeState.classList.remove('hidden');
-            if (quickTry) quickTry.classList.remove('hidden');
-            if (prizesNotice) prizesNotice.classList.remove('hidden');
-
-            // --- RIMOSTRA INSTALLA E PRIVACY NELLA HOME ---
-            const installSec = document.getElementById('installSectionContainer');
-            const privacySec = document.getElementById('privacySection');
-            if (installSec) installSec.classList.remove('hidden');
-            if (privacySec) privacySec.classList.remove('hidden');
-            
-            if (dishInputEl) dishInputEl.value = '';
-            toggleClearButton();
-            currentData = null;
-            readerPageIndex = 1;
-            
-            if (loadingTimer) {
-                clearTimeout(loadingTimer);
-                loadingTimer = null;
-            }
-        }
+    if (resultsCont) resultsCont.classList.add('hidden');
+    if (welcomeState) welcomeState.classList.remove('hidden');
+    if (quickTry) quickTry.classList.remove('hidden');
+    if (installSec) installSec.classList.remove('hidden');
+    if (privacySec) privacySec.classList.remove('hidden');
+    if (aboutSec) aboutSec.classList.remove('hidden'); // <-- Rimmostrato in home
+    
+    if (dishInputEl) dishInputEl.value = '';
+    toggleClearButton();
+    currentData = null;
+    readerPageIndex = 1;
+    
+    if (loadingTimer) {
+        clearTimeout(loadingTimer);
+        loadingTimer = null;
+    }
+}
 
         function toggleEnologoChat() {
             const chatBox = document.getElementById('enologoChatContainer');
@@ -1652,9 +1658,11 @@ async function loadLeaderboardData(type) {
     // Nasconde separatamente installazione e privacy
     const installSec = document.getElementById('installSectionContainer');
     const privacySec = document.getElementById('privacySection');
+    const aboutSec = document.getElementById('aboutSectionContainer');
     if (installSec) installSec.classList.add('hidden');
     if (privacySec) privacySec.classList.add('hidden');
-  
+    if (aboutSec) aboutSec.classList.add('hidden');
+
     if (!currentUser) {
         try {
             const tableName = searchMode === 'dish' ? 'dishes_free' : 'wines_free';
@@ -2324,13 +2332,32 @@ async function loadLeaderboardData(type) {
 
     const currentDish = currentData ? (currentData.dish_name || currentData.wine_name) : (dishInputEl ? dishInputEl.value : "Piatto");
 
+    // --- CALCOLO DINAMICO DEL CONTESTO ATTIVO (SCHEDA E ELEMENTO VISUALIZZATO) ---
+    let activeTabName = "Standard";
+    let activeItemName = "";
+
+    if (searchMode === 'dish') {
+        const tabs = ["Standard (<15€)", "Plus (15-40€)", "Prestige (>40€)", "Consiglio del Sommelier"];
+        activeTabName = tabs[readerPageIndex - 1] || "Standard";
+        
+        if (readerPageIndex === 1) activeItemName = currentData?.standard_wine || '';
+        else if (readerPageIndex === 2) activeItemName = currentData?.plus_wine || '';
+        else if (readerPageIndex === 3) activeItemName = currentData?.prestige_wine || '';
+        else if (readerPageIndex === 4) activeItemName = currentData?.sommelier_wine || '';
+    } else {
+        const tabs = ["Piatto della Tradizione", "Piatto Gourmet"];
+        activeTabName = tabs[readerPageIndex - 1] || "Tradizione";
+        
+        const currentMatchObj = readerPageIndex === 1 ? (currentData?.tradition || {}) : (currentData?.gourmet || {});
+        activeItemName = currentMatchObj.dish_name || currentMatchObj.trad_dish_name || currentMatchObj.gour_dish_name || '';
+    }
+
     try {
         // --- RECUPERO SICURO DELLA SESSIONE SUPABASE ---
         const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
         
         if (sessionError || !session || !session.access_token) {
             if (responseBox) responseBox.classList.add('hidden');
-            // Se manca la sessione, apre il paywall in primo piano
             if (typeof openPaywall === 'function') {
                 openPaywall();
             }
@@ -2350,6 +2377,9 @@ async function loadLeaderboardData(type) {
                 message: message,
                 lang: currentLang,
                 context_dish: currentDish,
+                search_mode: searchMode,
+                active_tab: activeTabName,
+                active_item: activeItemName,
                 context_wines: {
                     standard: currentData?.standard_wine || '',
                     plus: currentData?.plus_wine || '',
@@ -2371,7 +2401,6 @@ async function loadLeaderboardData(type) {
         if (response.status === 401 || response.status === 402 || response.status === 403 || (result && (result.paywall === true || result.error_code === "CREDITS_EXHAUSTED"))) {
             if (responseBox) responseBox.classList.add('hidden');
             
-            // Apre il modale fluttuante in primo piano con la card elegante
             if (typeof openPaywall === 'function') {
                 openPaywall();
             } else {
