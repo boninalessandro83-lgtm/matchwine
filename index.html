@@ -1902,10 +1902,15 @@ async function loadLeaderboardData(type) {
                     return { winery, type };
                 };
 
-                const wineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp, priceTag, regionVal, nationVal) => {
+                const wineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp, priceTag, regionVal, nationVal, grapeVal, alcoholVal) => {
                     let parts = formatWineTitleParts(wineTitle);
                     let displayGlass = wineGlass && wineGlass.trim() !== '' ? wineGlass : 'Ballon / Calice ampio';
                     let displayTemp = wineTemp && wineTemp.trim() !== '' ? wineTemp : '16-18°C';
+
+                    // Creazione della riga tecnica: Vitigno • Regione • Gradazione
+                    let technicalLine = [grapeVal, regionVal, alcoholVal ? `${alcoholVal}% vol.` : '']
+                        .filter(Boolean)
+                        .join(' • ');
 
                     return `
                     <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
@@ -1937,11 +1942,10 @@ async function loadLeaderboardData(type) {
                                             ${parts.type || parts.winery}
                                         </h3>
                                         
-                                        <!-- REGIONE E NAZIONE IN VERTICALE SOTTO AL VINO -->
-                                        ${regionVal ? `
-                                            <div class="pt-1 space-y-0.5">
-                                                <div class="text-[12px] sm:text-xs font-serif font-bold tracking-widest uppercase text-[#520d1a]">${regionVal}</div>
-                                                ${nationVal ? `<div class="text-[10px] sm:text-[11px] font-serif font-medium tracking-wider uppercase text-[#a37f37]">${nationVal}</div>` : ''}
+                                        <!-- RIGA TECNICA: VITIGNO • REGIONE • GRADAZIONE -->
+                                        ${technicalLine ? `
+                                            <div class="pt-1">
+                                                <div class="text-[11px] sm:text-xs font-serif font-bold tracking-wider uppercase text-[#520d1a]">${technicalLine}</div>
                                             </div>
                                         ` : ''}
                                     </div>
@@ -1980,10 +1984,14 @@ async function loadLeaderboardData(type) {
                     </div>`;
                 };
 
-                const sommelierWineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp, regionVal, nationVal) => {
+                const sommelierWineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp, regionVal, nationVal, grapeVal, alcoholVal) => {
                     let parts = formatWineTitleParts(wineTitle);
                     let displayGlass = wineGlass && wineGlass.trim() !== '' ? wineGlass : 'Ballon / Calice ampio';
                     let displayTemp = wineTemp && wineTemp.trim() !== '' ? wineTemp : '16-18°C';
+
+                    let technicalLine = [grapeVal, regionVal, alcoholVal ? `${alcoholVal}% vol.` : '']
+                        .filter(Boolean)
+                        .join(' • ');
 
                     return `
                     <div class="wine-card-bg p-4 sm:p-5 space-y-4 rounded-[2rem] border border-gold-400/40 shadow-wine-glow text-white relative">
@@ -2014,10 +2022,9 @@ async function loadLeaderboardData(type) {
                                         <h3 class="font-serif font-bold leading-tight tracking-wide text-sm sm:text-base uppercase text-stone-100">
                                             ${parts.type || parts.winery}
                                         </h3>
-                                        ${regionVal ? `
-                                            <div class="pt-1 space-y-0.5">
-                                                <div class="text-[12px] sm:text-xs font-serif font-bold tracking-widest uppercase text-stone-100">${regionVal}</div>
-                                                ${nationVal ? `<div class="text-[10px] sm:text-[11px] font-serif font-medium tracking-wider uppercase text-gold-300">${nationVal}</div>` : ''}
+                                        ${technicalLine ? `
+                                            <div class="pt-1">
+                                                <div class="text-[11px] sm:text-xs font-serif font-bold tracking-wider uppercase text-stone-100">${technicalLine}</div>
                                             </div>
                                         ` : ''}
                                     </div>
@@ -2140,7 +2147,9 @@ async function loadLeaderboardData(type) {
                             glass: d.standard_glass || d.standard_wine_glass || d.glass, 
                             temp: d.standard_temp || d.standard_wine_temp || d.temp, 
                             region: d.standard_wine_region || d.standard_region || d.region, 
-                            nation: d.standard_wine_nation || d.standard_nazione || d.nazione 
+                            nation: d.standard_wine_nation || d.standard_nazione || d.nazione,
+                            grape: d.standard_wine_grape || d.standard_grape || '',
+                            alcohol: d.standard_wine_alcohol || d.standard_alcohol || ''
                         },
                         { 
                             tag: 'Plus (15-40€)', 
@@ -2150,7 +2159,9 @@ async function loadLeaderboardData(type) {
                             glass: d.plus_glass || d.plus_wine_glass || d.glass, 
                             temp: d.plus_temp || d.plus_wine_temp || d.temp, 
                             region: d.plus_wine_region || d.plus_region || d.region, 
-                            nation: d.plus_wine_nation || d.plus_nazione || d.nazione 
+                            nation: d.plus_wine_nation || d.plus_nazione || d.nazione,
+                            grape: d.plus_wine_grape || d.plus_grape || '',
+                            alcohol: d.plus_wine_alcohol || d.plus_alcohol || ''
                         },
                         { 
                             tag: 'Prestige (>40€)', 
@@ -2160,11 +2171,13 @@ async function loadLeaderboardData(type) {
                             glass: d.prestige_glass || d.prestige_wine_glass || d.glass, 
                             temp: d.prestige_temp || d.prestige_wine_temp || d.temp, 
                             region: d.prestige_wine_region || d.prestige_region || d.region, 
-                            nation: d.prestige_wine_nation || d.prestige_nazione || d.nazione 
+                            nation: d.prestige_wine_nation || d.prestige_nazione || d.nazione,
+                            grape: d.prestige_wine_grape || d.prestige_grape || '',
+                            alcohol: d.prestige_wine_alcohol || d.prestige_alcohol || ''
                         }
                     ];
                     const wineInfo = types[readerPageIndex - 1];
-                    html = wineCardHtml(wineInfo.title, wineInfo.desc, wineInfo.matching, wineInfo.glass, wineInfo.temp, wineInfo.tag, wineInfo.region, wineInfo.nation) + dishCardHtml;
+                    html = wineCardHtml(wineInfo.title, wineInfo.desc, wineInfo.matching, wineInfo.glass, wineInfo.temp, wineInfo.tag, wineInfo.region, wineInfo.nation, wineInfo.grape, wineInfo.alcohol) + dishCardHtml;
                 } else if (readerPageIndex === 4) {
                     html = sommelierWineCardHtml(
                         d.sommelier_wine, 
@@ -2173,7 +2186,9 @@ async function loadLeaderboardData(type) {
                         d.sommelier_glass || d.sommelier_wine_glass || d.glass, 
                         d.sommelier_temp || d.sommelier_wine_temp || d.temp,
                         d.sommelier_wine_region || d.sommelier_region || d.region,
-                        d.sommelier_wine_nation || d.sommelier_nazione || d.nazione
+                        d.sommelier_wine_nation || d.sommelier_nazione || d.nazione,
+                        d.sommelier_wine_grape || d.sommelier_grape || '',
+                        d.sommelier_wine_alcohol || d.sommelier_alcohol || ''
                     ) + dishCardHtml;
                 }
             } else {
@@ -2247,8 +2262,7 @@ async function loadLeaderboardData(type) {
                                 </h3>
                                 ${wineRegionVal ? `
                                     <div class="pt-1 space-y-0.5">
-                                        <div class="text-[12px] sm:text-xs font-serif italic font-bold tracking-widest uppercase text-[#520d1a]">${wineRegionVal}</div>
-                                        ${wineNationVal ? `<div class="text-[10px] sm:text-[11px] font-serif font-medium tracking-wider uppercase text-[#a37f37]">${wineNationVal}</div>` : ''}
+                                        <div class="text-[12px] sm:text-xs font-serif italic font-bold tracking-widest uppercase text-[#520d1a]">${wineRegionVal}</div>${wineNationVal ? `<div class="text-[10px] sm:text-[11px] font-serif font-medium tracking-wider uppercase text-[#a37f37]">${wineNationVal}</div>` : ''}
                                     </div>
                                 ` : ''}
                             </div>
