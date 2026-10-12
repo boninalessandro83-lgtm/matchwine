@@ -421,22 +421,15 @@
         </div>
 
         <!-- BENVENUTO -->
-        <div id="welcomeState" class="w-full max-w-xl text-center py-3 px-2 space-y-3">
-            <div class="flex justify-center"><img src="images/Calice.png" alt="Calice" class="w-20 h-auto opacity-95 object-contain drop-shadow-sm" /></div>
-            
-            <div class="space-y-2.5">
-                <h2 id="welcomeTitle" class="text-3xl sm:text-3xl font-serif text-[#520d1a] tracking-wide font-normal italic">A Ciascun Piatto il Suo Calice</h2>
-                <div class="flex items-center justify-center gap-3 w-48 mx-auto py-1">
-                    <div class="h-[1px] bg-gradient-to-r from-transparent to-[#d4af37] flex-1"></div>
-                    <span class="text-gold-500 text-xs">◆</span>
-                    <div class="h-[1px] bg-gradient-to-l from-transparent to-[#d4af37] flex-1"></div>
-                </div>
+        <div id="welcomeState" class="w-full max-w-xl text-center pt-8 pb-14 px-2 space-y-4 mt-8">
+            <div class="flex justify-center">
+                <img src="images/Calice.png" alt="Calice" class="w-20 h-auto opacity-95 object-contain drop-shadow-sm" />
             </div>
-
-            <p id="welcomeDesc" class="text-[#520d1a]/85 font-serif italic text-sm leading-relaxed max-w-md mx-auto font-light">
-                Il tuo <strong class="font-semibold text-[#520d1a]">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta.
-            </p>
-
+            
+            <div class="space-y-1">
+                <h2 id="welcomeTitle" class="text-3xl sm:text-3xl font-serif text-[#520d1a] tracking-wide font-normal italic">A Ciascun Piatto il Suo Calice</h2>
+            </div>
+        </div>
             
             
             <!-- SEZIONE GAMING / QUIZ DEL GIORNO E CLASSIFICA -->
@@ -1601,6 +1594,7 @@ async function loadLeaderboardData(type) {
     const installSec = document.getElementById('installSectionContainer');
     const privacySec = document.getElementById('privacySection');
     const aboutSec = document.getElementById('aboutSectionContainer'); // <-- Il blocco nuovo
+    const triviaWidget = document.getElementById('triviaWidgetContainer');
 
     if (resultsCont) resultsCont.classList.add('hidden');
     if (welcomeState) welcomeState.classList.remove('hidden');
@@ -1608,6 +1602,7 @@ async function loadLeaderboardData(type) {
     if (installSec) installSec.classList.remove('hidden');
     if (privacySec) privacySec.classList.remove('hidden');
     if (aboutSec) aboutSec.classList.remove('hidden'); // <-- Rimmostrato in home
+    if (triviaWidget) triviaWidget.classList.remove('hidden');
     
     if (dishInputEl) dishInputEl.value = '';
     toggleClearButton();
@@ -1659,9 +1654,11 @@ async function loadLeaderboardData(type) {
     const installSec = document.getElementById('installSectionContainer');
     const privacySec = document.getElementById('privacySection');
     const aboutSec = document.getElementById('aboutSectionContainer');
+    const triviaWidget = document.getElementById('triviaWidgetContainer');
     if (installSec) installSec.classList.add('hidden');
     if (privacySec) privacySec.classList.add('hidden');
     if (aboutSec) aboutSec.classList.add('hidden');
+    if (triviaWidget) triviaWidget.classList.add('hidden');
 
     if (!currentUser) {
         try {
@@ -1892,15 +1889,32 @@ async function loadLeaderboardData(type) {
             if (searchMode === 'dish') {
                 let cleanDishName = (d.dish_name || (dishInputEl ? dishInputEl.value.trim() : '') || 'Carbonara').replace(/([aeiouàèìòù])\1{2,}/gi, '$1');
 
-                const formatWineTitleParts = (fullTitle) => {
-                    if (!fullTitle) return { winery: 'Vino Consigliato', type: '' };
-                    let cleaned = fullTitle.replace(/[-–—]/g, '|');
-                    let parts = cleaned.split('|').map(p => p.trim()).filter(Boolean);
-                    let winery = parts[0] ? parts[0].toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase()) : 'Selezionato';
-                    let type = parts.length > 1 ? parts[1].toUpperCase() : '';
-                    if (parts.length === 1) return { winery: fullTitle, type: '' };
-                    return { winery, type };
-                };
+                const formatWineTitleParts = (rawTitle, wineryVal, wineNameVal) => {
+                let winery = wineryVal || d.standard_winery || d.plus_winery || d.prestige_winery || d.sommelier_winery;
+                let wineName = wineNameVal || d.standard_wine_name || d.plus_wine_name || d.prestige_wine_name || d.sommelier_wine_name;
+
+                if (winery || wineName) {
+                return { 
+                 winery: winery || 'Cantina Selezionata', 
+                type: wineName ? wineName.toUpperCase() : '' 
+             };
+             }
+
+                let fullTitle = rawTitle || d.standard_wine || d.plus_wine || d.prestige_wine || d.sommelier_wine || 'Vino Consigliato';
+    
+                // Cerca il separatore principale tra produttore e vino, ad esempio " - " con gli spazi
+                // In questo modo il trattino interno a "Biondi-Santi" non viene toccato.
+                let parts = fullTitle.split(/\s+-\s+/);
+    
+                if (parts.length >= 2) {
+              let finalWinery = parts[0].trim();
+               // Rimuove eventuali indicazioni di regione tra parentesi alla fine (es. "(Toscana)") dal nome del vino se presenti
+              let finalType = parts.slice(1).join(' - ').replace(/\s*\([^)]*\)/g, '').trim().toUpperCase();
+              return { winery: finalWinery, type: finalType };
+             }
+
+              return { winery: fullTitle.replace(/\s*\([^)]*\)/g, '').trim(), type: '' };
+             };
 
                 const wineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp, priceTag, regionVal, nationVal, grapeVal, alcoholVal) => {
                     let parts = formatWineTitleParts(wineTitle);
