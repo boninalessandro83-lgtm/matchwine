@@ -1955,7 +1955,10 @@ async function loadLeaderboardData(type) {
                                         <h3 class="font-serif font-bold leading-tight tracking-wide text-sm sm:text-base uppercase text-[#520d1a]">
                                             ${parts.type || parts.winery}
                                         </h3>
-                                        
+                                        <div class="text-[11px] font-serif italic font-bold uppercase text-[#a37f37] tracking-widest pt-0.5">
+                                         ${d.region || ''}
+                                        </div>
+
                                         <!-- RIGA TECNICA: VITIGNO • REGIONE • GRADAZIONE -->
                                         ${technicalLine ? `
                                             <div class="pt-1">
@@ -2306,22 +2309,12 @@ async function loadLeaderboardData(type) {
         }
         
         function getDishIllustration(dishCategory, dishName = '', description = '') {
-            const text = ((dishName || '') + " " + (description || '')).toLowerCase();
+            // USIAMO SOLO IL NOME DEL PIATTO E LA CATEGORIA (La descrizione viene completamente ignorata!)
+            const nameAndCat = ((dishName || '') + " " + (dishCategory || '')).toLowerCase();
             const cat = dishCategory ? dishCategory.trim().toLowerCase() : '';
             
-            // 1. MATCH BASATO SUL TESTO (Nome e Descrizione - Altamente Affidabile)
-            if (text.match(/\b(pasta|spaghetti|carbonara|cacio e pepe|amatriciana|gricia|norma|pesto|lasagne|tagliatelle|ravioli|tortellini|rigatoni|penne|linguine|maccheroni|gnocchi|fregula|pizzoccheri|paccheri|trofie|orecchiette|fusilli|farfalle|cannelloni|vongole)\b/)) return "images/Piatto.png";
-            if (text.match(/\b(risotto|riso|paella|orzotto)\b/)) return "images/risotto.png";
-            if (text.match(/\b(carne|bistecca|cotoletta|milanese|filetto|costata|arrosto|tartare|agnello|maiale|stinco|prosciutto|spezzatino|ragù|pollo|tagliata|brasato|stufato)\b/)) return "images/bistecca.png";
-            if (text.match(/\b(pesce|salmone|orata|branzino|tonno|polpo|gamberi|frittura|cozze|ostriche|baccalà|calamari|aragosta)\b/)) return "images/pesce.png";
-            if (text.match(/\b(sushi|sashimi|nigiri|uramaki|poke|chirashi|temaki)\b/)) return "images/sushi.png";
-            if (text.match(/\b(pizza|focaccia|calzone|piadina|bruschetta|panino)\b/)) return "images/pizza.png";
-            if (text.match(/\b(hamburger|burger)\b/)) return "images/hamburger.png";
-            if (text.match(/\b(taco|tacos|burrito|fajitas|enchiladas|nachos|messicano)\b/)) return "images/mex.png";
-            if (text.match(/\b(formaggio|formaggi|fonduta|pecorino|parmigiano|mozzarella|burrata|gorgonzola)\b/)) return "images/formaggio.png";
-            if (text.match(/\b(torta|dolce|dessert|tiramisù|cioccolato|gelato|crostata|crep|panna cotta)\b/)) return "images/torta.png";
-
-            // 2. CATEGORIA DAL DATABASE (Solo se esplicita, ma escludendo "pasta" per evitare falsi positivi)
+            // 1. CONTROLLO SULLA MACROCATEGORIA DAL DATABASE
+            if (cat === 'pasta') return "images/Piatto.png";
             if (cat === 'risotto') return "images/risotto.png";
             if (cat === 'bistecca' || cat === 'carne') return "images/bistecca.png";
             if (cat === 'pesce') return "images/pesce.png";
@@ -2331,8 +2324,20 @@ async function loadLeaderboardData(type) {
             if (cat === 'mex') return "images/mex.png";
             if (cat === 'formaggio') return "images/formaggio.png";
             if (cat === 'torta' || cat === 'dolce') return "images/torta.png";
-            
-            // 3. FALLBACK GENERALE AUTOMATICO PER QUALSIASI ALTRO PIATTO (Uova, flan, verdure, zuppe, ecc.)
+
+            // 2. CONTROLLO SUL NOME DEL PIATTO (Senza leggere la descrizione)
+            if (nameAndCat.match(/\b(pasta|spaghetti|carbonara|cacio e pepe|amatriciana|gricia|norma|pesto|lasagne|tagliatelle|ravioli|tortellini|rigatoni|penne|linguine|maccheroni|gnocchi|fregula|pizzoccheri|paccheri|trofie|orecchiette|fusilli|farfalle|cannelloni|vongole)\b/)) return "images/Piatto.png";
+            if (nameAndCat.match(/\b(risotto|riso|paella|orzotto)\b/)) return "images/risotto.png";
+            if (nameAndCat.match(/\b(carne|bistecca|cotoletta|milanese|filetto|costata|arrosto|tartare|agnello|maiale|stinco|prosciutto|spezzatino|ragù|pollo|tagliata|brasato|stufato)\b/)) return "images/bistecca.png";
+            if (nameAndCat.match(/\b(pesce|salmone|orata|branzino|tonno|polpo|gamberi|frittura|cozze|ostriche|baccalà|calamari|aragosta)\b/)) return "images/pesce.png";
+            if (nameAndCat.match(/\b(sushi|sashimi|nigiri|uramaki|poke|chirashi|temaki)\b/)) return "images/sushi.png";
+            if (nameAndCat.match(/\b(pizza|focaccia|calzone|piadina|bruschetta|panino)\b/)) return "images/pizza.png";
+            if (nameAndCat.match(/\b(hamburger|burger)\b/)) return "images/hamburger.png";
+            if (nameAndCat.match(/\b(taco|tacos|burrito|fajitas|enchiladas|nachos|messicano)\b/)) return "images/mex.png";
+            if (nameAndCat.match(/\b(formaggio|formaggi|fonduta|pecorino|parmigiano|mozzarella|burrata|gorgonzola)\b/)) return "images/formaggio.png";
+            if (nameAndCat.match(/\b(torta|dolce|dessert|tiramisù|cioccolato|gelato|crostata|crep|panna cotta)\b/)) return "images/torta.png";
+
+            // 3. FALLBACK GENERALE PER TUTTO IL RESTO (Se non è tra le categorie sopra, usa PiattoMW.png)
             return "images/PiattoMW.png"; 
         }
      
