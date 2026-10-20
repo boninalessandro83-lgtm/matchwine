@@ -2673,7 +2673,6 @@ window.updateAboutCarousel = function() {
     const dotsContainer = document.getElementById('aboutCarouselDots');
     
     if (track) {
-        // Scorrimento nativo fluido basato sulla larghezza della slide
         const slideWidth = track.clientWidth;
         track.scrollTo({
             left: window.currentAboutSlide * slideWidth,
@@ -2691,21 +2690,44 @@ window.updateAboutCarousel = function() {
             }
         }
     }
-}
+};
 
 window.nextSlide = function() {
     if (window.currentAboutSlide < window.totalAboutSlides - 1) {
         window.currentAboutSlide++;
         window.updateAboutCarousel();
     }
-}
+};
 
 window.prevSlide = function() {
     if (window.currentAboutSlide > 0) {
         window.currentAboutSlide--;
         window.updateAboutCarousel();
     }
-}
+};
+
+window.openAboutModal = function() {
+    const modal = document.getElementById('aboutModal');
+    if (modal) {
+        document.getElementById('profileModal')?.classList.add('hidden');
+        document.getElementById('premiumStatusModal')?.classList.add('hidden');
+        document.getElementById('paywallModal')?.classList.add('hidden');
+        document.getElementById('plansModal')?.classList.add('hidden');
+        
+        window.currentAboutSlide = 0;
+        window.updateAboutCarousel();
+        
+        modal.classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+    }
+};
+
+window.closeAboutModal = function() {
+    const modal = document.getElementById('aboutModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+};
 
 // Sincronizzazione automatica dei pallini quando l'utente usa il dito (scroll nativo)
 document.addEventListener('DOMContentLoaded', () => {
