@@ -2722,7 +2722,23 @@ window.closeAboutModal = function() {
         modal.classList.add('hidden');
     }
 }
-        
+ 
+document.addEventListener('DOMContentLoaded', () => {
+    const track = document.getElementById('aboutCarouselTrack');
+    if (track) {
+        track.addEventListener('scroll', () => {
+            const slideWidth = track.clientWidth;
+            if (slideWidth > 0) {
+                const scrollIndex = Math.round(track.scrollLeft / slideWidth);
+                if (scrollIndex !== window.currentAboutSlide && scrollIndex >= 0 && scrollIndex < window.totalAboutSlides) {
+                    window.currentAboutSlide = scrollIndex;
+                    window.updateAboutCarousel();
+                }
+            }
+        });
+    }
+});
+
         // Apre la card con i 4 piani
         function openPlansModal() {
             const modal = document.getElementById('plansModal');
