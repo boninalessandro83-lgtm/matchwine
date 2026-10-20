@@ -91,14 +91,24 @@
         }
         
         #aboutCarouselTrack {
-         display: flex;
-         transition: transform 0.3s ease-out;
-        }
+    display: flex;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth;
+    transition: none !important; /* Via il transform che fa impazzire il touch */
+}
 
-        #aboutCarouselTrack > div {
-        flex-shrink: 0;
-        width: 100%;
-        }
+#aboutCarouselTrack::-webkit-scrollbar {
+    display: none !important;
+}
+
+#aboutCarouselTrack > div {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    scroll-snap-align: start !important;
+    scroll-snap-stop: always !important;
+}
         
         body {
             background-color: #fcfbfa !important;
@@ -2663,7 +2673,12 @@ window.updateAboutCarousel = function() {
     const dotsContainer = document.getElementById('aboutCarouselDots');
     
     if (track) {
-        track.style.transform = `translateX(-${window.currentAboutSlide * 100}%)`;
+        // Scorrimento nativo fluido basato sulla larghezza della slide
+        const slideWidth = track.clientWidth;
+        track.scrollTo({
+            left: window.currentAboutSlide * slideWidth,
+            behavior: 'smooth'
+        });
     }
     
     if (dotsContainer) {
@@ -2692,55 +2707,34 @@ window.prevSlide = function() {
     }
 }
 
-window.openAboutModal = function() {
-    const modal = document.getElementById('aboutModal');
-    if (modal) {
-        document.getElementById('profileModal')?.classList.add('hidden');
-        document.getElementById('premiumStatusModal')?.classList.add('hidden');
-        document.getElementById('paywallModal')?.classList.add('hidden');
-        document.getElementById('plansModal')?.classList.add('hidden');
-        
-        window.currentAboutSlide = 0;
-        window.updateAboutCarousel();
-        
-        modal.classList.remove('hidden');
-        if (window.lucide) lucide.createIcons();
-    }
-}
-
-window.closeAboutModal = function() {
-    const modal = document.getElementById('aboutModal');
-    if (modal) {
-        modal.classList.add('hidden');
-    }
-}
- 
+// Sincronizzazione automatica dei pallini quando l'utente usa il dito (scroll nativo)
 document.addEventListener('DOMContentLoaded', () => {
     const track = document.getElementById('aboutCarouselTrack');
-    if (!track) return;
-
-    let touchStartX = 0;
-
-    track.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].clientX;
-    }, { passive: true });
-
-    track.addEventListener('touchend', (e) => {
-        let touchEndX = e.changedTouches[0].clientX;
-        let diff = touchStartX - touchEndX;
-        
-        const threshold = 50; // Minimo spostamento in pixel per considerare lo swipe
-
-        if (Math.abs(diff) > threshold) {
-            if (diff > 0) {
-                // Swipe a sinistra -> Avanti
-                nextSlide();
-            } else {
-                // Swipe a destra -> Indietro
-                prevSlide();
-            }
-        }
-    }, { passive: true });
+    if (track) {
+        let scrollTimeout;
+        track.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const slideWidth = track.clientWidth;
+                if (slideWidth > 0) {
+                    const scrollIndex = Math.round(track.scrollLeft / slideWidth);
+                    if (scrollIndex !== window.currentAboutSlide && scrollIndex >= 0 && scrollIndex < window.totalAboutSlides) {
+                        window.currentAboutSlide = scrollIndex;
+                        // Aggiorna solo i pallini senza richiamare scrollTo per evitare loop
+                        const dotsContainer = document.getElementById('aboutCarouselDots');
+                        if (dotsContainer) {
+                            const dots = dotsContainer.children;
+                            for (let i = 0; i < dots.length; i++) {
+                                dots[i].className = (i === window.currentAboutSlide) 
+                                    ? "w-4 h-2 rounded-full bg-[#520d1a] transition-all duration-300" 
+                                    : "w-2 h-2 rounded-full bg-stone-300 transition-all duration-300";
+                            }
+                        }
+                    }
+                }
+            }, 50);
+        }, { passive: true });
+    }
 });
 
         // Apre la card con i 4 piani
