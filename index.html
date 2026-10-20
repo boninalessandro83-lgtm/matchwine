@@ -91,19 +91,11 @@
         }
         
         #aboutCarouselTrack {
-        display: flex;
-        transition: transform 0.3s ease-out;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        }
-
-        #aboutCarouselTrack::-webkit-scrollbar {
-        display: none; 
+         display: flex;
+         transition: transform 0.3s ease-out;
         }
 
         #aboutCarouselTrack > div {
-        scroll-snap-align: start;
         flex-shrink: 0;
         width: 100%;
         }
@@ -2725,17 +2717,29 @@ window.closeAboutModal = function() {
  
 document.addEventListener('DOMContentLoaded', () => {
     const track = document.getElementById('aboutCarouselTrack');
-    if (track) {
-        track.addEventListener('scroll', () => {
-            const slideWidth = track.clientWidth;
-            if (slideWidth > 0) {
-                const scrollIndex = Math.round(track.scrollLeft / slideWidth);
-                if (scrollIndex !== window.currentAboutSlide && scrollIndex >= 0 && scrollIndex < window.totalAboutSlides) {
-                    window.currentAboutSlide = scrollIndex;
-                    window.updateAboutCarousel();
-                }
-            }
-        });
+    if (!track) return;
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    track.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    track.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+        const threshold = 50; // Soglia minima in pixel per attivare il cambio slide
+        if (touchStartX - touchEndX > threshold) {
+            // Swipe a sinistra -> Slide successiva
+            nextSlide();
+        } else if (touchEndX - touchStartX > threshold) {
+            // Swipe a destra -> Slide precedente
+            prevSlide();
+        }
     }
 });
 
