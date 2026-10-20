@@ -2720,38 +2720,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!track) return;
 
     let touchStartX = 0;
-    let touchEndX = 0;
 
     track.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
+        touchStartX = e.changedTouches[0].clientX;
     }, { passive: true });
 
-    track.addEventListener('touchmove', (e) => {
-        // Aggiorna continuamente la posizione finale durante il trascinamento del dito
-        touchEndX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    track.addEventListener('touchend', () => {
-        handleSwipe();
-    }, { passive: true });
-
-    function handleSwipe() {
-        const threshold = 40; // Sensibilità dello swipe (ridotta a 40px per renderlo più reattivo)
-        const diff = touchStartX - touchEndX;
+    track.addEventListener('touchend', (e) => {
+        let touchEndX = e.changedTouches[0].clientX;
+        let diff = touchStartX - touchEndX;
+        
+        const threshold = 50; // Minimo spostamento in pixel per considerare lo swipe
 
         if (Math.abs(diff) > threshold) {
             if (diff > 0) {
-                // Swipe a sinistra -> Slide successiva
+                // Swipe a sinistra -> Avanti
                 nextSlide();
             } else {
-                // Swipe a destra -> Slide precedente
+                // Swipe a destra -> Indietro
                 prevSlide();
             }
         }
-        // Resetta i valori per permettere swipe consecutivi su tutte le slide
-        touchStartX = 0;
-        touchEndX = 0;
-    }
+    }, { passive: true });
 });
 
         // Apre la card con i 4 piani
