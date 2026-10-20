@@ -90,6 +90,24 @@
             text-rendering: optimizeLegibility;
         }
         
+        #aboutCarouselTrack {
+        display: flex;
+        transition: transform 0.3s ease-out;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        }
+
+        #aboutCarouselTrack::-webkit-scrollbar {
+        display: none; 
+        }
+
+        #aboutCarouselTrack > div {
+        scroll-snap-align: start;
+        flex-shrink: 0;
+        width: 100%;
+        }
+        
         body {
             background-color: #fcfbfa !important;
             background-image: 
