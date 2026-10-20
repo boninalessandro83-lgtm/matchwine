@@ -2726,20 +2726,31 @@ document.addEventListener('DOMContentLoaded', () => {
         touchStartX = e.changedTouches[0].screenX;
     }, { passive: true });
 
-    track.addEventListener('touchend', (e) => {
+    track.addEventListener('touchmove', (e) => {
+        // Aggiorna continuamente la posizione finale durante il trascinamento del dito
         touchEndX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    track.addEventListener('touchend', () => {
         handleSwipe();
     }, { passive: true });
 
     function handleSwipe() {
-        const threshold = 50; // Soglia minima in pixel per attivare il cambio slide
-        if (touchStartX - touchEndX > threshold) {
-            // Swipe a sinistra -> Slide successiva
-            nextSlide();
-        } else if (touchEndX - touchStartX > threshold) {
-            // Swipe a destra -> Slide precedente
-            prevSlide();
+        const threshold = 40; // Sensibilità dello swipe (ridotta a 40px per renderlo più reattivo)
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) {
+                // Swipe a sinistra -> Slide successiva
+                nextSlide();
+            } else {
+                // Swipe a destra -> Slide precedente
+                prevSlide();
+            }
         }
+        // Resetta i valori per permettere swipe consecutivi su tutte le slide
+        touchStartX = 0;
+        touchEndX = 0;
     }
 });
 
