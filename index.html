@@ -438,8 +438,8 @@
                 <button type="button" onclick="selectSuggestedItem('Carbonara')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
                     <span class="text-gold-600">🍝</span> Carbonara
                 </button>
-                <button type="button" onclick="selectSuggestedItem('Pizza Margherita')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
-                    <span class="text-gold-600">🍕</span> Pizza Margherita
+                <button class="pill-btn" onclick="selectDish('Fiorentina')">
+                    <span class="icon">🥩</span> Fiorentina
                 </button>
                 <button type="button" onclick="selectSuggestedItem('Risotto ai Funghi Porcini')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
                     <span class="text-gold-600">🍄</span> Risotto ai Funghi
@@ -454,7 +454,7 @@
             </div>
             
             <div class="space-y-1">
-                <h2 id="welcomeTitle" class="text-3xl sm:text-3xl font-serif text-[#520d1a] tracking-wide font-normal italic">A Ciascun Piatto il Suo Calice</h2>
+                <h2 id="welcomeTitle" class="text-3xl sm:text-3xl font-serif text-[#520d1a] tracking-wide font-normal italic">A Ciascun Piatto il Suo Calice!</h2>
             </div>
         </div>
         
@@ -1479,7 +1479,7 @@ async function loadLeaderboardData(type) {
                 btnMatch: "Abbina",
                 loadingTitle: "Consultando la Carta dei Vini...",
                 loadingSubtitle: "Analisi profilo organolettico in corso...",
-                welcomeTitle: "A Ciascun Piatto il Suo Calice",
+                welcomeTitle: "A Ciascun Piatto il Suo Calice!",
                 welcomeDesc: "Il tuo Sommelier IA ti guida verso l'armonia enologica perfetta."
             },
             en: {
@@ -1593,8 +1593,8 @@ async function loadLeaderboardData(type) {
                         <button type="button" onclick="selectSuggestedItem('Carbonara')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
                             <span class="text-gold-600">🍝</span> Carbonara
                         </button>
-                        <button type="button" onclick="selectSuggestedItem('Pizza Margherita')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
-                            <span class="text-gold-600">🍕</span> Pizza Margherita
+                        <button type="button" onclick="selectSuggestedItem('Fiorentina')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
+                            <span class="text-gold-600">🥩</span> Fiorentina
                         </button>
                         <button type="button" onclick="selectSuggestedItem('Risotto ai Funghi Porcini')" class="px-2.5 py-0.5 bg-[#fdfbf7] hover:bg-[#f5ebd9]/60 border border-[#d4af37]/40 rounded-full font-medium text-stone-700 flex items-center gap-1 shadow-2xs transition cursor-pointer text-[10px]">
                             <span class="text-gold-600">🍄</span> Risotto ai Funghi
