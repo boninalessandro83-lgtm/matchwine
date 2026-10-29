@@ -185,6 +185,46 @@
             justify-content: center;
         }
     
+
+        /* Homepage: spacing with a true bottom-aligned legal footer. */
+        main:has(#welcomeState:not(.hidden)) #privacySection {
+            margin-top: auto !important;
+            margin-bottom: 0 !important;
+            padding-top: 24px;
+            padding-bottom: 4px;
+        }
+        main:has(#welcomeState:not(.hidden)) #welcomeState {
+            margin-top: 0 !important;
+        }
+        main:has(#welcomeState:not(.hidden)) #quickTrySection { padding-top: 7px; }
+        main:has(#welcomeState:not(.hidden)) #aboutSectionContainer {
+            margin-top: 5px !important;
+            margin-bottom: 3px !important;
+        }
+        main:has(#welcomeState:not(.hidden)) #triviaWidgetContainer { margin-top: 3px !important; }
+        main:has(#welcomeState:not(.hidden)) #installSectionContainer {
+            margin-top: 10px !important;
+            margin-bottom: 5px !important;
+        }
+        /* Rifinitura verticale mobile: respiro calibrato senza ingrandire le card. */
+        main:has(#welcomeState:not(.hidden)) #welcomeState { margin-bottom: 0 !important; }
+        main:has(#welcomeState:not(.hidden)) #welcomeState + div { margin-top: 10px !important; margin-bottom: 6px !important; }
+        main:has(#welcomeState:not(.hidden)) #quickTrySection { padding-top: 7px; }
+        main:has(#welcomeState:not(.hidden)) #aboutSectionContainer {
+            margin-top: 15px !important;
+            margin-bottom: 13px !important;
+        }
+        main:has(#welcomeState:not(.hidden)) #triviaWidgetContainer { margin-top: 3px !important; }
+        main:has(#welcomeState:not(.hidden)) #installSectionContainer {
+            margin-top: 18px !important;
+            margin-bottom: 5px !important;
+        }
+        /* Mobile-first: headline stays above search and never creates a second hero. */
+        @media (max-width: 380px) {
+            #welcomeTitle { font-size: 18px; }
+            #welcomeState { gap: 4px; }
+            #welcomeState > img { width: 24px; height: 40px; }
+        }
     </style>
 </head>
 <body class="bg-[#faf7f2] text-stone-900 max-w-md mx-auto font-sans antialiased shadow-2xl relative min-h-screen flex flex-col page-container">
@@ -192,7 +232,7 @@
    <!-- HEADER -->
     <header class="sticky top-0 z-50 px-4 py-1.5 flex items-center justify-between bg-white border-b border-stone-200/60 shadow-2xs relative">
         <div class="flex items-center cursor-pointer rounded-xl overflow-hidden py-0.5" onclick="resetToHome()">
-            <img src="images/Logo.JPG" alt="MatchWine" style="height: 38px;" class="w-auto object-contain rounded-xl">
+            <img src="images/Logo_MatchWine.png" alt="MatchWine" style="height: 38px;" class="w-auto object-contain rounded-xl">
         </div>
 
         <div id="authContainer" class="relative">
@@ -396,10 +436,16 @@
     </header>
     
     <!-- MAIN -->
-    <main class="px-3 py-2.5 space-y-2.5 pb-12 flex-1 flex flex-col relative z-10 items-center">
+    <main class="px-3 pt-5 pb-3 space-y-2 flex-1 flex flex-col relative z-10 items-center">
         
-       <!-- SELETTORE PERCORSO -->
-        <div class="w-full max-w-xl text-center space-y-1">
+        <!-- IDENTITA MATCHWINE: calice e slogan compatti, mobile first -->
+        <div id="welcomeState" class="w-full max-w-xl px-1 py-0 flex items-center justify-center gap-0">
+            <img src="images/Calice.png" alt="Calice di vino" class="w-[27px] sm:w-[34px] h-[43px] sm:h-[50px] object-contain shrink-0 drop-shadow-sm" />
+            <h2 id="welcomeTitle" class="font-serif italic font-normal text-[#520d1a] text-[20px] sm:text-[24px] leading-[1.12] tracking-normal text-center">A Ciascun Piatto il Suo Calice!</h2>
+        </div>
+
+               <!-- SELETTORE PERCORSO -->
+        <div class="w-full max-w-xl text-center space-y-1 mb-0">
             <span class="text-[9px] tracking-[0.25em] text-[#a37f37] uppercase block font-semibold">Scegli il percorso</span>
             <div class="inline-flex items-center bg-[#fdfbf7] p-1 rounded-full border border-[#d4af37]/40 shadow-xs">
                 <button type="button" id="modePlateToGlass" onclick="switchSearchMode('dish')" class="px-4 py-1.5 rounded-full font-serif italic text-xs transition-all duration-300 bg-[#520d1a] text-white font-semibold shadow-sm cursor-pointer">Dal Piatto al Calice</button>
@@ -408,7 +454,7 @@
         </div>
 
         <!-- BARRA DI RICERCA -->
-        <section class="w-full max-w-xl space-y-3 px-1">
+        <section class="w-full max-w-xl space-y-2 px-1">
             <div class="flex items-center justify-between px-2">
                 <div>
                     <label id="searchLabel" class="font-serif italic text-xl text-[#520d1a] font-medium leading-tight block">Quale piatto vuoi abbinare?</label>
@@ -447,51 +493,35 @@
             </div>
         </div>
 
-        <!-- BENVENUTO -->
-        <div id="welcomeState" class="w-full max-w-xl text-center pt-8 pb-14 px-2 space-y-4 mt-8">
-            <div class="flex justify-center">
-                <img src="images/Calice.png" alt="Calice" class="w-20 h-auto opacity-95 object-contain drop-shadow-sm" />
-            </div>
-            
-            <div class="space-y-1">
-                <h2 id="welcomeTitle" class="text-3xl sm:text-3xl font-serif text-[#520d1a] tracking-wide font-normal italic">A Ciascun Piatto il Suo Calice!</h2>
-            </div>
+        <!-- GUIDA MATCHWINE - LINK ELEGANTE SENZA BOX -->
+        <div id="aboutSectionContainer" class="w-full max-w-xl text-center mt-2 mb-1 px-2">
+            <button type="button" onclick="openAboutModal()" aria-label="Scopri tutto quello che puoi fare con MatchWine" class="inline-flex items-center justify-center gap-2.5 py-2 px-1 cursor-pointer group transition-colors max-w-full">
+                <span class="w-8 h-8 rounded-full bg-[#fdfbf7] border border-[#d4af37]/60 flex items-center justify-center shadow-xs group-hover:bg-[#f5ebd9] transition-colors shrink-0 text-[#a37f37]" aria-hidden="true">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </span>
+                <span class="font-serif italic text-[15px] sm:text-[16px] font-semibold text-[#520d1a] group-hover:text-[#a37f37] leading-snug transition-colors text-center underline decoration-[#c4a04a] decoration-[1px] underline-offset-[5px] group-hover:decoration-[#a37f37]">Scopri tutto quello che puoi fare con MatchWine</span>
+            </button>
         </div>
-        
-        <!-- NUOVA CALL TO ACTION "COME FUNZIONA" - NAKED LUXURY -->
-<div id="aboutSectionContainer" class="w-full text-center mt-3 mb-6 px-2">
-    <button onclick="openAboutModal()" class="inline-flex items-center justify-center gap-3 cursor-pointer group transition-all py-1">
-        <!-- Iconcina tonda con Emoji Libro -->
-        <div class="w-7 h-7 rounded-full bg-[#fdfbf7] border border-[#d4af37]/60 flex items-center justify-center shadow-xs group-hover:scale-110 group-hover:bg-[#f5ebd9] transition-all shrink-0">
-    <span class="text-sm">📖</span>
-</div>
-        
-        <!-- Testo elegante con sottolineatura dinamica -->
-        <span class="font-serif italic text-[16.5px] sm:text-[17.5px] font-bold text-[#520d1a] group-hover:text-[#a37f37] transition-colors relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-px after:bottom-0 after:left-0 after:bg-[#a37f37] after:origin-bottom-right after:transition-transform after:duration-300 group-hover:after:scale-x-100 group-hover:after:origin-bottom-left">
-    Scopri come funziona MatchWine
-</span>
-    </button>
-</div>
-            
+
             <!-- SEZIONE GAMING / QUIZ DEL GIORNO E CLASSIFICA -->
-            <div id="triviaWidgetContainer" class="w-full max-w-xl bg-[#fffefb] rounded-2xl border border-[#d4af37]/60 shadow-luxury px-4 py-3.5 space-y-3 mt-3 text-left">
+            <div id="triviaWidgetContainer" class="w-full max-w-xl bg-[#fffefb] rounded-2xl border border-[#d4af37]/60 shadow-luxury px-3 py-2.5 space-y-3 mt-2 text-left">
                 <div class="flex items-center justify-between w-full">
                     
                     <!-- SEZIONE SINISTRA: Titolo elegante -->
-                      <div class="flex items-center gap-2 min-w-0 pr-2">
+                      <div class="flex items-center gap-1.5 min-w-0 pr-1 flex-1">
                       <span class="text-base shrink-0">🍷</span>
-                      <h3 class="font-serif italic font-bold text-base sm:text-lg tracking-wide leading-tight" style="color: #581c25;">Quiz Enologico del Giorno</h3>
+                      <h3 class="font-serif italic font-bold text-[15px] sm:text-base tracking-wide leading-tight" style="color: #581c25;">Quiz Enologico del Giorno</h3>
                       </div>
 
                     <!-- SEZIONE DESTRA: Coppa grande originale e Pulsante GIOCA -->
-                       <div class="flex items-center shrink-0">
+                       <div class="flex items-center gap-2 shrink-0">
                     <!-- Bottone Classifica con coppa1.png grande sovrapposta a sinistra del GIOCA -->
-                      <button onclick="toggleLeaderboardBox()" class="flex items-center justify-center transition hover:scale-110 cursor-pointer p-0 shrink-0 relative z-20 -mr-3 -my-6" title="Classifica Cantine">
-                      <img src="images/coppa1.png" alt="Classifica" style="width: 75px; height: 75px; min-width: 75px;" class="object-contain filter drop-shadow-xl" />
+                      <button onclick="toggleLeaderboardBox()" class="flex items-center justify-center transition hover:scale-105 cursor-pointer p-0 shrink-0 relative" title="Classifica Cantine">
+                      <img src="images/coppa1.png" alt="Classifica" style="width: 40px; height: 40px; min-width: 40px; transform: scale(2);" class="object-contain filter drop-shadow-xl" />
                       </button>
 
                         <!-- Pulsante Gioca (visibile da chiuso) -->
-                        <button onclick="toggleTriviaBox()" id="triviaToggleBtn" class="inline-flex items-center gap-1.5 wine-primary-btn text-white px-5 py-3 rounded-xl text-xs font-serif font-bold tracking-wider uppercase transition cursor-pointer shadow-sm shrink-0 relative z-0">
+                        <button onclick="toggleTriviaBox()" id="triviaToggleBtn" class="inline-flex items-center gap-1.5 wine-primary-btn text-white px-3 py-2.5 rounded-xl text-xs font-serif font-bold tracking-wider uppercase transition cursor-pointer shadow-sm shrink-0 relative z-0">
                             <span id="triviaBtnText">GIOCA</span>
                             <i id="triviaIcon" data-lucide="chevron-down" class="w-3.5 h-3.5 text-gold-300 transition-transform duration-300"></i>
                         </button>
@@ -544,7 +574,7 @@
 
       
         <!-- SEZIONE INSTALLAZIONE PWA -->
-<div id="installSectionContainer" class="w-full max-w-xl px-4 mt-4 mb-4 text-center">
+<div id="installSectionContainer" class="w-full max-w-xl px-4 mt-3 mb-1 text-center">
     <div onclick="toggleInstallBox()" class="inline-flex items-center gap-2.5 cursor-pointer group py-1.5 px-3 transition-all">
         <span class="text-gold-600 text-base transition-transform group-hover:scale-125">✦</span>
         <span class="font-serif italic text-base sm:text-lg font-medium tracking-wide text-wine-900 group-hover:text-gold-600 transition-colors">
@@ -748,7 +778,7 @@
 </style>
 
 <!-- PRIVACY -->
-<div id="privacySection" class="w-full text-center mb-2.5" style="margin-top: 38px;">
+<div id="privacySection" class="w-full text-center mb-2" style="margin-top: 20px;">
     <a href="privacy.html" class="text-[9px] tracking-[0.2em] text-[#8c6d33] uppercase font-medium hover:underline inline-flex items-center gap-1.5">
         <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span> PRIVACY POLICY <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span>
     </a>
@@ -2290,8 +2320,8 @@ async function loadLeaderboardData(type) {
                         d.sommelier_wine, 
                         d.sommelier_wine_desc, 
                         d.sommelier_principle, 
-                        d.sommelier_glass || d.sommelier_wine_glass || d.glass, 
-                        d.sommelier_temp || d.sommelier_wine_temp || d.temp,
+                        d.service_glass || d.sommelier_glass || d.sommelier_wine_glass || d.glass,
+                        d.service_decant || d.sommelier_temp || d.sommelier_wine_temp || d.temp,
                         d.sommelier_wine_region || d.sommelier_region || d.region,
                         d.sommelier_wine_nation || d.sommelier_nazione || d.nazione,
                         d.sommelier_wine_grape || d.sommelier_grape || '',
@@ -2340,18 +2370,32 @@ async function loadLeaderboardData(type) {
                     </div>
                 </div>`;
                 
-                let chosenVitigno = d.vitigno || d.grape || '';
-                let chosenRegion = d.regione ||'';
-                if (chosenRegion.toLowerCase().includes('alta cucina') || chosenRegion.toLowerCase().includes('innovazione')) {
-                    chosenRegion = '';
-                }
-                let chosenAlcohol = d.gradazione || d.alcohol || '';
-                let chosenGlass = d.calice || d.wine_glass || 'Ballon / Calice ampio';
-                let chosenTemp = d.temperatura || d.wine_temp || '16-18°C';
+                
+                 let chosenVitigno = d.grape_variety || d.vitigno || d.grape || '';
 
-                let chosenTechnicalLine = [chosenVitigno, chosenRegion, chosenAlcohol ? `${chosenAlcohol}% vol.` : '']
-                    .filter(Boolean)
-                    .join(' • ');
+                 let chosenRegion = d.wine_region || d.regione || '';
+                 if (chosenRegion.toLowerCase().includes('alta cucina') ||
+                 chosenRegion.toLowerCase().includes('innovazione')) {
+                 chosenRegion = '';
+                 }
+
+                 let chosenAlcohol = String(
+                 d.alcohol_content || d.gradazione || d.alcohol || ''
+                 ).trim();
+
+                 let chosenGlass = d.serving_glass || d.calice || d.wine_glass || '';
+                 let chosenTemp = d.serving_temperature || d.temperatura || d.wine_temp || '';
+
+                 if (chosenAlcohol && !chosenAlcohol.includes('%')) {
+                 chosenAlcohol += '% vol.';
+                 }
+
+                 let chosenTechnicalLine = [
+                 chosenVitigno,
+                 chosenRegion,
+                 chosenAlcohol
+                 ].filter(Boolean).join(' • ');
+
 
                 const userWineCard = `
                 <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
