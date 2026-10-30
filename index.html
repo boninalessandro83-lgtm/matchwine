@@ -219,6 +219,17 @@
             margin-top: 18px !important;
             margin-bottom: 5px !important;
         }
+        /* Pergamena visibile SOLO nella home e con quiz/classifica chiusi.
+           Regole automatiche: funzionano anche se si apre una sezione dopo l'altra. */
+        main:has(#welcomeState.hidden) #curiositaGiornoContainer,
+        main:has(#triviaWidgetContainer.hidden) #curiositaGiornoContainer,
+        main:has(#resultsContainer:not(.hidden)) #curiositaGiornoContainer,
+        main:has(#loadingState:not(.hidden)) #curiositaGiornoContainer,
+        main:has(#triviaContentBox:not(.hidden)) #curiositaGiornoContainer,
+        main:has(#leaderboardContentBox:not(.hidden)) #curiositaGiornoContainer {
+            display: none !important;
+        }
+
         /* Mobile-first: headline stays above search and never creates a second hero. */
         @media (max-width: 380px) {
             #welcomeTitle { font-size: 18px; }
@@ -573,6 +584,17 @@
         </div>
 
       
+        <!-- MATCHWINE | CURIOSITÀ ENOLOGICA DEL GIORNO -->
+        <section id="curiositaGiornoContainer" class="w-full max-w-xl mt-3 px-1" aria-labelledby="curiositaGiornoTitolo">
+            <div class="relative w-full overflow-hidden" style="aspect-ratio: 2 / 1; min-height: 190px;">
+                <img src="images/Pergamena.png" alt="Pergamena decorata con grappoli d'uva e vigneto" class="absolute inset-0 w-full h-full" style="object-fit: fill;" loading="lazy">
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center" style="padding: 10% 22% 9%;">
+                    <h3 id="curiositaGiornoTitolo" class="font-serif font-bold italic leading-tight" style="color: #651e2b; font-size: clamp(14px, 3.6vw, 23px);">Lo sapevi che…?</h3>
+                    <p id="curiositaGiornoTesto" class="font-serif font-bold leading-snug mt-2" style="color: #5b342a; font-size: clamp(11px, 2.35vw, 14px); overflow-wrap: anywhere;">La curiosità di oggi sta arrivando…</p>
+                </div>
+            </div>
+        </section>
+
         <!-- SEZIONE INSTALLAZIONE PWA -->
 <div id="installSectionContainer" class="w-full max-w-xl px-4 mt-3 mb-1 text-center">
     <div onclick="toggleInstallBox()" class="inline-flex items-center gap-2.5 cursor-pointer group py-1.5 px-3 transition-all">
@@ -658,11 +680,11 @@
                    <div class="w-9 h-9 shrink-0 rounded-full bg-[#fdfbf7] border border-[#d4af37]/40 flex items-center justify-center text-[#a37f37] shadow-xs">
                    <i data-lucide="sparkles" class="w-4 h-4"></i>
                     </div>
-                   <h4 class="font-serif font-bold text-wine-900 text-base leading-tight">Abbinamenti su Misura & Taccuino</h4>
+                   <h4 class="font-serif font-bold text-wine-900 text-base leading-tight">Abbinamenti Verificati e su Misura</h4>
                   </div>
         
                    <p class="text-[11px] sm:text-xs text-stone-600 leading-relaxed">
-                    Esplora <strong>50 abbinamenti classici verificati</strong> dai nostri sommelier oppure sfrutta la potenza dell'<strong>Intelligenza Artificiale</strong> per creare abbinamenti personalizzati per qualsiasi altro piatto o vino (<strong>1 credito per ciascuna nuova ricerca </strong>). Salva i tuoi preferiti nel tuo <strong>Taccuino</strong> personale per averli sempre con te.
+                    Esplora <strong>oltre 50 piatti e 50 vini</strong> tra i più famosi, con abbinamenti verificati dal nostro <strong>Sommelier AIS</strong>, <strong>gratis per tutti</strong>. Per qualsiasi altro piatto o vino, l’<strong>Intelligenza Artificiale</strong>, sotto la guida del nostro esperto, crea un abbinamento personalizzato (<strong>1 credito per ricerca</strong>). Salva i preferiti nel <strong>Taccuino</strong>.
                    </p>
                   </div>
                 </div>
@@ -675,11 +697,11 @@
                     <div class="w-9 h-9 shrink-0 rounded-full bg-[#fdfbf7] border border-[#d4af37]/40 flex items-center justify-center text-base shadow-xs">
                     🤵
                     </div>
-                    <h4 class="font-serif font-bold text-wine-900 text-base leading-tight">Parla con l'Enologo</h4>
+                    <h4 class="font-serif font-bold text-wine-900 text-base leading-tight">Parla con il Maestro Enologo</h4>
                     </div>
         
                     <p class="text-[11px] sm:text-xs text-stone-600 leading-relaxed">
-                     Hai una domanda su <strong>annate rare</strong> o <strong>abbinamenti fuori carta</strong>? Entra in chat e chiedi direttamente al nostro esperto in una sessione dedicata di <strong>10 minuti</strong> (<strong>1 sessione = 1 credito</strong>).
+                     Domande su <strong>annate rare</strong> o <strong>abbinamenti fuori carta</strong>? Il <strong>Maestro Enologo</strong> è il nostro <strong>assistente AI</strong>, guidato dalle regole del nostro <strong>Sommelier</strong>. <strong>Dialoga</strong> in una sessione di <strong>10 minuti</strong> (<strong>1 credito per sessione</strong>).
                     </p>
                     </div>
                 </div>
@@ -930,6 +952,28 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
             auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
         });
+
+        // Curiosità giornaliera: selezione unica per data italiana tramite RPC Supabase.
+        async function caricaCuriositaDelGiorno() {
+            const el = document.getElementById('curiositaGiornoTesto');
+            if (!el) return;
+            try {
+                const { data, error } = await supabaseClient.rpc('get_curiosita_del_giorno');
+                if (error) throw error;
+                const curiosita = Array.isArray(data) ? data[0] : data;
+                if (!curiosita?.testo) throw new Error('Nessuna curiosità disponibile');
+                el.textContent = curiosita.testo;
+            } catch (error) {
+                console.warn('Curiosità del giorno non disponibile:', error);
+                el.textContent = 'Torna presto per scoprire una nuova curiosità sul vino.';
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', caricaCuriositaDelGiorno, { once: true });
+        } else {
+            caricaCuriositaDelGiorno();
+        }
+
         let currentUser = null;
 
         async function initAuth() {
@@ -1240,6 +1284,8 @@
                 return;
             }
 
+            // La domanda e la classifica non devono essere aperte insieme.
+            document.getElementById('leaderboardContentBox')?.classList.add('hidden');
             contentBox.classList.remove('hidden');
             if (toggleBtn) toggleBtn.classList.add('hidden');
             if (closeBtn) closeBtn.classList.remove('hidden');
@@ -1396,6 +1442,11 @@ async function toggleLeaderboardBox() {
         if (window.lucide) lucide.createIcons();
         return;
     }
+
+    // Aprendo la classifica, chiudiamo l'eventuale domanda aperta.
+    document.getElementById('triviaContentBox')?.classList.add('hidden');
+    document.getElementById('triviaToggleBtn')?.classList.remove('hidden');
+    document.getElementById('triviaCloseBtn')?.classList.add('hidden');
 
     contentBox.classList.remove('hidden');
     loadLeaderboardData(currentLeaderboardType);
