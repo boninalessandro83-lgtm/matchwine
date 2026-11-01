@@ -1668,12 +1668,56 @@ async function loadLeaderboardData(type) {
             });
         }
 
-        function openWinePhotoMenu() {
-            const menu = document.getElementById('winePhotoMenu');
-            if (!menu) return;
-            menu.classList.remove('hidden');
-            menu.classList.add('flex');
-            if (window.lucide) lucide.createIcons();
+        const WINE_VISION_URL = 'https://cjjzpejwczllqwtquszm.supabase.co/functions/v1/matchwine-wine-vision';
+        let wineVisionBusy = false;
+
+        async function callWineVision(payload) {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session?.access_token) {
+                return { success: false, error_code: 'AUTH_REQUIRED', message: 'Accedi per riconoscere il vino.' };
+            }
+            const response = await fetch(WINE_VISION_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'apikey': SUPABASE_ANON_KEY
+                },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json().catch(() => ({}));
+            return { ...result, http_status: response.status };
+        }
+
+        async function openWinePhotoMenu() {
+            if (wineVisionBusy) return;
+            if (!currentUser) {
+                showToast('Accedi per utilizzare il riconoscimento delle etichette.');
+                if (typeof openPaywall === 'function') openPaywall();
+                return;
+            }
+            wineVisionBusy = true;
+            const cameraBtn = document.getElementById('wineCameraBtn');
+            if (cameraBtn) cameraBtn.disabled = true;
+            try {
+                const result = await callWineVision({ action: 'check' });
+                if (!result.success || !result.allowed) {
+                    if (result.paywall && typeof openPaywall === 'function') openPaywall();
+                    showToast(result.message || 'Riconoscimento non disponibile. Riprova.');
+                    return;
+                }
+                const menu = document.getElementById('winePhotoMenu');
+                if (!menu) return;
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+                if (window.lucide) lucide.createIcons();
+            } catch (error) {
+                console.warn('Wine Vision access check:', error);
+                showToast('Impossibile verificare l’accesso alla fotocamera. Riprova.');
+            } finally {
+                wineVisionBusy = false;
+                if (cameraBtn) cameraBtn.disabled = false;
+            }
         }
 
         function closeWinePhotoMenu() {
@@ -1689,17 +1733,68 @@ async function loadLeaderboardData(type) {
             if (input) input.click();
         }
 
-        // Fase 1: acquisizione immagine locale, senza invio all'AI né consumo crediti.
-        function handleWinePhotoSelection(event) {
-            const file = event.target.files && event.target.files[0];
-            if (!file) return;
-            if (!file.type.startsWith('image/')) {
-                showToast('Seleziona un’immagine valida.');
-                event.target.value = '';
-                return;
+        function prepareWineVisionImage(file) {
+            return new Promise((resolve, reject) => {
+                if (!file.type.startsWith('image/')) return reject(new Error('Seleziona una fotografia valida.'));
+                const image = new Image();
+                const url = URL.createObjectURL(file);
+                image.onload = () => {
+                    URL.revokeObjectURL(url);
+                    const maxSide = 1400;
+                    const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+                    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+                    const ctx = canvas.getContext('2d');
+                    if (!ctx) return reject(new Error('Impossibile elaborare la fotografia.'));
+                    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+                    if (dataUrl.length > 7 * 1024 * 1024) return reject(new Error('Foto troppo grande. Riprova.'));
+                    resolve(dataUrl);
+                };
+                image.onerror = () => {
+                    URL.revokeObjectURL(url);
+                    reject(new Error('Impossibile aprire la fotografia.'));
+                };
+                image.src = url;
+            });
+        }
+
+        async function handleWinePhotoSelection(event) {
+            const input = event.target;
+            const file = input.files && input.files[0];
+            if (!file || wineVisionBusy) { input.value = ''; return; }
+            wineVisionBusy = true;
+            const cameraBtn = document.getElementById('wineCameraBtn');
+            if (cameraBtn) cameraBtn.disabled = true;
+            showToast('Sto leggendo l’etichetta...');
+            try {
+                const imageDataUrl = await prepareWineVisionImage(file);
+                const result = await callWineVision({ action: 'recognize', image_data_url: imageDataUrl });
+                if (!result.success) {
+                    if (result.paywall && typeof openPaywall === 'function') openPaywall();
+                    showToast(result.message || 'Non riesco a leggere l’etichetta. Riprova.');
+                    return;
+                }
+                if (result.status === 'failed' || !result.wine_name) {
+                    showToast(result.message || 'Etichetta non riconosciuta. Riprova con una foto più nitida.');
+                    return;
+                }
+                const searchInput = document.getElementById('dishInput');
+                if (searchInput) {
+                    searchInput.value = result.wine_name;
+                    searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    searchInput.focus();
+                }
+                showToast(result.message || 'Vino riconosciuto. Verifica il nome e premi ABBINA.');
+            } catch (error) {
+                console.warn('Wine Vision:', error);
+                showToast(error.message || 'Riconoscimento temporaneamente non disponibile.');
+            } finally {
+                input.value = '';
+                wineVisionBusy = false;
+                if (cameraBtn) cameraBtn.disabled = false;
             }
-            showToast('Foto acquisita. Il riconoscimento dell’etichetta sarà disponibile nella prossima fase.');
-            event.target.value = '';
         }
 
         function updateWineCameraVisibility() {
