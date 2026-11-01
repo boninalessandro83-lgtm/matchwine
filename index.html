@@ -481,6 +481,12 @@
     
     <button type="button" id="clearBtn" onclick="clearInput()" class="hidden text-stone-400 hover:text-[#520d1a] p-1 transition-colors shrink-0 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
     
+    <!-- Fotocamera: solo smartphone e solo percorso vino -->
+    <input type="file" id="winePhotoInput" accept="image/*" capture="environment" class="hidden" aria-label="Scatta o seleziona una foto dell’etichetta" onchange="handleWinePhotoSelection(event)" />
+    <button type="button" id="wineCameraBtn" onclick="document.getElementById('winePhotoInput').click()" aria-label="Fotografa etichetta vino" title="Fotografa etichetta vino" class="hidden items-center justify-center shrink-0 w-9 h-9 rounded-xl border border-[#d4af37]/50 text-[#520d1a] bg-white/70 hover:bg-[#f5e8c7]/50 transition-colors cursor-pointer">
+        <i data-lucide="camera" class="w-4 h-4"></i>
+    </button>
+
     <button type="submit" id="submitBtn" class="px-4 py-2 wine-primary-btn text-white rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all hover:opacity-95 flex items-center gap-1.5 shrink-0 cursor-pointer">
         <span id="btnMatchText">Abbina</span> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
     </button>
@@ -1646,8 +1652,31 @@ async function loadLeaderboardData(type) {
             });
         }
 
+        // Fase 1: acquisizione immagine locale, senza invio all'AI né consumo crediti.
+        function handleWinePhotoSelection(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                showToast('Seleziona un’immagine valida.');
+                event.target.value = '';
+                return;
+            }
+            showToast('Foto acquisita. Il riconoscimento dell’etichetta sarà disponibile nella prossima fase.');
+            event.target.value = '';
+        }
+
+        function updateWineCameraVisibility() {
+            const btn = document.getElementById('wineCameraBtn');
+            if (!btn) return;
+            const visible = searchMode === 'wine' && window.matchMedia('(max-width: 639px)').matches;
+            btn.classList.toggle('hidden', !visible);
+            btn.classList.toggle('flex', visible);
+        }
+        window.addEventListener('resize', updateWineCameraVisibility);
+
         function switchSearchMode(mode) {
             searchMode = mode;
+            updateWineCameraVisibility();
             readerPageIndex = 1;
             resetToHome();
 
