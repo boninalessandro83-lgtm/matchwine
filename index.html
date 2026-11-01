@@ -484,11 +484,11 @@
     <!-- Foto vino: scatto e galleria separati, solo smartphone e percorso vino -->
     <input type="file" id="winePhotoInput" accept="image/*" capture="environment" class="hidden" aria-label="Scatta una foto dell’etichetta" onchange="handleWinePhotoSelection(event)" />
     <input type="file" id="wineGalleryInput" accept="image/*" class="hidden" aria-label="Scegli una foto dalla galleria" onchange="handleWinePhotoSelection(event)" />
-    <button type="button" id="wineCameraBtn" onclick="openWinePhotoMenu()" aria-label="Fotografa etichetta vino" title="Fotografa etichetta vino" class="hidden items-center justify-center shrink-0 w-9 h-9 rounded-xl border border-[#d4af37]/50 text-[#520d1a] bg-white/70 hover:bg-[#f5e8c7]/50 transition-colors cursor-pointer">
+    <button type="button" id="wineCameraBtn" onclick="openWinePhotoMenu()" aria-label="Fotografa etichetta vino" title="Fotografa etichetta vino" class="hidden items-center justify-center shrink-0 w-9 h-9 rounded-xl border border-[#d4af37]/50 text-[#520d1a] bg-[#fdfbf7] hover:bg-[#f5e8c7]/50 transition-colors cursor-pointer">
         <i data-lucide="camera" class="w-4 h-4"></i>
     </button>
 
-    <button type="submit" id="submitBtn" class="px-4 py-2 wine-primary-btn text-white rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all hover:opacity-95 flex items-center gap-1.5 shrink-0 cursor-pointer">
+    <button type="submit" id="submitBtn" class="h-9 px-2.5 sm:px-3 py-0 wine-primary-btn text-white rounded-xl text-xs font-serif italic tracking-wider uppercase shadow-sm transition-all hover:opacity-95 flex items-center gap-1.5 shrink-0 cursor-pointer">
         <span id="btnMatchText">Abbina</span> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
     </button>
     
@@ -1576,7 +1576,7 @@ async function loadLeaderboardData(type) {
         const i18n = {
             it: {
                 searchPlaceholderDish: "Es. Carbonara, risotto, sushi, carne...",
-                searchPlaceholderWine: "Es. Barolo, Chianti Classico, Franciacorta...",
+                searchPlaceholderWine: "Es. Barolo, Chianti Classico",
                 sublabelDish: "Trova il vino perfetto in pochi secondi.",
                 sublabelWine: "Trova i piatti ideali per esaltare questo vino.",
                 btnMatch: "Abbina",
