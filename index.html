@@ -494,6 +494,12 @@
     
     <div id="autocompleteDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-stone-300 shadow-xl overflow-hidden z-50 max-h-52 overflow-y-auto"></div>
 </form>
+            <!-- Suggerimento completo dalla foto, separato dall'autocompletamento del database -->
+            <button type="button" id="winePhotoSuggestion" class="hidden w-full text-left bg-[#fdfbf7] rounded-2xl border border-[#d4af37]/60 shadow-md px-4 py-3 mt-2" onclick="confirmWinePhotoSuggestion()" aria-label="Conferma il vino riconosciuto">
+                <span class="block text-[10px] uppercase tracking-wider text-[#a37f37] font-bold mb-1">✓ Vino riconosciuto dalla foto</span>
+                <span id="winePhotoSuggestionName" class="block text-sm font-semibold text-[#520d1a] whitespace-normal break-words leading-relaxed"></span>
+                <span class="block text-[11px] text-stone-500 mt-1">Tocca per confermare oppure correggi il nome nella barra</span>
+            </button>
         </section>
 
         <!-- Menu foto vino: visibile solo dopo il tocco sulla fotocamera -->
@@ -1600,12 +1606,26 @@ async function loadLeaderboardData(type) {
 
         const dishInputEl = document.getElementById('dishInput');
         const dropdownEl = document.getElementById('autocompleteDropdown');
+        let photoRecognizedWineName = '';
+        function hideWinePhotoSuggestion() {
+            photoRecognizedWineName = '';
+            document.getElementById('winePhotoSuggestion')?.classList.add('hidden');
+        }
+        function confirmWinePhotoSuggestion() {
+            if (!photoRecognizedWineName || !dishInputEl) return;
+            dishInputEl.value = photoRecognizedWineName;
+            if (dropdownEl) dropdownEl.classList.add('hidden');
+            toggleClearButton();
+            dishInputEl.focus();
+        }
+
 
         if (dishInputEl) {
             let searchTimeout = null;
 
             dishInputEl.addEventListener('input', function() {
                 const query = this.value.trim();
+                if (photoRecognizedWineName && query !== photoRecognizedWineName) hideWinePhotoSuggestion();
                 toggleClearButton();
                 
                 if (searchTimeout) clearTimeout(searchTimeout);
@@ -1617,6 +1637,7 @@ async function loadLeaderboardData(type) {
                 }
 
                 searchTimeout = setTimeout(async () => {
+                    if (photoRecognizedWineName && query === photoRecognizedWineName) return;
                     try {
                         if (searchMode === 'dish') {
                             const { data, error } = await supabaseClient
@@ -1784,7 +1805,15 @@ async function loadLeaderboardData(type) {
                 if (searchInput) {
                     searchInput.value = result.wine_name;
                     searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-                    searchInput.focus();
+                    photoRecognizedWineName = result.wine_name.trim();
+                    const photoSuggestion = document.getElementById('winePhotoSuggestion');
+                    const photoSuggestionName = document.getElementById('winePhotoSuggestionName');
+                    if (photoSuggestion && photoSuggestionName) {
+                        photoSuggestionName.textContent = photoRecognizedWineName;
+                        photoSuggestion.classList.remove('hidden');
+                    }
+                    if (dropdownEl) dropdownEl.classList.add('hidden');
+                    searchInput.blur();
                 }
                 showToast(result.message || 'Vino riconosciuto. Verifica il nome e premi ABBINA.');
             } catch (error) {
@@ -1808,6 +1837,7 @@ async function loadLeaderboardData(type) {
 
         function switchSearchMode(mode) {
             searchMode = mode;
+            hideWinePhotoSuggestion();
             updateWineCameraVisibility();
             readerPageIndex = 1;
             resetToHome();
@@ -1876,6 +1906,7 @@ async function loadLeaderboardData(type) {
             if (!dishInputEl) return;
             dishInputEl.value = itemName;
             if (dropdownEl) dropdownEl.classList.add('hidden');
+            hideWinePhotoSuggestion();
             toggleClearButton();
             handleSearch(null);
         }
@@ -1895,6 +1926,7 @@ async function loadLeaderboardData(type) {
 
         function clearInput() {
             if (!dishInputEl) return;
+            hideWinePhotoSuggestion();
             dishInputEl.value = '';
             if (dropdownEl) dropdownEl.classList.add('hidden');
             toggleClearButton();
@@ -1979,6 +2011,7 @@ async function loadLeaderboardData(type) {
     if (!dishInputEl) return;
     const inputValue = dishInputEl.value.trim();
     if (!inputValue) return;
+    hideWinePhotoSuggestion();
 
     if (dropdownEl) dropdownEl.classList.add('hidden');
 
@@ -2079,6 +2112,10 @@ async function loadLeaderboardData(type) {
         }
 
         currentData = result.data || result.result || result;
+        // Mantiene il nome completo inserito dall’utente per il titolo della card vino.
+        if (searchMode === 'wine' && currentData && typeof currentData === 'object') {
+            currentData.__matchwine_requested_wine_name = inputValue;
+        }
 
         if (!currentData || typeof currentData !== 'object') {
             throw "Formato dati non valido";
@@ -2210,7 +2247,7 @@ async function loadLeaderboardData(type) {
 
             let html = '';
 
-            let wineTitleToUse = d.wine_name || d.wine_name_corrected || (dishInputEl ? dishInputEl.value.trim() : 'Vino in cantina');
+            let wineTitleToUse = (searchMode === 'wine' ? d.__matchwine_requested_wine_name : '') || d.wine_name || d.wine_name_corrected || (dishInputEl ? dishInputEl.value.trim() : 'Vino in cantina');
             let wineDescToUse = d.wine_description || 'Straordinaria etichetta di grande pregio, caratterizzata da una complessità olfattiva unica e da una struttura perfettamente equilibrata.';
 
             const isFromDatabase = d.source === 'database' || d.verified === true;
