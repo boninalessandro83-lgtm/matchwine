@@ -481,9 +481,10 @@
     
     <button type="button" id="clearBtn" onclick="clearInput()" class="hidden text-stone-400 hover:text-[#520d1a] p-1 transition-colors shrink-0 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
     
-    <!-- Fotocamera: solo smartphone e solo percorso vino -->
-    <input type="file" id="winePhotoInput" accept="image/*" capture="environment" class="hidden" aria-label="Scatta o seleziona una foto dell’etichetta" onchange="handleWinePhotoSelection(event)" />
-    <button type="button" id="wineCameraBtn" onclick="document.getElementById('winePhotoInput').click()" aria-label="Fotografa etichetta vino" title="Fotografa etichetta vino" class="hidden items-center justify-center shrink-0 w-9 h-9 rounded-xl border border-[#d4af37]/50 text-[#520d1a] bg-white/70 hover:bg-[#f5e8c7]/50 transition-colors cursor-pointer">
+    <!-- Foto vino: scatto e galleria separati, solo smartphone e percorso vino -->
+    <input type="file" id="winePhotoInput" accept="image/*" capture="environment" class="hidden" aria-label="Scatta una foto dell’etichetta" onchange="handleWinePhotoSelection(event)" />
+    <input type="file" id="wineGalleryInput" accept="image/*" class="hidden" aria-label="Scegli una foto dalla galleria" onchange="handleWinePhotoSelection(event)" />
+    <button type="button" id="wineCameraBtn" onclick="openWinePhotoMenu()" aria-label="Fotografa etichetta vino" title="Fotografa etichetta vino" class="hidden items-center justify-center shrink-0 w-9 h-9 rounded-xl border border-[#d4af37]/50 text-[#520d1a] bg-white/70 hover:bg-[#f5e8c7]/50 transition-colors cursor-pointer">
         <i data-lucide="camera" class="w-4 h-4"></i>
     </button>
 
@@ -494,6 +495,21 @@
     <div id="autocompleteDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-stone-300 shadow-xl overflow-hidden z-50 max-h-52 overflow-y-auto"></div>
 </form>
         </section>
+
+        <!-- Menu foto vino: visibile solo dopo il tocco sulla fotocamera -->
+        <div id="winePhotoMenu" class="hidden fixed inset-0 z-[100] bg-stone-950/50 backdrop-blur-[2px] items-center justify-center p-5" onclick="if(event.target === this) closeWinePhotoMenu()" role="dialog" aria-modal="true" aria-labelledby="winePhotoMenuTitle">
+            <div class="w-full max-w-sm bg-[#fdfbf7] rounded-[1.5rem] border border-[#d4af37]/60 shadow-2xl p-5 space-y-3">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h3 id="winePhotoMenuTitle" class="font-serif italic text-2xl text-[#520d1a]">Riconosci il tuo vino</h3>
+                        <p class="text-xs text-stone-600 mt-1">Scatta una foto dell’etichetta oppure scegli un’immagine dalla galleria.</p>
+                    </div>
+                    <button type="button" onclick="closeWinePhotoMenu()" aria-label="Chiudi" class="p-2 text-[#520d1a] rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <button type="button" onclick="chooseWinePhoto('camera')" class="w-full flex items-center gap-3 text-left bg-white border border-[#d4af37]/50 rounded-xl px-4 py-3 text-[#520d1a] font-medium"><i data-lucide="camera" class="w-5 h-5"></i><span>Scatta una foto</span></button>
+                <button type="button" onclick="chooseWinePhoto('gallery')" class="w-full flex items-center gap-3 text-left bg-white border border-[#d4af37]/50 rounded-xl px-4 py-3 text-[#520d1a] font-medium"><i data-lucide="image" class="w-5 h-5"></i><span>Scegli dalla galleria</span></button>
+            </div>
+        </div>
 
         <!-- PILLOLE "PROVA SUBITO" -->
         <div id="quickTrySection" class="w-full max-w-xl px-1 pt-1">
@@ -1650,6 +1666,27 @@ async function loadLeaderboardData(type) {
                     }
                 }, 200);
             });
+        }
+
+        function openWinePhotoMenu() {
+            const menu = document.getElementById('winePhotoMenu');
+            if (!menu) return;
+            menu.classList.remove('hidden');
+            menu.classList.add('flex');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeWinePhotoMenu() {
+            const menu = document.getElementById('winePhotoMenu');
+            if (!menu) return;
+            menu.classList.add('hidden');
+            menu.classList.remove('flex');
+        }
+
+        function chooseWinePhoto(source) {
+            closeWinePhotoMenu();
+            const input = document.getElementById(source === 'gallery' ? 'wineGalleryInput' : 'winePhotoInput');
+            if (input) input.click();
         }
 
         // Fase 1: acquisizione immagine locale, senza invio all'AI né consumo crediti.
