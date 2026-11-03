@@ -236,7 +236,58 @@
             #welcomeState { gap: 4px; }
             #welcomeState > img { width: 24px; height: 40px; }
         }
-    </style>
+    
+        /* MatchWine - condivisione social */
+        .mw-social-share {position:absolute;top:14px;left:14px;z-index:3;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#faf5ec;color:#520d1a;border:1px solid #dcd0bc;box-shadow:0 2px 8px #0002;cursor:pointer}
+        .mw-social-share:hover {background:#f1e5d3}
+        .mw-social-overlay {position:fixed;inset:0;z-index:99999;background:#170b10cc;display:flex;align-items:center;justify-content:center;padding:12px;overflow:auto}
+        .mw-social-dialog {position:relative;width:min(100%,480px);max-height:calc(100dvh - 24px);overflow:auto;background:#faf5ec;border:2px solid #a37f37;border-radius:20px;padding:20px;text-align:center;color:#520d1a}
+        .mw-social-dialog h3 {font:bold 23px Georgia,serif;margin:4px 30px 8px}
+        .mw-social-status {font:13px Georgia,serif;margin:8px 0 12px}
+        .mw-social-preview {width:100%;max-height:min(62dvh,520px);object-fit:contain;border:1px solid #dcd0bc;border-radius:8px}
+        .mw-social-close {position:absolute;right:12px;top:8px;font-size:30px;line-height:1;cursor:pointer}
+        .mw-social-actions {display:flex;gap:10px;margin-top:14px}
+        .mw-social-actions button {flex:1;border-radius:10px;padding:12px 6px;background:#520d1a;color:#faf5ec;font:bold 13px Georgia,serif;cursor:pointer}
+        .mw-social-actions button:disabled {opacity:.45;cursor:wait}
+        @media(max-width:520px){.mw-social-dialog{padding:12px;border-radius:16px}.mw-social-dialog h3{font-size:19px;margin:6px 25px}.mw-social-status{font-size:11px;margin:5px 0 9px}.mw-social-actions{gap:8px;margin-top:10px}.mw-social-actions button{padding:12px 4px;font-size:12px}.mw-social-preview{max-height:calc(100dvh - 205px)}}
+
+
+        /* Anteprima social MatchWine — mobile-first, controlli esterni al PNG */
+        .mw-social-overlay {background:rgba(26,9,16,.82);padding:12px;overscroll-behavior:contain}
+        .mw-social-dialog {width:min(100%,510px);background:#fff;border:1px solid #c8a258;border-radius:22px;padding:16px;box-shadow:0 22px 70px #16080b88}
+        .mw-social-dialog h3 {font:bold 21px Georgia,serif;margin:2px 30px 10px;color:#570b1c}
+        .mw-social-status {font:12px Georgia,serif;margin:5px 0 9px;color:#826d62}
+        .mw-social-preview {display:block;width:100%;max-height:min(65dvh,560px);object-fit:contain;border:0;border-radius:12px;background:#fff}
+        .mw-social-preview[hidden] {display:none}
+        .mw-social-actions {margin-top:12px;gap:10px}
+        .mw-social-actions button {font:bold 14px Georgia,serif;min-height:46px;border:1px solid #a8823a;border-radius:13px}
+        .mw-social-actions .mw-social-send {background:#69091f;color:#fff}
+        .mw-social-actions .mw-social-save {background:#fff;color:#69091f}
+        .mw-social-close {right:12px;top:10px;color:#570b1c}
+        @media(max-width:520px){.mw-social-dialog{padding:12px}.mw-social-dialog h3{font-size:18px}.mw-social-preview{max-height:calc(100dvh - 185px)}.mw-social-actions button{font-size:12px;padding:10px 3px}}
+    
+        /* MatchWine social — dialog responsive, azioni gerarchizzate */
+        .mw-social-overlay {box-sizing:border-box;padding:clamp(10px,3vw,20px);overflow-y:auto;overflow-x:hidden}
+        .mw-social-dialog {box-sizing:border-box;width:100%;max-width:430px;min-width:0;margin:auto;padding:clamp(12px,3.5vw,18px);border-radius:22px;overflow-x:hidden}
+        .mw-social-dialog h3 {font-size:clamp(17px,4.5vw,22px);line-height:1.25;margin:3px 30px 12px}
+        .mw-social-preview {display:block;box-sizing:border-box;width:100%;height:auto;max-height:min(65dvh,580px);object-fit:contain;object-position:center;border:0;border-radius:10px}
+        .mw-social-actions {display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+        .mw-social-actions button {min-width:0;min-height:48px;padding:11px 8px;border-radius:14px;font:600 clamp(12px,3.4vw,15px) Georgia,serif;line-height:1.2;transition:filter .15s ease,transform .15s ease;box-shadow:none}
+        .mw-social-actions button:not(:disabled):active {transform:scale(.98)}
+        .mw-social-actions .mw-social-send {background:#650b20;color:#fff;border:1px solid #650b20}
+        .mw-social-actions .mw-social-save {background:#fff;color:#650b20;border:1.5px solid #b58a37}
+        .mw-social-actions button:disabled {opacity:.48;cursor:wait}
+        @media(max-width:380px){.mw-social-dialog{padding:10px;border-radius:17px}.mw-social-actions{gap:7px}.mw-social-actions button{min-height:44px;padding:8px 4px;font-size:12px}}
+
+        /* MatchWine social: Minimal Luxury — modifica limitata ai due pulsanti */
+        .mw-social-actions {gap:10px;margin-top:16px}
+        .mw-social-actions button {display:flex;align-items:center;justify-content:center;gap:7px;min-height:44px;border-radius:999px;padding:9px 10px;font:600 clamp(12px,3vw,14px) Georgia,serif;box-shadow:none;white-space:nowrap}
+        .mw-social-actions .mw-social-send {background:#69091f;color:#fff;border:1px solid #69091f;border-radius:12px}
+        .mw-social-actions .mw-social-save {background:#fff;color:#69091f;border:1.5px solid #d6b16b}
+        .mw-social-actions button svg {flex:none;width:17px;height:17px}
+        .mw-social-actions button:not(:disabled):focus-visible {outline:3px solid #d6b16b;outline-offset:3px}
+        @media(max-width:360px){.mw-social-actions{gap:7px}.mw-social-actions button{gap:6px;padding:10px 7px;font-size:12px;min-height:46px}.mw-social-actions button svg{width:17px;height:17px}}
+</style>
 </head>
 <body class="bg-[#faf7f2] text-stone-900 max-w-md mx-auto font-sans antialiased shadow-2xl relative min-h-screen flex flex-col page-container">
     
@@ -1526,58 +1577,62 @@ function formatNamePrivacy(fullName) {
 }
 
 // 6. Caricamento dati della classifica da Supabase
+
 async function loadLeaderboardData(type) {
-            const container = document.getElementById('leaderboardListContainer');
-            if (!container) return;
+    const container = document.getElementById('leaderboardListContainer');
+    if (!container) return;
 
-            container.style.minHeight = '140px';
-            container.innerHTML = '<div class="flex items-center justify-center py-6"><p class="text-xs font-serif italic text-stone-400">Calcolo posizioni in cantina...</p></div>';
+    container.style.minHeight = '140px';
+    container.innerHTML = '<div class="flex items-center justify-center py-6"><p class="text-xs font-serif italic text-stone-400">Calcolo posizioni in cantina...</p></div>';
 
-            try {
-                const pointsColumn = (type === 'monthly') ? 'monthly_points' : 'annual_points';
+    try {
+        // Recupera la classifica mensile o annuale tramite Supabase RPC
+        const { data, error } = await supabaseClient
+            .rpc('get_trivia_leaderboard', {
+                p_period: type
+            });
 
-                const { data, error } = await supabaseClient
-                    .from('profiles')
-                    .select(`full_name, email, ${pointsColumn}`)
-                    .order(pointsColumn, { ascending: false })
-                    .limit(20);
+        if (error) throw error;
 
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    container.innerHTML = `<p class="text-xs font-serif italic text-stone-500 text-center py-3">Nessuna degustazione registrata per questo periodo.</p>`;
-                    return;
-                }
-
-                let html = '';
-                data.forEach((user, index) => {
-                    const rawName = user.full_name || user.email?.split('@')[0] || 'Sommelier Anonimo';
-                    const name = formatNamePrivacy(rawName); // ✦ APPLICHIAMO LA PRIVACY QUI
-                    const points = user[pointsColumn] || 0;
-
-                    let rankBadge = `<span class="w-5 h-5 rounded-full bg-stone-100 text-stone-600 text-[10px] font-bold flex items-center justify-center">${index + 1}°</span>`;
-                    if (index === 0) rankBadge = `<span class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center shadow-xs">1°</span>`;
-                    if (index === 1) rankBadge = `<span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center justify-center shadow-xs">2°</span>`;
-                    if (index === 2) rankBadge = `<span class="w-5 h-5 rounded-full bg-orange-100 text-orange-800 text-[10px] font-bold flex items-center justify-center shadow-xs">3°</span>`;
-
-                    html += `
-                        <div class="flex items-center justify-between p-2 rounded-xl bg-stone-50/70 border border-stone-200/60">
-                            <div class="flex items-center gap-2.5">
-                                ${rankBadge}
-                                <span class="font-serif font-bold text-xs text-wine-900">${name}</span>
-                            </div>
-                            <span class="text-[10px] font-serif font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/50">✦ ${points} pt</span>
-                        </div>
-                    `;
-                });
-
-                container.innerHTML = html;
-
-            } catch (err) {
-                console.error("Errore caricamento classifica:", err);
-                container.innerHTML = '<p class="text-xs font-serif italic text-red-500 text-center py-3">Impossibile caricare la classifica al momento.</p>';
-            }
+        if (!data || data.length === 0) {
+            container.innerHTML = '<p class="text-xs font-serif italic text-stone-500 text-center py-3">Nessuna degustazione registrata per questo periodo.</p>';
+            return;
         }
+
+        let html = '';
+
+        data.forEach((user, index) => {
+            // Il nome è già abbreviato dalla funzione SQL
+            const name = user.display_name || 'Sommelier Anonimo';
+            const points = user.points ?? 0;
+
+            let rankBadge = `<span class="w-5 h-5 rounded-full bg-stone-100 text-stone-600 text-[10px] font-bold flex items-center justify-center">${index + 1}°</span>`;
+
+            if (index === 0) rankBadge = `<span class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center shadow-xs">1°</span>`;
+
+            if (index === 1) rankBadge = `<span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center justify-center shadow-xs">2°</span>`;
+
+            if (index === 2) rankBadge = `<span class="w-5 h-5 rounded-full bg-orange-100 text-orange-800 text-[10px] font-bold flex items-center justify-center shadow-xs">3°</span>`;
+
+            html += `
+                <div class="flex items-center justify-between p-2 rounded-xl bg-stone-50/70 border border-stone-200/60">
+                    <div class="flex items-center gap-2.5">
+                        ${rankBadge}
+                        <span class="font-serif font-bold text-xs text-wine-900">${name}</span>
+                    </div>
+                    <span class="text-[10px] font-serif font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/50">✦ ${points} pt</span>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+
+    } catch (err) {
+        console.error("Errore caricamento classifica:", err);
+        container.innerHTML = '<p class="text-xs font-serif italic text-red-500 text-center py-3">Impossibile caricare la classifica al momento.</p>';
+    }
+}
+
 
         const i18n = {
             it: {
@@ -2709,6 +2764,7 @@ async function loadLeaderboardData(type) {
             }
 
             contentContainer.innerHTML = html;
+            attachSocialShareButtons(contentContainer);
             if (window.lucide) lucide.createIcons();
         }
 
@@ -3261,6 +3317,129 @@ document.addEventListener('DOMContentLoaded', () => {
 		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
 	}
 	// ]]>
+
+        // MatchWine: social sharing local-only. No API, credits or server calls.
+        function attachSocialShareButtons(container) {
+            // Ogni pagina ha una sola proposta visibile: un pulsante su quella card.
+            const cards = Array.from(container.children).filter(el => el.classList.contains('notebook-sheet') || el.classList.contains('wine-card-bg'));
+            const target = cards[0];
+            if (!target || target.querySelector('.mw-social-share')) return;
+            target.style.position = 'relative';
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'mw-social-share';
+            btn.title = 'Condividi questo abbinamento';
+            btn.setAttribute('aria-label', 'Condividi questo abbinamento');
+            btn.innerHTML = '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"/></svg>';
+            btn.addEventListener('click', () => openSocialSharePreview(container));
+            target.appendChild(btn);
+        }
+
+        // Testo dinamico: adatta il carattere senza troncare nomi o motivazioni.
+        function mwSocialWrap(ctx, text, maxWidth, font) {
+            ctx.font=font;
+            const words=String(text||'').replace(/\s+/g,' ').trim().split(' ').filter(Boolean);
+            const lines=[];let line='';
+            for(const word of words){
+                const candidate=line?line+' '+word:word;
+                if(ctx.measureText(candidate).width<=maxWidth){line=candidate;continue;}
+                if(line){lines.push(line);line='';}
+                if(ctx.measureText(word).width<=maxWidth){line=word;continue;}
+                let chunk='';
+                for(const ch of word){if(chunk&&ctx.measureText(chunk+ch).width>maxWidth){lines.push(chunk);chunk='';}chunk+=ch;}
+                line=chunk;
+            }
+            if(line)lines.push(line);
+            return lines;
+        }
+        function mwSocialTextBlock(ctx,text,cx,cy,maxWidth,maxHeight,opts={}){
+            const {maxFont=52,minFont=18,weight='bold',italic=false,color='#650b20'}=opts;
+            let size=maxFont,lines=[];
+            for(;size>=minFont;size--){
+                ctx.font=`${italic?'italic ':''}${weight} ${size}px Georgia,serif`;
+                lines=mwSocialWrap(ctx,text,maxWidth,ctx.font);
+                if(lines.length*size*1.18<=maxHeight)break;
+            }
+            if(size<minFont){size=minFont;ctx.font=`${italic?'italic ':''}${weight} ${size}px Georgia,serif`;lines=mwSocialWrap(ctx,text,maxWidth,ctx.font);}
+            if(lines.length*size*1.18>maxHeight){ throw new Error('Testo social troppo lungo per lo spazio disponibile: '+String(text).slice(0,80)); }
+            ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';
+            const lh=size*1.18,start=cy-(lines.length-1)*lh/2;
+            lines.forEach((line,i)=>ctx.fillText(line,cx,start+i*lh));
+        }
+        async function mwSocialLoadImage(src){
+            const img=new Image();img.crossOrigin='anonymous';img.src=src;await img.decode();return img;
+        }
+        function mwSocialPath(ctx,points){
+            ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);
+            for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);
+            ctx.closePath();
+        }
+        async function mwSocialImage(container){
+            const cards=Array.from(container.children).filter(el=>el.classList.contains('notebook-sheet')||el.classList.contains('wine-card-bg'));
+            const isDishSearch=searchMode==='dish';
+            const wineCard=isDishSearch?cards[0]:cards[1];
+            const dishCard=isDishSearch?cards[1]:cards[0];
+            if(!wineCard||!dishCard)throw new Error('Card di abbinamento incomplete');
+            const clean=v=>String(v||'').replace(/\s+/g,' ').trim();
+            const winery=isDishSearch ? clean(wineCard.querySelector('.font-serif.italic.font-bold')?.textContent) : '';
+            const wineType=clean(wineCard.querySelector('h3')?.textContent);
+            const wineName=isDishSearch
+                ? ([winery,wineType].filter((v,i,a)=>v&&(i===0||v.toLowerCase()!==a[0].toLowerCase())).join(' · ')||'Vino consigliato')
+                : (wineType||'Vino scelto'); // Dal Calice al Piatto: titolo H3 della card del vino sottostante
+            const dishName=clean(dishCard.querySelector('h3')?.textContent)||'Piatto consigliato';
+            const reasonCard=wineCard; // In entrambi i percorsi usa la motivazione della card del vino.
+            const reasonHeader=[...reasonCard.querySelectorAll('h4')].find(el=>/PERCHÉ FUNZIONA|MOTIVO DELL.ABBINAMENTO/i.test(el.textContent));
+            const reason=clean(reasonHeader?.parentElement?.querySelector('p')?.textContent).replace(/^["“”]+|["“”]+$/g,'')||'Un incontro di sapori studiato per valorizzare il piatto e il vino.';
+
+            // Il modello fotografico rimane invariato: inseriamo SOLO i testi dinamici.
+            const template=await mwSocialLoadImage('images/CardSocialMatchWine.png');
+            const canvas=document.createElement('canvas');
+            canvas.width=1080;canvas.height=1350;
+            const ctx=canvas.getContext('2d');
+            ctx.drawImage(template,0,0,1080,1350);
+            // Coordinate espresse nel sistema di riferimento della grafica originale 1122 x 1402.
+            ctx.save();ctx.scale(1080/1122,1350/1402);
+            const dark='#650b20';
+            // I nomi restano centrati nella colonna di destra, senza sovrapporsi alle etichette.
+            mwSocialTextBlock(ctx,dishName,720,455,470,115,{maxFont:57,minFont:25,color:dark});
+            mwSocialTextBlock(ctx,wineName,720,isDishSearch ? 779 : 755,495,160,{maxFont:48,minFont:22,color:dark});
+            // La motivazione occupa la fascia bordeaux e si ridimensiona automaticamente.
+            mwSocialTextBlock(ctx,reason,561,1100,880,165,{maxFont:33,minFont:20,weight:'normal',italic:true,color:'#fff'});
+            ctx.restore();
+            return canvas;
+        }
+
+        async function openSocialSharePreview(container) {
+            const old = document.getElementById('mwSocialOverlay'); if (old) old.remove();
+            const overlay=document.createElement('div'); overlay.id='mwSocialOverlay';
+            overlay.className='mw-social-overlay';
+            overlay.innerHTML='<div class="mw-social-dialog" role="dialog" aria-modal="true" aria-label="Anteprima condivisione"><button class="mw-social-close" type="button" aria-label="Chiudi">×</button><h3>Condividi il tuo abbinamento</h3><p class="mw-social-status">Preparazione anteprima…</p><img class="mw-social-preview" alt="Anteprima social MatchWine" hidden><div class="mw-social-actions"><button type="button" class="mw-social-send" disabled><svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg><span>Condividi</span></button><button type="button" class="mw-social-save" disabled><svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"/></svg><span>Salva</span></button></div></div>';
+            document.body.appendChild(overlay);
+            const close=()=>{ if (overlay.dataset.url) URL.revokeObjectURL(overlay.dataset.url); overlay.remove(); };
+            overlay.querySelector('.mw-social-close').onclick=close;
+            overlay.addEventListener('click',e=>{if(e.target===overlay)close();});
+            try {
+                const canvas=await mwSocialImage(container);
+                if (!overlay.isConnected) return;
+                const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+                if(!blob) throw new Error('Impossibile generare PNG');
+                const url=URL.createObjectURL(blob); overlay.dataset.url=url;
+                const preview=overlay.querySelector('.mw-social-preview'); preview.src=url; preview.hidden=false;
+                overlay.querySelector('.mw-social-status').textContent='';
+                const filename='MatchWine-abbinamento.png';
+                const save=overlay.querySelector('.mw-social-save'); save.disabled=false;
+                save.onclick=()=>{const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();};
+                const share=overlay.querySelector('.mw-social-send'); share.disabled=false;
+                share.onclick=async()=>{
+                    const file=new File([blob],filename,{type:'image/png'});
+                    try {
+                        if(navigator.share && navigator.canShare?.({files:[file]})) await navigator.share({files:[file],title:'MatchWine'});
+                        else { save.click(); overlay.querySelector('.mw-social-status').textContent='Immagine salvata: puoi pubblicarla dal tuo social.'; }
+                    } catch(e) {if(e.name!=='AbortError')overlay.querySelector('.mw-social-status').textContent='Condivisione non disponibile: usa Salva immagine.';}
+                };
+            } catch(e) { console.error('Errore condivisione social',e);overlay.querySelector('.mw-social-status').textContent='Impossibile creare l’immagine. Controlla che images/CardSocialMatchWine_v3.png esista e verifica la Console.'; }
+        }
+
 </script>
 </body>
 </html>
