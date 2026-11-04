@@ -214,7 +214,7 @@
             margin-top: 15px !important;
             margin-bottom: 13px !important;
         }
-        main:has(#welcomeState:not(.hidden)) #triviaWidgetContainer { margin-top: 3px !important; }
+        main:has(#welcomeState:not(.hidden)) #triviaWidgetContainer { margin-top: 25px !important; }
         main:has(#welcomeState:not(.hidden)) #installSectionContainer {
             margin-top: 18px !important;
             margin-bottom: 5px !important;
@@ -585,13 +585,13 @@
             </div>
         </div>
 
-        <!-- GUIDA MATCHWINE - LINK ELEGANTE SENZA BOX -->
-        <div id="aboutSectionContainer" class="w-full max-w-xl text-center mt-2 mb-1 px-2">
-            <button type="button" onclick="openAboutModal()" aria-label="Scopri tutto quello che puoi fare con MatchWine" class="inline-flex items-center justify-center gap-2.5 py-2 px-1 cursor-pointer group transition-colors max-w-full">
-                <span class="w-8 h-8 rounded-full bg-[#fdfbf7] border border-[#d4af37]/60 flex items-center justify-center shadow-xs group-hover:bg-[#f5ebd9] transition-colors shrink-0 text-[#a37f37]" aria-hidden="true">
-                    <i data-lucide="sparkles" class="w-4 h-4"></i>
-                </span>
-                <span class="font-serif italic text-[15px] sm:text-[16px] font-semibold text-[#520d1a] group-hover:text-[#a37f37] leading-snug transition-colors text-center underline decoration-[#c4a04a] decoration-[1px] underline-offset-[5px] group-hover:decoration-[#a37f37]">Scopri tutto quello che puoi fare con MatchWine</span>
+        <!-- GUIDA MATCHWINE - FASCIA COMPATTA COERENTE CON IL QUIZ -->
+        <div id="aboutSectionContainer" class="w-full max-w-xl mt-2 mb-1">
+            <button type="button" onclick="openAboutModal()" aria-label="Scopri tutto quello che puoi fare con MatchWine" class="group w-full flex items-center gap-2.5 sm:gap-3 text-left bg-[#fffefb] border border-[#d4af37]/60 rounded-2xl px-3 sm:px-4 py-2.5 shadow-sm hover:bg-[#fcf7ed] hover:border-[#bd923a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a37f37] transition-colors duration-200 cursor-pointer min-h-[60px]">
+                <i data-lucide="sparkles" class="w-5 h-5 sm:w-6 sm:h-6 shrink-0 text-[#a37f37]" aria-hidden="true"></i>
+                <span class="self-stretch w-px bg-[#d4af37]/45 shrink-0" aria-hidden="true"></span>
+                <span class="flex-1 min-w-0 font-serif italic text-[15px] sm:text-[17px] font-semibold text-[#520d1a] leading-snug">Scopri tutto quello che puoi fare con MatchWine</span>
+                <i data-lucide="chevron-right" class="w-5 h-5 shrink-0 text-[#a37f37] group-hover:translate-x-0.5 transition-transform" aria-hidden="true"></i>
             </button>
         </div>
 
@@ -748,7 +748,7 @@
         
                   <p class="text-[11px] sm:text-xs text-stone-600 leading-relaxed">
                   <strong>• Dal Piatto al Calice:</strong> Scrivi il piatto e scopri 4 vini abbinati (sotto 15€, 15-40€, oltre 40€ e il consiglio del Sommelier).<br>
-                  <strong>• Dal Calice al Piatto:</strong> Inserisci il vino che hai in cantina e ottieni 2 proposte: un piatto della tradizione e uno gourmet.
+                  <strong>• Dal Calice al Piatto:</strong> Inserisci il nome del vino oppure <strong>fotografa l'etichetta della bottiglia</strong> per scoprire due proposte gastronomiche: una tradizionale e una gourmet..
                   </p>
                   </div>
                 </div>
@@ -765,7 +765,7 @@
                   </div>
         
                    <p class="text-[11px] sm:text-xs text-stone-600 leading-relaxed">
-                    Esplora <strong>oltre 50 piatti e 50 vini</strong> tra i più famosi, con abbinamenti verificati dal nostro <strong>Sommelier AIS</strong>, <strong>gratis per tutti</strong>. Per qualsiasi altro piatto o vino, l’<strong>Intelligenza Artificiale</strong>, sotto la guida del nostro esperto, crea un abbinamento personalizzato (<strong>1 credito per ricerca</strong>). Salva i preferiti nel <strong>Taccuino</strong>.
+                    Esplora <strong>oltre 50 piatti e 50 vini</strong> tra i più famosi, con abbinamenti verificati dal nostro <strong>Sommelier AIS</strong>, <strong>gratis per tutti</strong>. Per qualsiasi altro piatto o vino, l’<strong>Intelligenza Artificiale</strong>, sotto la guida del nostro esperto, crea un abbinamento personalizzato (<strong>1 credito per ricerca</strong>). Salva i preferiti nel <strong>Taccuino</strong> e usa il pulsante <strong>Condividi</strong> per condividere la card dell'abbinamento sui social.
                    </p>
                   </div>
                 </div>
