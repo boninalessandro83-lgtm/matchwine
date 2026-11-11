@@ -214,7 +214,7 @@
             margin-top: 15px !important;
             margin-bottom: 13px !important;
         }
-        main:has(#welcomeState:not(.hidden)) #triviaWidgetContainer { margin-top: 25px !important; }
+        main:has(#welcomeState:not(.hidden)) #triviaWidgetContainer { margin-top: 12px !important; }
         main:has(#welcomeState:not(.hidden)) #installSectionContainer {
             margin-top: 18px !important;
             margin-bottom: 5px !important;
@@ -587,11 +587,11 @@
 
         <!-- GUIDA MATCHWINE - FASCIA COMPATTA COERENTE CON IL QUIZ -->
         <div id="aboutSectionContainer" class="w-full max-w-xl mt-2 mb-1">
-            <button type="button" onclick="openAboutModal()" aria-label="Scopri tutto quello che puoi fare con MatchWine" class="group w-full flex items-center gap-2.5 sm:gap-3 text-left bg-[#fffefb] border border-[#d4af37]/60 rounded-2xl px-3 sm:px-4 py-2.5 shadow-sm hover:bg-[#fcf7ed] hover:border-[#bd923a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a37f37] transition-colors duration-200 cursor-pointer min-h-[60px]">
-                <i data-lucide="sparkles" class="w-5 h-5 sm:w-6 sm:h-6 shrink-0 text-[#a37f37]" aria-hidden="true"></i>
+            <button type="button" onclick="openAboutModal()" aria-label="Scopri tutto quello che puoi fare con MatchWine" class="group w-full flex items-center gap-2.5 sm:gap-3 text-left bg-[#fffefb] border border-[#d4af37]/60 rounded-xl px-3 sm:px-4 py-1 shadow-sm hover:bg-[#fcf7ed] hover:border-[#bd923a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a37f37] transition-colors duration-200 cursor-pointer min-h-[32px]">
+                <i data-lucide="sparkles" class="w-4 h-4 shrink-0 text-[#a37f37]" aria-hidden="true"></i>
                 <span class="self-stretch w-px bg-[#d4af37]/45 shrink-0" aria-hidden="true"></span>
-                <span class="flex-1 min-w-0 font-serif italic text-[15px] sm:text-[17px] font-semibold text-[#520d1a] leading-snug">Scopri tutto quello che puoi fare con MatchWine</span>
-                <i data-lucide="chevron-right" class="w-5 h-5 shrink-0 text-[#a37f37] group-hover:translate-x-0.5 transition-transform" aria-hidden="true"></i>
+                <span class="flex-1 min-w-0 font-serif italic text-[12px] sm:text-[13px] font-semibold text-[#520d1a] leading-tight">Scopri tutto quello che puoi fare con MatchWine</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-[#a37f37] group-hover:translate-x-0.5 transition-transform" aria-hidden="true"></i>
             </button>
         </div>
 
@@ -2169,13 +2169,52 @@ async function loadLeaderboardData(type) {
         }
 
         currentData = result.data || result.result || result;
-        // Mantiene il nome completo inserito dall’utente per il titolo della card vino.
+        // Nel percorso Dal Calice al Piatto il nome restituito dal backend
+        // ha la precedenza sul testo digitato (che può contenere refusi).
         if (searchMode === 'wine' && currentData && typeof currentData === 'object') {
-            currentData.__matchwine_requested_wine_name = inputValue;
+            const correctedWineName = String(currentData.wine_name_corrected || currentData.wine_name || '').trim();
+            if (correctedWineName && dishInputEl) dishInputEl.value = correctedWineName;
         }
 
         if (!currentData || typeof currentData !== 'object') {
             throw "Formato dati non valido";
+        }
+
+        // Le categorie delle quattro selezioni archiviate possono non essere
+        // incluse nella risposta della Edge Function. Le recuperiamo dal DB
+        // solo per i piatti presenti in dishes_free, senza alterare le risposte AI.
+        if (searchMode === 'dish' && currentData && typeof currentData === 'object') {
+            const fields = ['standard_wine_category', 'plus_wine_category',
+                            'prestige_wine_category', 'sommelier_wine_category'];
+            const missingCategory = fields.some(field => !currentData[field]);
+            if (missingCategory) {
+                try {
+                    const dishName = String(currentData.dish_name || '').trim();
+                    if (dishName) {
+                        const { data: storedDish, error: categoryError } = await supabaseClient
+                            .from('dishes_free')
+                            .select('dish_name,standard_wine,plus_wine,prestige_wine,sommelier_wine,' + fields.join(','))
+                            .eq('dish_name', dishName)
+                            .maybeSingle();
+                        if (categoryError) throw categoryError;
+                        if (storedDish) {
+                            for (const tier of ['standard', 'plus', 'prestige', 'sommelier']) {
+                                const field = `${tier}_wine_category`;
+                                const returnedWine = String(currentData[`${tier}_wine`] || '').trim();
+                                const storedWine = String(storedDish[`${tier}_wine`] || '').trim();
+                                // Non attribuire a un vino AI la categoria di un vino diverso.
+                                if (!currentData[field] && returnedWine && storedWine &&
+                                    returnedWine.toLocaleLowerCase('it') === storedWine.toLocaleLowerCase('it') &&
+                                    storedDish[field]) {
+                                    currentData[field] = storedDish[field];
+                                }
+                            }
+                        }
+                    }
+                } catch (categoryError) {
+                    console.warn('MatchWine: impossibile integrare categorie social da dishes_free', categoryError);
+                }
+            }
         }
 
         if (currentUser) {
@@ -2304,7 +2343,7 @@ async function loadLeaderboardData(type) {
 
             let html = '';
 
-            let wineTitleToUse = (searchMode === 'wine' ? d.__matchwine_requested_wine_name : '') || d.wine_name || d.wine_name_corrected || (dishInputEl ? dishInputEl.value.trim() : 'Vino in cantina');
+            let wineTitleToUse = d.wine_name_corrected || d.wine_name || (dishInputEl ? dishInputEl.value.trim() : 'Vino in cantina');
             let wineDescToUse = d.wine_description || 'Straordinaria etichetta di grande pregio, caratterizzata da una complessità olfattiva unica e da una struttura perfettamente equilibrata.';
 
             const isFromDatabase = d.source === 'database' || d.verified === true;
@@ -3376,6 +3415,29 @@ document.addEventListener('DOMContentLoaded', () => {
             for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);
             ctx.closePath();
         }
+        // Selezione del template social: nessuna nuova chiamata AI.
+        function mwSocialTemplateForCurrentWine(){
+            const d = currentData || {};
+            const prefix = searchMode === 'dish'
+                ? (['standard', 'plus', 'prestige', 'sommelier'][readerPageIndex - 1] || 'standard')
+                : null;
+            const category = prefix
+                ? (d[`${prefix}_wine_category`] || d[`${prefix}_categoria_vino`] || d[`${prefix}_wine`]?.categoria_vino || d[`${prefix}_wine`]?.category)
+                : (d.categoria_vino || d.wine_category || d.wine_type_category || d.wine?.categoria_vino);
+            const normalized = String(category || '').trim().toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\s-]+/g, '_');
+            const templates = {
+                rosso: 'CardSocialMatchWine.png',
+                bianco: 'CardBianco.png',
+                rosato: 'CardRosè.png', rose: 'CardRosè.png',
+                spumante: 'CardSpumante.png',
+                spumante_rose: 'CardSpumanterosè.png', spumante_rosato: 'CardSpumanterosè.png',
+                ambrato: 'CardPassito.png', passito: 'CardPassito.png'
+            };
+            // Per i risultati storici privi di categoria manteniamo la card originale.
+            if (!templates[normalized]) console.warn('MatchWine social: categoria vino assente o sconosciuta:', category);
+            return 'images/' + (templates[normalized] || 'CardSocialMatchWine.png');
+        }
         async function mwSocialImage(container){
             const cards=Array.from(container.children).filter(el=>el.classList.contains('notebook-sheet')||el.classList.contains('wine-card-bg'));
             const isDishSearch=searchMode==='dish';
@@ -3383,6 +3445,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const dishCard=isDishSearch?cards[1]:cards[0];
             if(!wineCard||!dishCard)throw new Error('Card di abbinamento incomplete');
             const clean=v=>String(v||'').replace(/\s+/g,' ').trim();
+            // Maiuscola solo la prima lettera visibile, senza alterare il resto del nome.
+            const initialUpper=v=>clean(v).replace(/^(\P{L}*)(\p{L})/u,(_,prefix,letter)=>prefix+letter.toLocaleUpperCase('it-IT'));
             const winery=isDishSearch ? clean(wineCard.querySelector('.font-serif.italic.font-bold')?.textContent) : '';
             const wineType=clean(wineCard.querySelector('h3')?.textContent);
             const wineName=isDishSearch
@@ -3394,7 +3458,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const reason=clean(reasonHeader?.parentElement?.querySelector('p')?.textContent).replace(/^["“”]+|["“”]+$/g,'')||'Un incontro di sapori studiato per valorizzare il piatto e il vino.';
 
             // Il modello fotografico rimane invariato: inseriamo SOLO i testi dinamici.
-            const template=await mwSocialLoadImage('images/CardSocialMatchWine.png');
+            const templatePath=mwSocialTemplateForCurrentWine();
+            const template=await mwSocialLoadImage(templatePath);
             const canvas=document.createElement('canvas');
             canvas.width=1080;canvas.height=1350;
             const ctx=canvas.getContext('2d');
@@ -3402,11 +3467,25 @@ document.addEventListener('DOMContentLoaded', () => {
             // Coordinate espresse nel sistema di riferimento della grafica originale 1122 x 1402.
             ctx.save();ctx.scale(1080/1122,1350/1402);
             const dark='#650b20';
-            // I nomi restano centrati nella colonna di destra, senza sovrapporsi alle etichette.
-            mwSocialTextBlock(ctx,dishName,720,455,470,115,{maxFont:57,minFont:25,color:dark});
-            mwSocialTextBlock(ctx,wineName,720,isDishSearch ? 779 : 755,495,160,{maxFont:48,minFont:22,color:dark});
-            // La motivazione occupa la fascia bordeaux e si ridimensiona automaticamente.
-            mwSocialTextBlock(ctx,reason,561,1100,880,165,{maxFont:33,minFont:20,weight:'normal',italic:true,color:'#fff'});
+            // Piatto e vino condividono lo stesso font iniziale (48 px); si riducono solo se il testo non entra.
+            mwSocialTextBlock(ctx,initialUpper(dishName),720,455,470,115,{maxFont:48,minFont:22,color:dark});
+            mwSocialTextBlock(ctx,initialUpper(wineName),720,isDishSearch ? 779 : 755,495,160,{maxFont:48,minFont:22,color:dark});
+            // Fascia 'Perché funziona': centro della zona utile, sotto il titolo e sopra il bordo inferiore.
+            // Bordeaux sui fondi chiari, bianco sulle fasce scure (rosso e ambrato).
+            const lightBand = /CardBianco\.png|CardRosè\.png|CardSpumante\.png|CardSpumanterosè\.png/.test(templatePath);
+            // Ogni sfondo ha una fascia curva con altezza differente.
+            // Coordinate specifiche per mantenere il testo lontano dal titolo e dal bordo inferiore.
+            const reasonLayouts = {
+                'CardSocialMatchWine.png': {centerY:1090, maxHeight:112},
+                'CardBianco.png': {centerY:1075, maxHeight:105},
+                'CardRosè.png': {centerY:1070, maxHeight:105},
+                'CardSpumante.png': {centerY:1050, maxHeight:100},
+                'CardSpumanterosè.png': {centerY:1050, maxHeight:100},
+                'CardPassito.png': {centerY:1115, maxHeight:105}
+            };
+            const templateName=templatePath.split('/').pop();
+            const reasonLayout=reasonLayouts[templateName] || reasonLayouts['CardSocialMatchWine.png'];
+            mwSocialTextBlock(ctx,reason,561,reasonLayout.centerY,860,reasonLayout.maxHeight,{maxFont:29,minFont:17,weight:'normal',italic:true,color:lightBand ? '#650b20' : '#fff'});
             ctx.restore();
             return canvas;
         }
@@ -3439,7 +3518,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         else { save.click(); overlay.querySelector('.mw-social-status').textContent='Immagine salvata: puoi pubblicarla dal tuo social.'; }
                     } catch(e) {if(e.name!=='AbortError')overlay.querySelector('.mw-social-status').textContent='Condivisione non disponibile: usa Salva immagine.';}
                 };
-            } catch(e) { console.error('Errore condivisione social',e);overlay.querySelector('.mw-social-status').textContent='Impossibile creare l’immagine. Controlla che images/CardSocialMatchWine_v3.png esista e verifica la Console.'; }
+            } catch(e) { console.error('Errore condivisione social',e);overlay.querySelector('.mw-social-status').textContent='Impossibile creare l’immagine. Verifica che le card PNG siano presenti nella cartella images e controlla la Console.'; }
         }
 
 </script>
