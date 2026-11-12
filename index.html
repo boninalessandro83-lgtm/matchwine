@@ -237,6 +237,41 @@
             #welcomeState img[alt=""] { height: 44px; }
         }
     
+        /* Hero UX: il calice e il titolo sono UN SOLO gruppo centrato sulla pagina.
+           Il sottotitolo usa lo stesso asse, senza colonne vuote o offset. */
+        #welcomeState {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; gap: 1px !important;
+            width: 100%; margin-top: 0 !important; margin-bottom: 13px !important;
+        }
+        #welcomeState .mw-hero-heading {
+            display: flex; align-items: center; justify-content: center;
+            gap: 7px; width: 100%; max-width: 100%;
+            transform: translateX(-8px);
+        }
+        #welcomeState .mw-hero-glass {
+            display: block; width: 24px; height: 38px;
+            object-fit: contain; flex: 0 0 24px;
+        }
+        #welcomeState #welcomeTitle {
+            width: auto; margin: 0; text-align: center;
+            font-size: clamp(17px, 4.5vw, 24px);
+            line-height: 1.13; letter-spacing: 0;
+        }
+        #welcomeState #welcomeSubtitle {
+            display: block; width: 100%; margin: 0; padding: 0 2px;
+            text-align: center; font-size: clamp(8px, 2.1vw, 10px);
+            line-height: 1.35; letter-spacing: 0.10em;
+        }
+        @media (max-width: 380px) {
+            #welcomeState .mw-hero-heading { gap: 5px; }
+            #welcomeState .mw-hero-glass { width: 20px; height: 34px; flex-basis: 20px; }
+            #welcomeState #welcomeTitle { font-size: clamp(16px, 4.5vw, 18px); }
+            #welcomeState #welcomeSubtitle { letter-spacing: 0.05em; }
+        }
+
+        main:has(#welcomeState:not(.hidden)) #welcomeState { margin-bottom: 13px !important; }
+
         /* MatchWine - condivisione social */
         .mw-social-share {position:absolute;top:14px;left:14px;z-index:3;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#faf5ec;color:#520d1a;border:1px solid #dcd0bc;box-shadow:0 2px 8px #0002;cursor:pointer}
         .mw-social-share:hover {background:#f1e5d3}
@@ -498,14 +533,15 @@
     </header>
     
     <!-- MAIN -->
-    <main class="px-3 pt-5 pb-3 space-y-2 flex-1 flex flex-col relative z-10 items-center">
+    <main class="px-3 pt-2 pb-3 space-y-2 flex-1 flex flex-col relative z-10 items-center">
         
-        <!-- IDENTITA MATCHWINE: calice e slogan centrati come un unico gruppo -->
-        <div id="welcomeState" class="w-full max-w-xl px-1 py-0 flex items-center justify-center">
-            <div class="inline-flex items-center justify-center gap-2 max-w-full mx-auto">
-                <img src="images/Calice.png" alt="" aria-hidden="true" class="w-[30px] h-[48px] sm:w-[36px] sm:h-[54px] object-contain shrink-0" />
-                <h2 id="welcomeTitle" class="font-serif italic font-semibold text-[#520d1a] text-[20px] sm:text-[24px] leading-[1.12] tracking-normal text-center">A Ciascun Piatto il Suo Calice!</h2>
+        <!-- IDENTITA MATCHWINE: asse centrale condiviso da titolo e sottotitolo -->
+        <div id="welcomeState" class="w-full max-w-xl px-1 py-0">
+            <div class="mw-hero-heading">
+                <img src="images/Calice.png" alt="" aria-hidden="true" class="mw-hero-glass" />
+                <h2 id="welcomeTitle" class="font-serif italic font-semibold text-[#520d1a]">A Ciascun Piatto il Suo Calice!</h2>
             </div>
+            <p id="welcomeSubtitle" class="font-sans not-italic text-[#817c78] font-medium">IL TUO PIATTO. IL TUO VINO. IL MATCH PERFETTO.</p>
         </div>
 
         <!-- SELETTORE PERCORSO -->
@@ -586,11 +622,11 @@
         </div>
 
         <!-- GUIDA MATCHWINE - FASCIA COMPATTA COERENTE CON IL QUIZ -->
-        <div id="aboutSectionContainer" class="w-full max-w-xl mt-2 mb-1">
-            <button type="button" onclick="openAboutModal()" aria-label="Scopri tutto quello che puoi fare con MatchWine" class="group w-full flex items-center gap-2.5 sm:gap-3 text-left bg-[#fffefb] border border-[#d4af37]/60 rounded-xl px-3 sm:px-4 py-1 shadow-sm hover:bg-[#fcf7ed] hover:border-[#bd923a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a37f37] transition-colors duration-200 cursor-pointer min-h-[32px]">
-                <i data-lucide="sparkles" class="w-4 h-4 shrink-0 text-[#a37f37]" aria-hidden="true"></i>
+        <div id="aboutSectionContainer" class="w-full max-w-xl mt-2 mb-1 px-3">
+            <button type="button" onclick="openAboutModal()" aria-label="Scopri come funziona MatchWine" class="group w-full flex items-center gap-2 sm:gap-2.5 text-left bg-[#fffefb] border border-[#d4af37]/60 rounded-xl px-2.5 sm:px-3 py-0.5 shadow-sm hover:bg-[#fcf7ed] hover:border-[#bd923a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a37f37] transition-colors duration-200 cursor-pointer min-h-[29px]">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 shrink-0 text-[#a37f37]" aria-hidden="true"></i>
                 <span class="self-stretch w-px bg-[#d4af37]/45 shrink-0" aria-hidden="true"></span>
-                <span class="flex-1 min-w-0 font-serif italic text-[12px] sm:text-[13px] font-semibold text-[#520d1a] leading-tight">Scopri tutto quello che puoi fare con MatchWine</span>
+                <span class="flex-1 min-w-0 font-serif italic text-[11px] sm:text-[12px] font-semibold text-[#520d1a] leading-tight">Scopri come funziona MatchWine</span>
                 <i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-[#a37f37] group-hover:translate-x-0.5 transition-transform" aria-hidden="true"></i>
             </button>
         </div>
@@ -2180,40 +2216,70 @@ async function loadLeaderboardData(type) {
             throw "Formato dati non valido";
         }
 
-        // Le categorie delle quattro selezioni archiviate possono non essere
-        // incluse nella risposta della Edge Function. Le recuperiamo dal DB
-        // solo per i piatti presenti in dishes_free, senza alterare le risposte AI.
+        // MATCHWINE wines_free: per le 50 etichette archiviate, il database aggiornato
+        // e' la fonte autorevole di piatti, motivazioni e tipologia della card social.
+        // Non modifica le risposte AI per vini non presenti nell'archivio.
+        if (searchMode === 'wine' && currentData && typeof currentData === 'object') {
+            try {
+                const dbWineName = String(currentData.wine_name_corrected || currentData.wine_name || dishInputEl?.value || '').trim();
+                if (dbWineName) {
+                    const { data: storedWine, error: wineLookupError } = await supabaseClient
+                        .from('wines_free')
+                        .select('wine_name,wine_card_type,trad_dish_name,trad_description,trad_matching_reason,gour_dish_name,gour_description,gour_matching_reason')
+                        .ilike('wine_name', dbWineName)
+                        .maybeSingle();
+                    if (wineLookupError) throw wineLookupError;
+                    if (storedWine && storedWine.wine_name.toLocaleLowerCase('it') === dbWineName.toLocaleLowerCase('it')) {
+                        currentData.wine_card_type = storedWine.wine_card_type || currentData.wine_card_type;
+                        for (const [key, prefix] of [['tradition', 'trad'], ['gourmet', 'gour']]) {
+                            const existing = currentData[key] || {};
+                            currentData[key] = {
+                                ...existing,
+                                dish_name: storedWine[`${prefix}_dish_name`] || existing.dish_name,
+                                description: storedWine[`${prefix}_description`] || existing.description,
+                                matching_reason: storedWine[`${prefix}_matching_reason`] || existing.matching_reason
+                            };
+                        }
+                    }
+                }
+            } catch (wineLookupError) {
+                console.warn('MatchWine: recupero aggiornamenti wines_free non riuscito', wineLookupError);
+            }
+        }
+
+        // Fonte autorevole per le schede archiviate: prevalgono i dati del DB,
+        // ma soltanto se l'etichetta corrisponde al vino restituito.
         if (searchMode === 'dish' && currentData && typeof currentData === 'object') {
-            const fields = ['standard_wine_category', 'plus_wine_category',
-                            'prestige_wine_category', 'sommelier_wine_category'];
-            const missingCategory = fields.some(field => !currentData[field]);
-            if (missingCategory) {
-                try {
-                    const dishName = String(currentData.dish_name || '').trim();
-                    if (dishName) {
-                        const { data: storedDish, error: categoryError } = await supabaseClient
-                            .from('dishes_free')
-                            .select('dish_name,standard_wine,plus_wine,prestige_wine,sommelier_wine,' + fields.join(','))
-                            .eq('dish_name', dishName)
-                            .maybeSingle();
-                        if (categoryError) throw categoryError;
-                        if (storedDish) {
-                            for (const tier of ['standard', 'plus', 'prestige', 'sommelier']) {
-                                const field = `${tier}_wine_category`;
-                                const returnedWine = String(currentData[`${tier}_wine`] || '').trim();
-                                const storedWine = String(storedDish[`${tier}_wine`] || '').trim();
-                                // Non attribuire a un vino AI la categoria di un vino diverso.
-                                if (!currentData[field] && returnedWine && storedWine &&
-                                    returnedWine.toLocaleLowerCase('it') === storedWine.toLocaleLowerCase('it') &&
-                                    storedDish[field]) {
-                                    currentData[field] = storedDish[field];
-                                }
+            try {
+                const dishName = String(currentData.dish_name || dishInputEl?.value || '').trim();
+                if (dishName) {
+                    const tiers = ['standard', 'plus', 'prestige', 'sommelier'];
+                    const columns = tiers.flatMap(t => [
+                        `${t}_wine`, `${t}_wine_glass`, `${t}_wine_temp`,
+                        `${t}_wine_region`, `${t}_wine_grape`, `${t}_wine_alcohol`
+                    ]);
+                    const { data: storedDish, error: lookupError } = await supabaseClient
+                        .from('dishes_free')
+                        .select('dish_name,' + columns.join(','))
+                        .ilike('dish_name', dishName)
+                        .maybeSingle();
+                    if (lookupError) throw lookupError;
+                    if (storedDish) {
+                        const normalizeWine = value => String(value || '')
+                            .normalize('NFKC').toLocaleLowerCase('it')
+                            .replace(/[‘’]/g, "'").replace(/[–—]/g, '-')
+                            .replace(/\s+/g, ' ').trim();
+                        for (const tier of tiers) {
+                            if (normalizeWine(currentData[`${tier}_wine`]) !== normalizeWine(storedDish[`${tier}_wine`])) continue;
+                            for (const suffix of ['glass', 'temp', 'region', 'grape', 'alcohol']) {
+                                const field = `${tier}_wine_${suffix}`;
+                                if (String(storedDish[field] || '').trim()) currentData[field] = storedDish[field];
                             }
                         }
                     }
-                } catch (categoryError) {
-                    console.warn('MatchWine: impossibile integrare categorie social da dishes_free', categoryError);
                 }
+            } catch (lookupError) {
+                console.warn('MatchWine: recupero dati di servizio non riuscito', lookupError);
             }
         }
 
@@ -2354,40 +2420,33 @@ async function loadLeaderboardData(type) {
             if (searchMode === 'dish') {
                 let cleanDishName = (d.dish_name || (dishInputEl ? dishInputEl.value.trim() : '') || 'Carbonara').replace(/([aeiouàèìòù])\1{2,}/gi, '$1');
 
-                const formatWineTitleParts = (rawTitle, wineryVal, wineNameVal) => {
-                let winery = wineryVal || d.standard_winery || d.plus_winery || d.prestige_winery || d.sommelier_winery;
-                let wineName = wineNameVal || d.standard_wine_name || d.plus_wine_name || d.prestige_wine_name || d.sommelier_wine_name;
+                const formatWineTitleParts = (rawTitle) => {
+                    const fullTitle = String(rawTitle || 'Vino consigliato').trim();
+                    const parts = fullTitle.split(/\s+[—–-]\s+/);
+                    if (parts.length > 1) {
+                        return { winery: parts[0].trim(), type: parts.slice(1).join(' — ').trim() };
+                    }
+                    return { winery: fullTitle, type: '' };
+                };
 
-                if (winery || wineName) {
-                return { 
-                 winery: winery || 'Cantina Selezionata', 
-                type: wineName ? wineName.toUpperCase() : '' 
-             };
-             }
-
-                let fullTitle = rawTitle || d.standard_wine || d.plus_wine || d.prestige_wine || d.sommelier_wine || 'Vino Consigliato';
-    
-                // Cerca il separatore principale tra produttore e vino, ad esempio " - " con gli spazi
-                // In questo modo il trattino interno a "Biondi-Santi" non viene toccato.
-                let parts = fullTitle.split(/\s+-\s+/);
-    
-                if (parts.length >= 2) {
-              let finalWinery = parts[0].trim();
-               // Rimuove eventuali indicazioni di regione tra parentesi alla fine (es. "(Toscana)") dal nome del vino se presenti
-              let finalType = parts.slice(1).join(' - ').replace(/\s*\([^)]*\)/g, '').trim().toUpperCase();
-              return { winery: finalWinery, type: finalType };
-             }
-
-              return { winery: fullTitle.replace(/\s*\([^)]*\)/g, '').trim(), type: '' };
-             };
+                const formatAlcohol = (value) => {
+                    let v = String(value || '').trim();
+                    if (!v) return '';
+                    // Rimuove solo l'indicazione editoriale di approssimazione, senza alterare il dato nel DB.
+                    v = v.replace(/\b(?:circa|ca\.?|approssimativamente)\s*/gi, '').trim();
+                    v = v.replace(/\s*(?:%\s*vol\.?|vol\.?\s*%|%|vol\.)\s*$/gi, '').trim();
+                    v = v.replace(/\s*(?:%\s*vol\.?|vol\.?\s*%|%|vol\.)\s*$/gi, '').trim();
+                    return v ? `${v.replace(/(\d)\.(\d)/g, '$1,$2')}% vol.` : '';
+                };
+                const cleanServiceValue = (value) => String(value || '').trim();
 
                 const wineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp, priceTag, regionVal, nationVal, grapeVal, alcoholVal) => {
                     let parts = formatWineTitleParts(wineTitle);
-                    let displayGlass = wineGlass && wineGlass.trim() !== '' ? wineGlass : 'Ballon / Calice ampio';
-                    let displayTemp = wineTemp && wineTemp.trim() !== '' ? wineTemp : '16-18°C';
+                    let displayGlass = cleanServiceValue(wineGlass) || 'Non disponibile';
+                    let displayTemp = cleanServiceValue(wineTemp) || 'Non disponibile';
 
                     // Creazione della riga tecnica: Vitigno • Regione • Gradazione
-                    let technicalLine = [grapeVal, regionVal, alcoholVal ? `${alcoholVal}% vol.` : '']
+                    let technicalLine = [grapeVal, regionVal, formatAlcohol(alcoholVal)]
                         .filter(Boolean)
                         .join(' • ');
 
@@ -2414,32 +2473,29 @@ async function loadLeaderboardData(type) {
                                 <div>
                                     ${badgeHtml}
                                     <div class="space-y-1">
-                                        <div class="font-serif italic font-bold text-base sm:text-lg capitalize text-[#520d1a] leading-tight">
+                                        <div class="font-serif italic font-semibold text-base sm:text-lg text-[#520d1a] leading-tight">
                                             ${parts.winery}
                                         </div>
-                                        <h3 class="font-serif font-bold leading-tight tracking-wide text-sm sm:text-base uppercase text-[#520d1a]">
+                                        <h3 class="font-serif font-semibold uppercase tracking-[0.035em] leading-snug ${String(parts.type || parts.winery).length > 30 ? 'text-[11px] sm:text-[12px]' : 'text-[13px] sm:text-[14px]'} text-[#520d1a]">
                                             ${parts.type || parts.winery}
                                         </h3>
-                                        <div class="text-[11px] font-serif italic font-bold uppercase text-[#a37f37] tracking-widest pt-0.5">
-                                         ${d.region || ''}
-                                        </div>
 
                                         <!-- RIGA TECNICA: VITIGNO • REGIONE • GRADAZIONE -->
                                         ${technicalLine ? `
                                             <div class="pt-1">
-                                                <div class="text-[11px] sm:text-xs font-serif font-bold tracking-wider uppercase text-[#520d1a]">${technicalLine}</div>
+                                                <div class="text-[10px] sm:text-[11px] font-serif font-medium uppercase tracking-[0.015em] leading-relaxed text-[#520d1a]">${technicalLine}</div>
                                             </div>
                                         ` : ''}
                                     </div>
                                 </div>
-                                <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-bold pt-1">
+                                <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-normal pt-1">
                                     "${wineDesc || ''}"
                                 </p>
                             </div>
                         </div>
                         <div class="space-y-1.5 pt-2.5 border-t border-[#dcd0bc]/60">
                             <h4 class="text-[9px] uppercase font-bold tracking-widest" style="color: #a37f37;">PERCHÉ FUNZIONA L'ABBINAMENTO</h4>
-                            <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-bold">
+                            <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-normal">
                                 "${wineMatching || ''}"
                             </p>
                         </div>
@@ -2450,7 +2506,7 @@ async function loadLeaderboardData(type) {
                                 </div>
                                 <div class="min-w-0">
                                     <span class="text-[8px] uppercase tracking-wider font-bold block" style="color: #a37f37;">TIPO DI CALICE</span>
-                                    <span class="text-[11px] font-serif font-medium truncate block text-[#520d1a]">${displayGlass}</span>
+                                    <span class="text-[11px] font-serif font-medium leading-snug block text-[#520d1a]">${displayGlass}</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 text-stone-900">
@@ -2459,7 +2515,7 @@ async function loadLeaderboardData(type) {
                                 </div>
                                 <div class="min-w-0">
                                     <span class="text-[8px] uppercase tracking-wider font-bold block" style="color: #a37f37;">TEMPERATURA</span>
-                                    <span class="text-[11px] font-serif font-medium truncate block text-[#520d1a]">${displayTemp}</span>
+                                    <span class="text-[11px] font-serif font-medium leading-snug block text-[#520d1a]">${displayTemp}</span>
                                 </div>
                             </div>
                         </div>
@@ -2468,10 +2524,10 @@ async function loadLeaderboardData(type) {
 
                 const sommelierWineCardHtml = (wineTitle, wineDesc, wineMatching, wineGlass, wineTemp, regionVal, nationVal, grapeVal, alcoholVal) => {
                     let parts = formatWineTitleParts(wineTitle);
-                    let displayGlass = wineGlass && wineGlass.trim() !== '' ? wineGlass : 'Ballon / Calice ampio';
-                    let displayTemp = wineTemp && wineTemp.trim() !== '' ? wineTemp : '16-18°C';
+                    let displayGlass = cleanServiceValue(wineGlass) || 'Non disponibile';
+                    let displayTemp = cleanServiceValue(wineTemp) || 'Non disponibile';
 
-                    let technicalLine = [grapeVal, regionVal, alcoholVal ? `${alcoholVal}% vol.` : '']
+                    let technicalLine = [grapeVal, regionVal, formatAlcohol(alcoholVal)]
                         .filter(Boolean)
                         .join(' • ');
 
@@ -2498,27 +2554,27 @@ async function loadLeaderboardData(type) {
                                 <div>
                                     <span class="inline-flex px-2.5 py-0.5 rounded-full text-[8px] font-bold uppercase bg-white/10 text-gold-300 border border-gold-400/30 mb-1">SELEZIONE D'ECCELLENZA</span>
                                     <div class="space-y-1">
-                                        <div class="font-serif italic font-bold text-base sm:text-lg capitalize text-gold-200 leading-tight">
+                                        <div class="font-serif italic font-semibold text-base sm:text-lg text-gold-200 leading-tight">
                                             ${parts.winery}
                                         </div>
-                                        <h3 class="font-serif font-bold leading-tight tracking-wide text-sm sm:text-base uppercase text-stone-100">
+                                        <h3 class="font-serif font-semibold uppercase tracking-[0.035em] leading-snug ${String(parts.type || parts.winery).length > 30 ? 'text-[11px] sm:text-[12px]' : 'text-[13px] sm:text-[14px]'} text-stone-100">
                                             ${parts.type || parts.winery}
                                         </h3>
                                         ${technicalLine ? `
                                             <div class="pt-1">
-                                                <div class="text-[11px] sm:text-xs font-serif font-bold tracking-wider uppercase text-stone-100">${technicalLine}</div>
+                                                <div class="text-[10px] sm:text-[11px] font-serif font-medium uppercase tracking-[0.015em] leading-relaxed text-stone-100">${technicalLine}</div>
                                             </div>
                                         ` : ''}
                                     </div>
                                 </div>
-                                <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-stone-100 font-bold pt-1">
+                                <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-stone-100 font-normal pt-1">
                                     "${wineDesc || ''}"
                                 </p>
                             </div>
                         </div>
                         <div class="space-y-1.5 pt-2.5 border-t border-gold-400/20">
                             <h4 class="text-[9px] uppercase font-bold tracking-widest text-gold-300">MOTIVO DELL'ABBINAMENTO</h4>
-                            <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-stone-100 font-bold">
+                            <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-stone-100 font-normal">
                                 "${wineMatching || ''}"
                             </p>
                         </div>
@@ -2529,7 +2585,7 @@ async function loadLeaderboardData(type) {
                                 </div>
                                 <div class="min-w-0">
                                     <span class="text-[8px] uppercase tracking-wider font-bold block text-gold-300">TIPO DI CALICE</span>
-                                    <span class="text-[11px] font-serif font-medium truncate block text-stone-100">${displayGlass}</span>
+                                    <span class="text-[11px] font-serif font-medium leading-snug block text-stone-100">${displayGlass}</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 text-stone-100">
@@ -2538,7 +2594,7 @@ async function loadLeaderboardData(type) {
                                 </div>
                                 <div class="min-w-0">
                                     <span class="text-[8px] uppercase tracking-wider font-bold block text-gold-300">TEMPERATURA</span>
-                                    <span class="text-[11px] font-serif font-medium truncate block text-stone-100">${displayTemp}</span>
+                                    <span class="text-[11px] font-serif font-medium leading-snug block text-stone-100">${displayTemp}</span>
                                 </div>
                             </div>
                         </div>
@@ -2626,8 +2682,8 @@ async function loadLeaderboardData(type) {
                             title: d.standard_wine, 
                             desc: d.standard_wine_desc, 
                             matching: d.standard_wine_matching, 
-                            glass: d.standard_glass || d.standard_wine_glass || d.glass, 
-                            temp: d.standard_temp || d.standard_wine_temp || d.temp, 
+                            glass: d.standard_wine_glass, 
+                            temp: d.standard_wine_temp, 
                             region: d.standard_wine_region || d.standard_region || d.region, 
                             nation: d.standard_wine_nation || d.standard_nazione || d.nazione,
                             grape: d.standard_wine_grape || d.standard_grape || '',
@@ -2638,8 +2694,8 @@ async function loadLeaderboardData(type) {
                             title: d.plus_wine, 
                             desc: d.plus_wine_desc, 
                             matching: d.plus_wine_matching, 
-                            glass: d.plus_glass || d.plus_wine_glass || d.glass, 
-                            temp: d.plus_temp || d.plus_wine_temp || d.temp, 
+                            glass: d.plus_wine_glass, 
+                            temp: d.plus_wine_temp, 
                             region: d.plus_wine_region || d.plus_region || d.region, 
                             nation: d.plus_wine_nation || d.plus_nazione || d.nazione,
                             grape: d.plus_wine_grape || d.plus_grape || '',
@@ -2650,8 +2706,8 @@ async function loadLeaderboardData(type) {
                             title: d.prestige_wine, 
                             desc: d.prestige_wine_desc, 
                             matching: d.prestige_wine_matching, 
-                            glass: d.prestige_glass || d.prestige_wine_glass || d.glass, 
-                            temp: d.prestige_temp || d.prestige_wine_temp || d.temp, 
+                            glass: d.prestige_wine_glass, 
+                            temp: d.prestige_wine_temp, 
                             region: d.prestige_wine_region || d.prestige_region || d.region, 
                             nation: d.prestige_wine_nation || d.prestige_nazione || d.nazione,
                             grape: d.prestige_wine_grape || d.prestige_grape || '',
@@ -2665,8 +2721,8 @@ async function loadLeaderboardData(type) {
                         d.sommelier_wine, 
                         d.sommelier_wine_desc, 
                         d.sommelier_principle, 
-                        d.service_glass || d.sommelier_glass || d.sommelier_wine_glass || d.glass,
-                        d.service_decant || d.sommelier_temp || d.sommelier_wine_temp || d.temp,
+                        d.sommelier_wine_glass,
+                        d.sommelier_wine_temp,
                         d.sommelier_wine_region || d.sommelier_region || d.region,
                         d.sommelier_wine_nation || d.sommelier_nazione || d.nazione,
                         d.sommelier_wine_grape || d.sommelier_grape || '',
@@ -2742,6 +2798,47 @@ async function loadLeaderboardData(type) {
                  ].filter(Boolean).join(' • ');
 
 
+                // Solo presentazione della card vino nel percorso Calice → Piatto.
+                // I 50 vini wines_free hanno normalmente il produttore tra parentesi finali.
+                // Per titoli generati dall'AI supporta anche «Cantina — Vino».
+                const splitSelectedWineTitle = (raw) => {
+                    const title = String(raw || '').trim();
+                    const parenthetical = title.match(/^(.*?)\s*\(([^()]+)\)\s*$/);
+                    if (parenthetical) return { winery: parenthetical[2].trim(), wine: parenthetical[1].trim() };
+                    const separated = title.split(/\s+[—–]\s+|\s+-\s+/);
+                    if (separated.length === 2 && separated[0].trim() && separated[1].trim()) {
+                        // Evita di scambiare la denominazione «DOC - ...» per una cantina.
+                        if (!/\b(?:DOCG?|IGT|DOP|IGP)\b/i.test(separated[0])) {
+                            return { winery: separated[0].trim(), wine: separated[1].trim() };
+                        }
+                    }
+                    return { winery: '', wine: title };
+                };
+                // Se il backend AI restituisce campi strutturati, sono prioritari.
+                // Non tentare una separazione arbitraria di nomi sconosciuti.
+                const explicitWinery = String(d.winery || d.wine_producer || d.producer || d.cantina || d.wine?.winery || '').trim();
+                const explicitWineName = String(d.wine_name_only || d.wine_label || d.wine_display_name || d.wine?.wine_name || '').trim();
+                let selectedWineParts = splitSelectedWineTitle(wineTitleToUse);
+                if (explicitWinery) {
+                    let cleanedWine = explicitWineName || selectedWineParts.wine;
+                    if (!explicitWineName && !selectedWineParts.winery) {
+                        if (cleanedWine.toLocaleLowerCase('it').endsWith(' ' + explicitWinery.toLocaleLowerCase('it'))) {
+                            cleanedWine = cleanedWine.slice(0, -(explicitWinery.length + 1)).trim();
+                        }
+                    }
+                    selectedWineParts = { winery: explicitWinery, wine: cleanedWine };
+                }
+                // Normalizza le iniziali della cantina, senza alterare il resto del nome.
+                if (selectedWineParts.winery) {
+                    selectedWineParts.winery = selectedWineParts.winery.replace(/(^|[\\s'’\\-])([a-zà-ÿ])/g,
+                        (_, separator, letter) => separator + letter.toLocaleUpperCase('it'));
+                }
+                // Caso esplicito noto: il nome libero non porta un produttore separato.
+                if (!selectedWineParts.winery && /^primitivo\s+sette\s+archi$/i.test(wineTitleToUse)) {
+                    selectedWineParts = { winery: 'Sette Archi', wine: 'Primitivo' };
+                }
+
+
                 const userWineCard = `
                 <div class="notebook-sheet p-4 sm:p-5 space-y-3.5">
                     <div class="text-center space-y-0.5">
@@ -2759,8 +2856,11 @@ async function loadLeaderboardData(type) {
                         </div>
                         <div class="flex-1 space-y-2 min-w-0 flex flex-col justify-between">
                             <div>
-                                <h3 class="font-serif font-bold leading-tight tracking-wide text-sm uppercase" style="color: #520d1a;">
-                                   ${wineTitleToUse}
+                                ${selectedWineParts.winery ? `
+                                    <div class="font-serif italic font-semibold text-base sm:text-lg text-[#520d1a] leading-tight mb-1">${selectedWineParts.winery}</div>
+                                ` : ''}
+                                <h3 class="font-serif font-semibold uppercase tracking-[0.035em] leading-snug ${selectedWineParts.wine.length > 30 ? 'text-[11px] sm:text-[12px]' : 'text-[13px] sm:text-[14px]'} text-[#520d1a]">
+                                    ${selectedWineParts.wine}
                                 </h3>
                                 ${chosenTechnicalLine ? `
                                     <div class="pt-1">
@@ -2775,7 +2875,7 @@ async function loadLeaderboardData(type) {
                     </div>
                     <div class="space-y-1.5 pt-2.5 border-t border-[#dcd0bc]/60">
                         <h4 class="text-[9px] uppercase font-bold tracking-widest" style="color: #a37f37;">PERCHÉ FUNZIONA L'ABBINAMENTO</h4>
-                        <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-bold">
+                        <p class="text-xs sm:text-sm leading-relaxed font-serif italic text-[#520d1a] font-normal">
                             "${wineMatchingReason}"
                         </p>
                     </div>
@@ -2786,7 +2886,7 @@ async function loadLeaderboardData(type) {
                             </div>
                             <div class="min-w-0">
                                 <span class="text-[8px] uppercase tracking-wider font-bold block" style="color: #a37f37;">TIPO DI CALICE</span>
-                                <span class="text-[11px] font-serif font-medium truncate block text-[#520d1a]">${chosenGlass}</span>
+                                <span class="text-[11px] font-serif font-medium leading-snug block text-[#520d1a]">${chosenGlass}</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-2 text-stone-900">
@@ -2795,7 +2895,7 @@ async function loadLeaderboardData(type) {
                             </div>
                             <div class="min-w-0">
                                 <span class="text-[8px] uppercase tracking-wider font-bold block" style="color: #a37f37;">TEMPERATURA</span>
-                                <span class="text-[11px] font-serif font-medium truncate block text-[#520d1a]">${chosenTemp}</span>
+                                <span class="text-[11px] font-serif font-medium leading-snug block text-[#520d1a]">${chosenTemp}</span>
                             </div>
                         </div>
                     </div>
@@ -3423,7 +3523,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : null;
             const category = prefix
                 ? (d[`${prefix}_wine_category`] || d[`${prefix}_categoria_vino`] || d[`${prefix}_wine`]?.categoria_vino || d[`${prefix}_wine`]?.category)
-                : (d.categoria_vino || d.wine_category || d.wine_type_category || d.wine?.categoria_vino);
+                : (d.wine_card_type || d.categoria_vino || d.wine_category || d.wine_type_category || d.wine?.categoria_vino);
             const normalized = String(category || '').trim().toLowerCase()
                 .normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\s-]+/g, '_');
             const templates = {
@@ -3447,11 +3547,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const clean=v=>String(v||'').replace(/\s+/g,' ').trim();
             // Maiuscola solo la prima lettera visibile, senza alterare il resto del nome.
             const initialUpper=v=>clean(v).replace(/^(\P{L}*)(\p{L})/u,(_,prefix,letter)=>prefix+letter.toLocaleUpperCase('it-IT'));
-            const winery=isDishSearch ? clean(wineCard.querySelector('.font-serif.italic.font-bold')?.textContent) : '';
-            const wineType=clean(wineCard.querySelector('h3')?.textContent);
-            const wineName=isDishSearch
-                ? ([winery,wineType].filter((v,i,a)=>v&&(i===0||v.toLowerCase()!==a[0].toLowerCase())).join(' · ')||'Vino consigliato')
-                : (wineType||'Vino scelto'); // Dal Calice al Piatto: titolo H3 della card del vino sottostante
+            // La card social usa gli stessi dati visibili della card del vino,
+            // in entrambi i percorsi. La cantina è in corsivo e il vino in <h3>.
+            const wineryElement = Array.from(wineCard.querySelectorAll('div.font-serif.italic'))
+                .find(el => el.classList.contains('font-semibold') || el.classList.contains('font-bold'));
+            const winery = clean(wineryElement?.textContent);
+            const wineType = clean(wineCard.querySelector('h3')?.textContent);
+            // Titolo social su due livelli: produttore elegante e vino protagonista.
+            // Non modificare i dati sorgente, soltanto la resa grafica della condivisione.
+            const socialTitleCase = value => clean(value).toLocaleLowerCase('it-IT')
+                .replace(/(^|[\s'’\-])([a-zà-ÿ])/g, (_, separator, letter) => separator + letter.toLocaleUpperCase('it-IT'))
+                .replace(/\b(A|Di|Del|Della|Dei|Degli|Da|In|E)\b/g, (word, offset) => offset === 0 ? word : word.toLocaleLowerCase('it-IT'));
+            let socialWinery = winery ? socialTitleCase(winery) : '';
+            let socialWineName = wineType || (isDishSearch ? 'Vino consigliato' : 'Vino scelto');
+            // Badia a Passignano è il nome dell'etichetta, Antinori il produttore.
+            if (/^antinori\s*[-–—]\s*badia\s+a\s+passignano$/i.test(winery)) {
+                socialWinery = 'Antinori';
+                if (!/badia\s+a\s+passignano/i.test(socialWineName)) {
+                    socialWineName = 'Badia a Passignano – ' + socialWineName;
+                }
+            }
+            // Evita duplicazioni se il titolo del vino contiene già il produttore.
+            if (socialWinery && socialWineName.toLocaleLowerCase('it-IT').startsWith(socialWinery.toLocaleLowerCase('it-IT') + ' ')) {
+                socialWineName = socialWineName.slice(socialWinery.length).trim();
+            }
+            // I nomi di vini e denominazioni restano leggibili in maiuscolo.
+            socialWineName = clean(socialWineName).toLocaleUpperCase('it-IT');
             const dishName=clean(dishCard.querySelector('h3')?.textContent)||'Piatto consigliato';
             const reasonCard=wineCard; // In entrambi i percorsi usa la motivazione della card del vino.
             const reasonHeader=[...reasonCard.querySelectorAll('h4')].find(el=>/PERCHÉ FUNZIONA|MOTIVO DELL.ABBINAMENTO/i.test(el.textContent));
@@ -3469,7 +3590,47 @@ document.addEventListener('DOMContentLoaded', () => {
             const dark='#650b20';
             // Piatto e vino condividono lo stesso font iniziale (48 px); si riducono solo se il testo non entra.
             mwSocialTextBlock(ctx,initialUpper(dishName),720,455,470,115,{maxFont:48,minFont:22,color:dark});
-            mwSocialTextBlock(ctx,initialUpper(wineName),720,isDishSearch ? 779 : 755,495,160,{maxFont:48,minFont:22,color:dark});
+            // Blocco cantina + vino: altezza misurata prima del disegno.
+            // Evita che la cantina tocchi la targhetta IL VINO e mantiene
+            // una distanza costante fra cantina e denominazione, anche su 3 righe.
+            const wineAreaTop = 722;
+            const wineAreaBottom = 853;
+            const wineAreaHeight = wineAreaBottom - wineAreaTop;
+            const wineGap = 10;
+            function measureWineText(value, size, weight, italic, maxWidth) {
+                const font = `${italic ? 'italic ' : ''}${weight} ${size}px Georgia,serif`;
+                ctx.font = font;
+                const lines = mwSocialWrap(ctx, value, maxWidth, font);
+                return {font, lines, height: lines.length * size * 1.14, size};
+            }
+            function drawMeasuredWine(block, centerY) {
+                ctx.font = block.font;
+                ctx.fillStyle = dark;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const lineHeight = block.size * 1.14;
+                const firstY = centerY - (block.lines.length - 1) * lineHeight / 2;
+                block.lines.forEach((line, i) => ctx.fillText(line, 720, firstY + i * lineHeight));
+            }
+            if (socialWinery) {
+                // Un'unica area, non due coordinate indipendenti.
+                // Il nome breve rimane grande; quello lungo si adatta solo se necessario.
+                let wineryBlock, wineBlock;
+                for (let wineSize = 48; wineSize >= 23; wineSize--) {
+                    const proposedWinerySize = Math.min(31, Math.max(24, Math.round(wineSize * .70)));
+                    wineryBlock = measureWineText(socialWinery, proposedWinerySize, 'normal', true, 520);
+                    wineBlock = measureWineText(socialWineName, wineSize, 'bold', false, 525);
+                    if (wineryBlock.height + wineGap + wineBlock.height <= wineAreaHeight) break;
+                }
+                const totalHeight = wineryBlock.height + wineGap + wineBlock.height;
+                const top = wineAreaTop + (wineAreaHeight - totalHeight) / 2;
+                drawMeasuredWine(wineryBlock, top + wineryBlock.height / 2);
+                drawMeasuredWine(wineBlock, top + wineryBlock.height + wineGap + wineBlock.height / 2);
+            } else {
+                mwSocialTextBlock(ctx, socialWineName, 720,
+                    (wineAreaTop + wineAreaBottom) / 2, 525, wineAreaHeight,
+                    {maxFont:48,minFont:23,weight:'bold',color:dark});
+            }
             // Fascia 'Perché funziona': centro della zona utile, sotto il titolo e sopra il bordo inferiore.
             // Bordeaux sui fondi chiari, bianco sulle fasce scure (rosso e ambrato).
             const lightBand = /CardBianco\.png|CardRosè\.png|CardSpumante\.png|CardSpumanterosè\.png/.test(templatePath);
