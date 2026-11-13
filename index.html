@@ -381,6 +381,12 @@
                 <button onclick="executeLogout()" class="w-full bg-[#520d1a] hover:bg-[#33060f] text-white font-serif italic text-xs py-2.5 rounded-xl shadow-xs transition-all uppercase tracking-wider cursor-pointer text-center">
                     Disconnetti account
                 </button>
+                <div class="pt-2">
+    <button type="button"
+        onclick="requestAccountDeletion()"
+        class="w-full py-2 rounded-xl border border-[#E8D8B5] bg-[#FCFAF5] text-[#650F25] font-serif italic text-xs tracking-wide hover:bg-[#F7F0E2] transition-all cursor-pointer">
+        ELIMINA ACCOUNT
+    </button>
             </div>
         </div>
 
@@ -478,7 +484,7 @@
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="font-serif font-bold text-wine-900 text-sm">Piano Premium</span>
-                            <span class="text-base font-bold text-wine-900">2,49 € <span class="text-[10px] font-normal text-stone-500">/ mese</span></span>
+                            <span class="text-base font-bold text-wine-900">2,99 € <span class="text-[10px] font-normal text-stone-500">/ mese</span></span>
                         </div>
                         <p class="text-xs text-stone-500 leading-tight">Richieste illimitate e funzioni avanzate senza pensieri.</p>
                         <button onclick="buyPlan('premium')" class="w-full wine-card-bg text-stone-100 font-bold text-xs py-2.5 rounded-xl shadow-xs hover:opacity-95 transition-all uppercase tracking-wider cursor-pointer">
@@ -808,10 +814,26 @@
                     <h4 class="font-serif font-bold text-wine-900 text-base leading-tight">Parla con il Maestro Enologo</h4>
                     </div>
         
+                    
                     <p class="text-[11px] sm:text-xs text-stone-600 leading-relaxed">
-                     Domande su <strong>annate rare</strong> o <strong>abbinamenti fuori carta</strong>? Il <strong>Maestro Enologo</strong> è il nostro <strong>assistente AI</strong>, guidato dalle regole del nostro <strong>Sommelier</strong>. <strong>Dialoga</strong> in una sessione di <strong>10 minuti</strong> (<strong>1 credito per sessione</strong>).
-                    </p>
-                    </div>
+                    Domande su <strong>annate rare</strong> o
+                    <strong>abbinamenti fuori carta</strong>?
+                    Il <strong>Maestro Enologo</strong> è il nostro
+                    <strong>assistente AI</strong>, guidato dalle regole
+                    del nostro <strong>Sommelier</strong>.
+                   <strong>Dialoga</strong> in una sessione di
+                   <strong>10 minuti</strong>
+                  (<strong>1 credito per sessione</strong>).
+
+                  <span class="block mt-3">
+                 📍 <strong>Dove lo trovi?</strong>
+                  Scorri fino alla sezione
+                  <strong>“Parla con il Maestro Enologo”</strong>,
+                  in fondo alla pagina principale.
+                  </span>
+                  </p>
+                 </div>
+
                 </div>
 
                 <!-- SLIDE 4: Punto 6 + Acquisto Crediti -->
@@ -1163,10 +1185,77 @@
             alert("Reindirizzamento al portale di gestione abbonamento sicuro.");
         }
 
-        async function executeLogout() {
-            await supabaseClient.auth.signOut();
-            window.location.reload();
+       
+async function executeLogout() {
+    await supabaseClient.auth.signOut();
+    window.location.reload();
+}
+
+
+function requestAccountDeletion() {
+    if (!currentUser) {
+        alert("Devi effettuare l'accesso.");
+        return;
+    }
+
+    const modal = document.getElementById("deleteAccountModal");
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+}
+
+function closeDeleteAccountModal() {
+    const modal = document.getElementById("deleteAccountModal");
+
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+}
+
+
+async function confirmAccountDeletion() {
+    closeDeleteAccountModal();
+
+    try {
+        const { data, error } =
+            await supabaseClient.functions.invoke(
+                "delete-account",
+                { body: {} }
+            );
+
+        if (error) {
+            console.error("Errore eliminazione account:", error);
+
+            alert(
+                "Impossibile verificare la richiesta. " +
+                "Riprova più tardi."
+            );
+            return;
         }
+
+        if (data?.test_mode === true) {
+            alert(
+                "TEST RIUSCITO!\n\n" +
+                "Il tuo account è stato riconosciuto correttamente.\n\n" +
+                "Nessun dato è stato eliminato."
+            );
+            return;
+        }
+
+        alert(
+            "La cancellazione dell'account non è ancora disponibile."
+        );
+
+    } catch (error) {
+        console.error("Errore:", error);
+
+        alert(
+            "Si è verificato un errore. Riprova più tardi."
+        );
+    }
+}
+
+
+
 
         async function saveToFavorites(dishName, wineName, btnElement) {
             if (!currentUser) {
@@ -3690,6 +3779,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
 </script>
+
+
+<!-- FINESTRA ELIMINA ACCOUNT -->
+<div id="deleteAccountModal"
+     class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/60 px-5">
+
+    <div role="dialog"
+         aria-modal="true"
+         aria-labelledby="deleteAccountTitle"
+         class="w-full max-w-md rounded-3xl border border-[#D9C59A] bg-[#FCFAF5] p-7 text-center shadow-2xl">
+
+        <div class="mb-4 text-3xl">⚠️</div>
+
+        <h2 id="deleteAccountTitle"
+            class="mb-4 font-serif text-xl tracking-wide text-[#650F25]">
+            ELIMINARE ACCOUNT?
+        </h2>
+
+        <p class="mb-4 text-sm leading-relaxed text-[#473D39]">
+            Vuoi eliminare definitivamente il tuo account MatchWine?
+        </p>
+
+        <p class="mb-4 text-sm leading-relaxed text-[#473D39]">
+            Perderai il profilo, i crediti residui
+            e gli abbinamenti preferiti.
+        </p>
+
+        <p class="mb-7 text-xs font-semibold text-[#650F25]">
+            Questa operazione non potrà essere annullata.
+        </p>
+
+        <div class="flex flex-col gap-3">
+            <button type="button"
+                    onclick="closeDeleteAccountModal()"
+                    class="w-full rounded-xl border border-[#D9C59A] py-3 font-serif text-sm tracking-widest text-[#650F25] cursor-pointer">
+                ANNULLA
+            </button>
+
+            <button type="button"
+                    onclick="confirmAccountDeletion()"
+                    class="w-full rounded-xl bg-[#650F25] py-3 font-serif text-sm tracking-widest text-white cursor-pointer">
+                ELIMINA ACCOUNT
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "15031c4ddfa0424fad6a741414d00fa6"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
