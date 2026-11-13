@@ -2,7 +2,7 @@
 <html lang="it" class="bg-[#faf7f2] text-stone-800 selection:bg-rose-900/25 selection:text-wine-900" style="color-scheme: only light;">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     
     <title>MatchWine - Il Taccuino del Sommelier</title>
     <meta name="application-name" content="MatchWine">
@@ -19,15 +19,6 @@
     <link rel="apple-touch-icon" href="images/LogPic.png">
     <link rel="icon" type="image/png" href="images/LogPic.png">
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-407ZRP97W1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'G-407ZRP97W1');
-    </script>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -3524,14 +3515,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const category = prefix
                 ? (d[`${prefix}_wine_category`] || d[`${prefix}_categoria_vino`] || d[`${prefix}_wine`]?.categoria_vino || d[`${prefix}_wine`]?.category)
                 : (d.wine_card_type || d.categoria_vino || d.wine_category || d.wine_type_category || d.wine?.categoria_vino);
-            const normalized = String(category || '').trim().toLowerCase()
+            // Le due direzioni condividono la stessa mappa delle sei grafiche.
+            // Alcuni backend usano "rosé", "rose_spumante" o descrizioni estese.
+            const normalizedRaw = String(category || '').trim().toLowerCase()
                 .normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\s-]+/g, '_');
+            const normalized = /(?:spumante|sparkling|bollicine|metodo_classico|franciacorta|trentodoc|champagne|prosecco).*ros[ae]|ros[ae].*(?:spumante|sparkling|bollicine|metodo_classico)/.test(normalizedRaw)
+                ? 'spumante_rose'
+                : /^(?:rose|rosa|rosato|cerasuolo|chiaretto)$/.test(normalizedRaw) ? 'rosato'
+                : normalizedRaw;
             const templates = {
                 rosso: 'CardSocialMatchWine.png',
                 bianco: 'CardBianco.png',
-                rosato: 'CardRosè.png', rose: 'CardRosè.png',
+                rosato: 'CardRosè.png', rose: 'CardRosè.png', rosa: 'CardRosè.png',
                 spumante: 'CardSpumante.png',
-                spumante_rose: 'CardSpumanterosè.png', spumante_rosato: 'CardSpumanterosè.png',
+                spumante_rose: 'CardSpumanterosè.png', spumante_rosato: 'CardSpumanterosè.png', rose_spumante: 'CardSpumanterosè.png',
                 ambrato: 'CardPassito.png', passito: 'CardPassito.png'
             };
             // Per i risultati storici privi di categoria manteniamo la card originale.
@@ -3593,10 +3590,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Blocco cantina + vino: altezza misurata prima del disegno.
             // Evita che la cantina tocchi la targhetta IL VINO e mantiene
             // una distanza costante fra cantina e denominazione, anche su 3 righe.
-            const wineAreaTop = 722;
-            const wineAreaBottom = 853;
+            // Riserva un margine superiore alla targhetta e uno inferiore al grappolo.
+            const wineAreaTop = 683;
+            const wineAreaBottom = 807;
             const wineAreaHeight = wineAreaBottom - wineAreaTop;
-            const wineGap = 10;
+            const wineGap = 9;
             function measureWineText(value, size, weight, italic, maxWidth) {
                 const font = `${italic ? 'italic ' : ''}${weight} ${size}px Georgia,serif`;
                 ctx.font = font;
@@ -3616,11 +3614,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Un'unica area, non due coordinate indipendenti.
                 // Il nome breve rimane grande; quello lungo si adatta solo se necessario.
                 let wineryBlock, wineBlock;
-                for (let wineSize = 48; wineSize >= 23; wineSize--) {
-                    const proposedWinerySize = Math.min(31, Math.max(24, Math.round(wineSize * .70)));
-                    wineryBlock = measureWineText(socialWinery, proposedWinerySize, 'normal', true, 520);
+                // La cantina NON si rimpicciolisce insieme al nome del vino.
+                // Riduciamo la cantina solo quando il suo nome è realmente lungo.
+                for (let winerySize = 46; winerySize >= 30; winerySize--) {
+                    wineryBlock = measureWineText(socialWinery, winerySize, 'normal', true, 520);
+                    if (wineryBlock.lines.length === 1) break;
+                }
+                // Il vino si adatta autonomamente nello spazio rimasto, lasciando
+                // un margine di sicurezza sopra il grappolo decorativo.
+                for (let wineSize = 48; wineSize >= 19; wineSize--) {
                     wineBlock = measureWineText(socialWineName, wineSize, 'bold', false, 525);
                     if (wineryBlock.height + wineGap + wineBlock.height <= wineAreaHeight) break;
+                }
+                if (wineryBlock.height + wineGap + wineBlock.height > wineAreaHeight) {
+                    throw new Error('Nome del vino troppo lungo per la card social');
                 }
                 const totalHeight = wineryBlock.height + wineGap + wineBlock.height;
                 const top = wineAreaTop + (wineAreaHeight - totalHeight) / 2;
@@ -3629,7 +3636,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 mwSocialTextBlock(ctx, socialWineName, 720,
                     (wineAreaTop + wineAreaBottom) / 2, 525, wineAreaHeight,
-                    {maxFont:48,minFont:23,weight:'bold',color:dark});
+                    {maxFont:48,minFont:19,weight:'bold',color:dark});
             }
             // Fascia 'Perché funziona': centro della zona utile, sotto il titolo e sopra il bordo inferiore.
             // Bordeaux sui fondi chiari, bianco sulle fasce scure (rosso e ambrato).
@@ -3683,5 +3690,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
 </script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "15031c4ddfa0424fad6a741414d00fa6"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
