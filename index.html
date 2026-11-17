@@ -366,6 +366,19 @@
                 </div>
             </div>
 
+            <!-- PROGRESSIONE GRADO SOMMELIER: punti storici del quiz -->
+            <div id="sommelierProgress" class="hidden rounded-2xl border border-[#d4af37]/45 bg-[#fdfbf7] px-3 py-3 space-y-2" aria-label="Avanzamento grado sommelier">
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-[10px] uppercase tracking-wider font-bold text-[#a37f37]">Il tuo percorso enologico</span>
+                    <span id="sommelierProgressCount" class="text-[10px] font-semibold text-[#520d1a]"></span>
+                </div>
+                <p id="sommelierProgressTarget" class="font-serif italic text-xs font-semibold text-[#520d1a]"></p>
+                <div id="sommelierProgressTrack" class="w-full h-2 rounded-full bg-[#e8d5b5] overflow-hidden" role="progressbar" aria-label="Progresso verso il prossimo grado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div id="sommelierProgressFill" class="h-full rounded-full bg-[#a37f37] transition-all duration-500" style="width:0%"></div>
+                </div>
+                <p id="sommelierProgressMessage" class="text-[11px] text-stone-600 text-center"></p>
+            </div>
+
             <!-- SEZIONE TACCUINO PREFERITI -->
             <div class="space-y-2">
                 <div class="flex items-center justify-between px-1">
@@ -462,7 +475,7 @@
                     </button>
                 </div>
                 
-                <p class="text-[11px] font-serif italic text-stone-500 pt-1">🎁 In palio abbonamenti per i migliori sommelier in classifica</p>
+                <p class="text-[11px] font-serif italic text-stone-500 pt-1">🍷 Allenati con il quiz quotidiano e conquista nuovi gradi Sommelier.</p>
             </div>
         </div>
 
@@ -866,17 +879,17 @@
                  </div>
         
                   <p class="text-[11px] sm:text-xs text-stone-600 leading-relaxed">
-                  Rispondi al <strong>Quiz Enologico del giorno</strong> e scala la classifica della cantina per vincere fantastici premi:
+                  Rispondi al <strong>Quiz Enologico del giorno</strong>, accumula punti e conquista nuovi gradi Sommelier. Sfida gli altri appassionati nelle classifiche:
                   </p>
 
                  <div class="space-y-1.5 pt-1">
                   <div class="bg-[#faf5ec] border border-[#dcd0bc]/60 rounded-lg p-2 flex items-center gap-2">
                    <span class="text-sm">🥇</span>
-                   <span class="text-[10px] sm:text-[11px] text-stone-700"><strong>1° mensile</strong> riceve <strong>1 mese Premium</strong></span>
+                   <span class="text-[10px] sm:text-[11px] text-stone-700"><strong>Classifica mensile:</strong> scala le posizioni ogni mese</span>
                  </div>
                  <div class="bg-[#faf5ec] border border-[#dcd0bc]/60 rounded-lg p-2 flex items-center gap-2">
-                   <span class="text-sm">👑</span>
-                   <span class="text-[10px] sm:text-[11px] text-stone-700"><strong>1° annuale</strong> riceve <strong>1 anno Premium</strong></span>
+                   <span class="text-sm">🏆</span>
+                   <span class="text-[10px] sm:text-[11px] text-stone-700"><strong>Classifica annuale:</strong> conquista un posto nell’Albo d’Oro</span>
                   </div>
                   </div>
                   </div>
@@ -1131,12 +1144,45 @@
             if (error) alert("Impossibile completare l'accesso con Google.");
         }
 
+        // Soglie identiche alla funzione SQL record_trivia_answer.
+        function updateSommelierProgress(rawPoints) {
+            const panel = document.getElementById('sommelierProgress');
+            if (!panel) return;
+            const points = Math.max(0, Number(rawPoints) || 0);
+            const levels = [
+                { name: 'Apprendista', min: 0 },
+                { name: 'Sommelier I Livello', min: 20 },
+                { name: 'Sommelier II Livello', min: 50 },
+                { name: 'Sommelier III Livello', min: 100 },
+                { name: 'Gran Maestro Sommelier', min: 200 }
+            ];
+            let index = 0;
+            for (let i = 0; i < levels.length; i++) {
+                if (points >= levels[i].min) index = i;
+            }
+            const next = levels[index + 1];
+            const percentage = next
+                ? Math.min(100, Math.max(0, (points - levels[index].min) / (next.min - levels[index].min) * 100))
+                : 100;
+            document.getElementById('sommelierProgressCount').textContent =
+                next ? `${points} / ${next.min} pt` : `${points} pt`;
+            document.getElementById('sommelierProgressTarget').textContent =
+                next ? `Verso ${next.name}` : 'Gran Maestro Sommelier';
+            document.getElementById('sommelierProgressFill').style.width = `${percentage}%`;
+            document.getElementById('sommelierProgressTrack').setAttribute('aria-valuenow', String(Math.round(percentage)));
+            document.getElementById('sommelierProgressMessage').textContent = next
+                ? `Ti mancano ${next.min - points} punti al prossimo grado!`
+                : 'Hai raggiunto il massimo grado! ✦';
+            panel.classList.remove('hidden');
+        }
+
         async function toggleProfileModal() {
             const modal = document.getElementById('profileModal');
             const initialEl = document.getElementById('modalUserInitial');
             const emailEl = document.getElementById('modalUserEmail');
             const levelEl = document.getElementById('modalSommelierLevel');
             const pointsEl = document.getElementById('modalUserPoints');
+            document.getElementById('sommelierProgress')?.classList.add('hidden');
 
             if (currentUser) {
                 const displayName = currentUser.user_metadata?.full_name || currentUser.email || 'A';
@@ -1153,6 +1199,7 @@
                     if (!error && data) {
                         if (levelEl) levelEl.innerText = data.sommelier_level || 'Apprendista';
                         if (pointsEl) pointsEl.innerText = data.trivia_points || 0;
+                        updateSommelierProgress(data.trivia_points);
                     }
                 } catch (err) {
                     console.warn("Impossibile caricare i punti del profilo:", err);
@@ -1408,12 +1455,13 @@ async function confirmAccountDeletion() {
                     }
 
                     if (!profile) {
-                        // Il profilo esiste davvero solo se l'errore è PGRST116 (record non trovato)
-                        const { data: upserted } = await supabaseClient
-                            .from('profiles')
-                            .upsert([{ id: user.id, email: user.email || '', full_name: user.user_metadata?.full_name || 'Utente', credits_remaining: 10, plan: 'free', sommelier_level: 'Apprendista' }], { onConflict: 'id' })
-                            .select().single();
-                        if (upserted) profile = upserted;
+                        // Il profilo viene creato dal trigger auth.users -> handle_new_user().
+                        // Non creare profili o assegnare crediti dal browser.
+                        console.error('Profilo MatchWine non trovato. Contattare assistenza se il problema persiste.');
+                        if (creditsLabel) creditsLabel.innerText = 'Profilo non disponibile';
+                        if (levelLabel) levelLabel.innerText = 'Grado non disponibile';
+                        isUserPremium = false;
+                        return;
                     }
 
                     if (profile) {
@@ -1517,116 +1565,110 @@ async function confirmAccountDeletion() {
             if (window.lucide) lucide.createIcons();
         }
 
-        // 2. Caricamento della domanda del giorno
+        // 2. Caricamento sicuro della domanda del giorno
+        let triviaSubmitting = false;
+        async function triviaRequest(payload) {
+            const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+            if (sessionError || !session?.access_token) throw new Error('Sessione scaduta: accedi nuovamente.');
+            const res = await fetch(config.triviaWebhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'apikey': SUPABASE_ANON_KEY
+                },
+                body: JSON.stringify(payload)
+            });
+            const result = await res.json();
+            if (!res.ok || result.status !== 'success') throw new Error(result.error || 'Quiz non disponibile.');
+            return result;
+        }
+
         async function loadDailyTrivia() {
             const questionEl = document.getElementById('triviaQuestionText');
             const optionsEl = document.getElementById('triviaOptionsList');
             const badgeEl = document.getElementById('triviaPointsBadge');
             const feedbackBox = document.getElementById('triviaFeedbackBox');
-
-            if (!questionEl || !optionsEl) return;
-
+            if (!questionEl || !optionsEl || !currentUser) return;
             try {
-                const res = await fetch(config.triviaWebhookUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: currentUser ? currentUser.id : 'anonymous' })
-                });
-                const result = await res.json();
-            
-                if (result.status === 'success' && result.data) {
-                    currentTriviaData = result.data;
-                    const pts = currentTriviaData.points || 1;
-                    
-                    userHasAnsweredToday = result.has_answered;
-
-                    // Se non ha ancora risposto, mostra la domanda normalmente
-                    if (!userHasAnsweredToday) {
-                        if (feedbackBox) feedbackBox.classList.add('hidden');
-                        if (badgeEl) {
-                            badgeEl.innerText = `✦ ${pts} ${pts === 1 ? 'Punto' : 'Punti'}`;
-                            badgeEl.classList.remove('hidden');
-                        }
-                        questionEl.innerText = currentTriviaData.question_text;
-
-                        let optsHtml = '';
-                        currentTriviaData.options.forEach((opt, idx) => {
-                            optsHtml += `<button onclick="submitTriviaAnswer(${idx})" class="w-full text-left p-3 rounded-2xl border border-gold-400/40 hover:opacity-90 wine-card-bg text-white text-sm sm:text-base font-serif font-bold transition cursor-pointer shadow-sm">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
-                        });
-                        optionsEl.innerHTML = optsHtml;
-                    }
+                const result = await triviaRequest({ action: 'get' });
+                currentTriviaData = result.data;
+                userHasAnsweredToday = Boolean(result.has_answered);
+                if (userHasAnsweredToday) {
+                    if (badgeEl) badgeEl.classList.add('hidden');
+                    if (feedbackBox) feedbackBox.classList.add('hidden');
+                    questionEl.innerText = 'Hai già risposto a questa domanda oggi. Il sommelier ti aspetta domani!';
+                    optionsEl.innerHTML = '';
+                    return;
                 }
+                const pts = currentTriviaData.points || 1;
+                if (feedbackBox) feedbackBox.classList.add('hidden');
+                if (badgeEl) {
+                    badgeEl.innerText = `✦ ${pts} ${pts === 1 ? 'Punto' : 'Punti'}`;
+                    badgeEl.classList.remove('hidden');
+                }
+                questionEl.innerText = currentTriviaData.question_text;
+                optionsEl.replaceChildren();
+                currentTriviaData.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'w-full text-left p-3 rounded-2xl border border-gold-400/40 hover:opacity-90 wine-card-bg text-white text-sm sm:text-base font-serif font-bold transition cursor-pointer shadow-sm';
+                    btn.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
+                    btn.onclick = () => submitTriviaAnswer(idx);
+                    optionsEl.appendChild(btn);
+                });
             } catch (err) {
-                console.warn("Quiz del giorno non disponibile al momento.", err);
+                console.error('Quiz del giorno:', err);
+                questionEl.innerText = err.message || 'Quiz non disponibile al momento.';
+                optionsEl.innerHTML = '';
             }
             if (window.lucide) lucide.createIcons();
         }
 
-        // 3. Invio della risposta (Mostra la spiegazione e imposta il flag senza mostrare l'avviso "già risposto")
+        // 3. Risposta verificata e accreditata esclusivamente sul server
         async function submitTriviaAnswer(selectedIndex) {
-            if (!currentUser) {
-                showToast("Accedi con Google per partecipare al Quiz!");
-                if (typeof loginWithGoogle === 'function') loginWithGoogle();
-                return;
-            }
-            if (!currentTriviaData) return;
-
-            const isCorrect = selectedIndex === currentTriviaData.correct_option_index;
-            const pts = currentTriviaData.points || 1;
-
-            const optionButtons = document.querySelectorAll('#triviaOptionsList button');
-            optionButtons.forEach((btn, idx) => {
-                btn.disabled = true;
-                if (idx === currentTriviaData.correct_option_index) {
-                    btn.classList.remove('wine-card-bg');
-                    btn.style.backgroundColor = '#15803d';
-                    btn.style.borderColor = '#16a34a';
-                } else if (idx === selectedIndex && !isCorrect) {
-                    btn.classList.remove('wine-card-bg');
-                    btn.style.backgroundColor = '#b91c1c';
-                    btn.style.borderColor = '#dc2626';
-                } else {
-                    btn.style.opacity = '0.4';
-                }
-            });
-
+            if (!currentUser || !currentTriviaData || userHasAnsweredToday || triviaSubmitting) return;
+            triviaSubmitting = true;
+            const buttons = document.querySelectorAll('#triviaOptionsList button');
+            buttons.forEach(btn => btn.disabled = true);
             try {
-                const { error } = await supabaseClient.rpc('record_trivia_answer', {
-                    p_user_id: currentUser.id,
-                    p_question_id: currentTriviaData.id,
-                    p_selected_option: selectedIndex,
-                    p_is_correct: isCorrect,
-                    p_points: pts
+                const result = await triviaRequest({
+                    action: 'answer',
+                    question_id: currentTriviaData.id,
+                    selected_option: selectedIndex
                 });
-
-                if (error) throw error;
-
-                // Segnamo che adesso ha risposto, così se dovesse ricliccare in futuro vedrà l'avviso
                 userHasAnsweredToday = true;
-
-                // Mostriamo subito il feedback e la spiegazione (SENZA l'avviso "Hai già risposto")
+                const correctIndex = result.correct_option_index;
+                buttons.forEach((btn, idx) => {
+                    if (idx === correctIndex) {
+                        btn.classList.remove('wine-card-bg');
+                        btn.style.backgroundColor = '#15803d';
+                        btn.style.borderColor = '#16a34a';
+                    } else if (idx === selectedIndex && !result.is_correct) {
+                        btn.classList.remove('wine-card-bg');
+                        btn.style.backgroundColor = '#b91c1c';
+                        btn.style.borderColor = '#dc2626';
+                    } else btn.style.opacity = '0.4';
+                });
                 const feedbackBox = document.getElementById('triviaFeedbackBox');
                 const fbTitle = document.getElementById('triviaFeedbackTitle');
                 const fbExp = document.getElementById('triviaExplanationText');
                 const badgeEl = document.getElementById('triviaPointsBadge');
-
                 if (badgeEl) badgeEl.classList.add('hidden');
-
                 if (feedbackBox && fbTitle && fbExp) {
-                    fbTitle.innerText = isCorrect ? "✦ Risposta Esatta! Punto accreditato alla tua cantina." : "✗ Risposta errata. Sarà per la prossima degustazione.";
-                    fbExp.innerText = currentTriviaData.explanation || "";
+                    fbTitle.innerText = result.already_answered ? 'Hai già risposto a questo quiz oggi.' :
+                        result.is_correct ? `✦ Risposta esatta! ${result.points_earned} ${result.points_earned === 1 ? 'punto accreditato' : 'punti accreditati'} alla tua cantina.` :
+                        '✗ Risposta errata. Sarà per la prossima degustazione.';
+                    fbExp.innerText = result.explanation || '';
                     feedbackBox.classList.remove('hidden');
                     feedbackBox.style.display = 'block';
                 }
-
-                if (typeof updateAuthUI === 'function') updateAuthUI(currentUser);
-                showToast(isCorrect ? "Risposta esatta! Punto registrato." : "Risposta registrata.");
-
+                if (typeof updateAuthUI === 'function') await updateAuthUI(currentUser);
+                showToast(result.already_answered ? 'Risposta già registrata.' : result.is_correct ? 'Punti registrati!' : 'Risposta registrata.');
             } catch (err) {
-                console.error("Errore salvataggio risposta trivia:", err);
-                showToast("Hai già risposto a questo quiz oggi.");
-                userHasAnsweredToday = true;
-            }
+                console.error('Errore salvataggio risposta trivia:', err);
+                showToast('Impossibile registrare la risposta. Riprova.');
+                buttons.forEach(btn => btn.disabled = false);
+            } finally { triviaSubmitting = false; }
         }
 
 // 4. Apertura / Chiusura Box Classifica
@@ -2119,9 +2161,15 @@ async function loadLeaderboardData(type) {
             document.getElementById('loadingTitle').innerText = dict.loadingTitle;
             document.getElementById('loadingSubtitle').innerText = dict.loadingSubtitle;
             document.getElementById('welcomeTitle').innerText = dict.welcomeTitle;
-            document.getElementById('welcomeDesc').innerHTML = currentLang === 'it' 
-                ? "Il tuo <strong class=\"font-semibold text-[#520d1a]\">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta." 
-                : "Let our <strong class=\"font-semibold text-[#520d1a]\">AI Sommelier</strong> guide you to the perfect wine pairing.";
+            
+const welcomeDescEl = document.getElementById('welcomeDesc');
+
+if (welcomeDescEl) {
+    welcomeDescEl.innerHTML = currentLang === 'it'
+        ? "Il tuo <strong class=\"font-semibold text-[#520d1a]\">Sommelier IA</strong> ti guida verso l'armonia enologica perfetta."
+        : "Let our <strong class=\"font-semibold text-[#520d1a]\">AI Sommelier</strong> guide you to the perfect wine pairing.";
+}
+
             if (window.lucide) lucide.createIcons();
         }
 
