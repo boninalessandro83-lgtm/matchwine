@@ -3423,43 +3423,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const priceMap = {
-                'premium': 'price_1UJG8fEVhIuUUxsw3qBJBk7B',
-                'credits_200': 'price_1UJG9BEVhIuUUxswNUyJ2tpu',
-                'credits_50': 'price_1UJG9BEVhIuUUxswNUyJ2tpu',
-                'credits_20': 'price_1UJG9BEVhIuUUxswNUyJ2tpu'
-            };
-
-            const priceId = priceMap[planType];
-            if (!priceId) {
-                alert("Prezzo non configurato.");
+            const validPlans = ['credits_10', 'credits_25', 'credits_100', 'premium'];
+            if (!validPlans.includes(planType)) {
+                alert("Piano non valido.");
                 return;
             }
 
-            const paymentMode = (planType === 'premium') ? 'subscription' : 'payment';
-
             try {
-                showToast("Reindirizzamento al portale di pagamento sicuro...");
-                 
+                showToast("Reindirizzamento al pagamento di prova Stripe...");
                 const { data, error } = await supabaseClient.functions.invoke('create-checkout-session', {
-                    body: { 
-                        priceId: priceId, 
-                        userId: currentUser.id, 
-                        mode: paymentMode 
-                    }
+                    body: { plan: planType }
                 });
 
                 if (error) {
                     let errorMsg = error.message;
                     try {
                         const errorBody = await error.context.json();
-                        if (errorBody && errorBody.error) errorMsg = errorBody.error;
+                        if (errorBody?.error) errorMsg = errorBody.error;
                     } catch (e) {}
                     throw new Error(errorMsg);
                 }
 
-                if (data && data.url) {
-                    window.location.href = data.url;
+                if (typeof data?.url === 'string' && data.url.startsWith('https://checkout.stripe.com/')) {
+                    window.location.assign(data.url);
                 } else {
                     throw new Error("URL di checkout non valido.");
                 }
