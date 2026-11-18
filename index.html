@@ -1229,8 +1229,28 @@
             if (modal) modal.classList.add('hidden');
         }
 
-        function manageSubscription() {
-            alert("Reindirizzamento al portale di gestione abbonamento sicuro.");
+        async function manageSubscription() {
+            try {
+                if (!currentUser) throw new Error("Accedi con Google per gestire l'abbonamento.");
+                const { data, error } = await supabaseClient.functions.invoke('create-customer-portal', {
+                    body: {}
+                });
+                if (error) {
+                    let message = error.message;
+                    try {
+                        const details = await error.context.json();
+                        if (details?.error) message = details.error;
+                    } catch (_) {}
+                    throw new Error(message);
+                }
+                if (typeof data?.url !== 'string' || !data.url.startsWith('https://billing.stripe.com/')) {
+                    throw new Error('Link del portale non valido.');
+                }
+                window.location.assign(data.url);
+            } catch (err) {
+                console.error('Errore portale abbonamento:', err);
+                alert('Impossibile aprire la gestione abbonamento: ' + err.message);
+            }
         }
 
        
