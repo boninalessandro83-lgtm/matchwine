@@ -1232,7 +1232,7 @@
         async function manageSubscription() {
             try {
                 if (!currentUser) throw new Error("Accedi con Google per gestire l'abbonamento.");
-                const { data, error } = await supabaseClient.functions.invoke('create-customer-portal', {
+                const { data, error } = await supabaseClient.functions.invoke('create-customer-portal-live', {
                     body: {}
                 });
                 if (error) {
@@ -3450,8 +3450,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                showToast("Reindirizzamento al pagamento di prova Stripe...");
-                const { data, error } = await supabaseClient.functions.invoke('create-checkout-session', {
+                showToast("Connessione sicura al pagamento Stripe...");
+                const { data, error } = await supabaseClient.functions.invoke('create-checkout-session-live', {
                     body: { plan: planType }
                 });
 
