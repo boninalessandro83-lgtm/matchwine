@@ -314,6 +314,29 @@
         .mw-social-actions button:not(:disabled):focus-visible {outline:3px solid #d6b16b;outline-offset:3px}
         @media(max-width:360px){.mw-social-actions{gap:7px}.mw-social-actions button{gap:6px;padding:10px 7px;font-size:12px;min-height:46px}.mw-social-actions button svg{width:17px;height:17px}}
 </style>
+
+<style id="matchwinePrivacyStyles">
+    #privacyPage { position: fixed; inset: 0; z-index: 1000; display: none; overflow-y: auto; background: #faf7f2; color: #33060f; -webkit-overflow-scrolling: touch; }
+    #privacyPage.is-open { display: block; }
+    #privacyPage .privacy-topbar { position: sticky; top: 0; z-index: 5; background: rgba(255,255,255,.96); border-bottom: 1px solid rgba(197,160,89,.35); backdrop-filter: blur(12px); }
+    #privacyPage .privacy-shell { width: min(100%, 920px); margin: 0 auto; padding: 24px 18px 64px; }
+    #privacyPage .privacy-paper { background: rgba(255,255,255,.94); border: 1px solid #e8d9bd; border-radius: 24px; box-shadow: 0 18px 48px rgba(82,13,26,.08); padding: clamp(22px, 5vw, 48px); }
+    #privacyPage .privacy-kicker { color: #a37f37; letter-spacing: .24em; text-transform: uppercase; font-size: 10px; font-weight: 700; }
+    #privacyPage h1 { color: #520d1a; font-family: 'Cormorant Garamond', Georgia, serif; font-size: clamp(34px, 7vw, 48px); line-height: 1.05; font-weight: 700; }
+    #privacyPage h2 { color: #520d1a; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 25px; line-height: 1.2; font-weight: 700; margin: 34px 0 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(212,175,55,.35); }
+    #privacyPage h3 { color: #650f25; font-size: 15px; font-weight: 700; margin: 22px 0 8px; }
+    #privacyPage p, #privacyPage li { color: #514640; font-size: 14px; line-height: 1.8; }
+    #privacyPage p { margin: 9px 0; }
+    #privacyPage ul { margin: 10px 0 16px; padding-left: 22px; list-style: disc; }
+    #privacyPage li { padding: 2px 0; }
+    #privacyPage strong { color: #3b1019; }
+    #privacyPage a { color: #8c6d33; text-decoration: underline; text-underline-offset: 3px; }
+    #privacyPage .privacy-meta { color: #8b7b70; font-size: 12px; }
+    #privacyPage .privacy-back { display: inline-flex; align-items: center; gap: 9px; border: 1px solid rgba(212,175,55,.55); color: #520d1a; background: #fffdf8; border-radius: 14px; padding: 10px 15px; font-size: 12px; font-weight: 600; letter-spacing: .04em; }
+    #privacyPage .privacy-back:hover { background: #fdf6e8; }
+    @media (max-width: 520px) { #privacyPage .privacy-shell { padding: 16px 12px 42px; } #privacyPage .privacy-paper { border-radius: 19px; padding: 22px 18px; } #privacyPage h2 { font-size: 23px; } #privacyPage p, #privacyPage li { font-size: 13px; line-height: 1.75; } }
+</style>
+
 </head>
 <body class="bg-[#faf7f2] text-stone-900 max-w-md mx-auto font-sans antialiased shadow-2xl relative min-h-screen flex flex-col page-container">
     
@@ -945,7 +968,7 @@
 
 <!-- PRIVACY -->
 <div id="privacySection" class="w-full text-center mb-2" style="margin-top: 20px;">
-    <a href="privacy.html" class="text-[9px] tracking-[0.2em] text-[#8c6d33] uppercase font-medium hover:underline inline-flex items-center gap-1.5">
+    <a href="#privacy" onclick="openPrivacyPolicy(); return false;" class="text-[9px] tracking-[0.2em] text-[#8c6d33] uppercase font-medium hover:underline inline-flex items-center gap-1.5">
         <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span> PRIVACY POLICY <span class="w-1 h-1 rounded-full bg-[#8c6d33]"></span>
     </a>
 </div>
@@ -3882,5 +3905,165 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "15031c4ddfa0424fad6a741414d00fa6"}'></script><!-- End Cloudflare Web Analytics -->
+
+<!-- PRIVACY POLICY INTEGRATA: sostituisce il precedente collegamento a privacy.html -->
+<section id="privacyPage" aria-label="Privacy Policy MatchWine" aria-hidden="true">
+    <div class="privacy-topbar">
+        <div class="mx-auto max-w-5xl px-4 py-3 flex items-center justify-between gap-3">
+            <img src="images/Logo_MatchWine.png" alt="MatchWine" class="h-10 w-auto object-contain" onerror="this.style.display='none'">
+            <button type="button" class="privacy-back" onclick="closePrivacyPolicy()" aria-label="Torna a MatchWine">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i><span>Torna a MatchWine</span>
+            </button>
+        </div>
+    </div>
+    <div class="privacy-shell">
+        <article class="privacy-paper">
+            <div class="text-center mb-8">
+                <p class="privacy-kicker">Trasparenza e protezione dei dati</p>
+                <h1 class="mt-3">Privacy Policy</h1>
+                <p class="privacy-meta mt-3">Informativa ai sensi degli articoli 13 e 14 del Regolamento UE 2016/679 (GDPR)</p>
+                <p class="privacy-meta">Ultimo aggiornamento: 19 novembre 2026</p>
+            </div>
+            <p>La presente informativa descrive le modalità con cui MatchWine raccoglie, utilizza, conserva e protegge i dati personali degli utenti che visitano e utilizzano il sito web, l'applicazione web progressiva (PWA) e i servizi collegati. È resa ai sensi del Regolamento (UE) 2016/679 (GDPR), del D.lgs. 196/2003 e successive modificazioni e della normativa italiana ed europea applicabile.</p>
+
+            <h2>1. Titolare del trattamento</h2>
+            <p>Il titolare del trattamento è <strong>Alessandro Bonin</strong>, Via XI Febbraio 8, Parabiago (MI), Italia. Per qualsiasi richiesta relativa al trattamento dei dati personali è possibile scrivere a <a href="mailto:info@matchwine.it">info@matchwine.it</a>.</p>
+
+            <h2>2. Tipologie di dati personali trattati</h2>
+            <h3>2.1 Dati identificativi e di registrazione</h3>
+            <p>Per consentire la registrazione e l'accesso possono essere trattati indirizzo email, nome e cognome ove disponibili, immagine del profilo ove disponibile, identificativo univoco dell'account e informazioni tecniche relative all'autenticazione e alle sessioni.</p>
+            <p>MatchWine consente l'autenticazione attraverso Google Login, integrato tramite Supabase. L'integrazione utilizza gli ambiti OAuth <strong>openid</strong> (identificativo univoco dell'account), <strong>userinfo.email</strong> (indirizzo email) e <strong>userinfo.profile</strong> (informazioni del profilo, quali nome e immagine). MatchWine non richiede autorizzazioni per accedere a Gmail, Google Drive, contatti o calendario.</p>
+            <h3>2.2 Dati del profilo e di utilizzo</h3>
+            <p>Possono essere trattati identificativo dell'utente, crediti disponibili e utilizzati, piano di utilizzo, stato e scadenza dell'abbonamento, preferiti, abbinamenti salvati, risposte ai quiz, punteggi, livelli, badge e informazioni relative all'utilizzo delle funzionalità.</p>
+            <h3>2.3 Quiz e classifiche</h3>
+            <p>Per le funzionalità di apprendimento e intrattenimento enologico possono essere trattati risposte ai quiz, punteggi, identificativo dell'utente, nome visualizzato, livello e badge. Le classifiche possono rendere visibili agli altri utenti il nome visualizzato e il relativo punteggio. Il nome può essere ricavato dal profilo mostrando il nome e l'iniziale del cognome; in assenza di un nome utilizzabile può essere mostrata la dicitura «Sommelier Anonimo».</p>
+            <h3>2.4 Dati inseriti nelle funzionalità AI</h3>
+            <p>Quando l'utente utilizza gli abbinamenti enogastronomici e la sessione Enologo AI possono essere trattati domande, richieste, descrizioni di piatti e alimenti, informazioni sui vini, preferenze e informazioni contestuali necessarie alla generazione delle risposte. I contenuti necessari vengono trasmessi a OpenAI tramite API. Il flusso applicativo della sessione Enologo non trasmette esplicitamente a OpenAI nome, email o identificativo Supabase dell'utente. La cronologia non viene archiviata nel database MatchWine secondo il funzionamento applicativo implementato. Restano applicabili le modalità di conservazione di OpenAI. Si invita a non inserire dati sanitari o altre informazioni particolari non necessarie.</p>
+            <h3>2.5 Immagini delle etichette</h3>
+            <p>Quando viene utilizzata la funzionalità di riconoscimento delle etichette, l'immagine può essere trasmessa a un servizio AI per l'elaborazione. Il flusso applicativo verificato non prevede l'archiviazione dell'immagine nel database MatchWine e non trasmette esplicitamente a OpenAI nome, email o identificativo dell'account.</p>
+            <h3>2.6 Dati tecnici e di sicurezza</h3>
+            <p>Possono essere trattati identificativi delle richieste e delle sessioni, date e orari, contatori di utilizzo, informazioni necessarie alla prevenzione degli abusi e informazioni tecniche trattate dai servizi infrastrutturali.</p>
+
+            <h2>3. Finalità e basi giuridiche</h2>
+            <ul>
+                <li><strong>Registrazione e gestione dell'account:</strong> esecuzione del contratto, art. 6(1)(b) GDPR.</li>
+                <li><strong>Abbinamenti enogastronomici e sessione Enologo AI:</strong> esecuzione del contratto, art. 6(1)(b) GDPR.</li>
+                <li><strong>Gestione crediti e Premium:</strong> esecuzione del contratto, art. 6(1)(b) GDPR.</li>
+                <li><strong>Quiz, punteggi e classifiche:</strong> esecuzione del contratto, art. 6(1)(b) GDPR.</li>
+                <li><strong>Sicurezza e prevenzione degli abusi:</strong> legittimo interesse del titolare, art. 6(1)(f) GDPR, consistente nella protezione, integrità e disponibilità della piattaforma.</li>
+                <li><strong>Adempimenti normativi e amministrativi:</strong> obbligo legale, art. 6(1)(c) GDPR.</li>
+                <li><strong>Statistiche di utilizzo:</strong> legittimo interesse, nei limiti consentiti dalla normativa applicabile.</li>
+                <li><strong>Eventuali comunicazioni promozionali:</strong> consenso dell'interessato, ove richiesto dalla normativa.</li>
+            </ul>
+
+            <h2>4. Utilizzo dell'intelligenza artificiale</h2>
+            <p>MatchWine integra sistemi AI forniti da OpenAI tramite API per generare abbinamenti, suggerimenti e spiegazioni enogastronomiche, rispondere alle domande nella sessione Enologo AI ed elaborare immagini di etichette. I contenuti vengono trasmessi nella misura necessaria all'elaborazione del servizio.</p>
+            <p>Secondo le condizioni standard delle API OpenAI, i dati API non vengono utilizzati per addestrare o migliorare i modelli per impostazione predefinita, salvo adesione esplicita a programmi di condivisione. OpenAI può conservare temporaneamente i contenuti nei log di monitoraggio degli abusi: il periodo standard è fino a 30 giorni, salvo eccezioni previste dalle condizioni del servizio o dalla normativa.</p>
+            <p>La cronologia non viene conservata nel database MatchWine secondo il funzionamento implementato. Le risposte AI hanno finalità informative e di supporto e non costituiscono consulenza professionale personalizzata. MatchWine non utilizza sistemi decisionali automatizzati che producano effetti giuridici o incidano analogamente in modo significativo sulla persona.</p>
+
+            <h2>5. Modalità di trattamento e sicurezza</h2>
+            <p>Il trattamento avviene mediante strumenti informatici e telematici e procedure tecniche e organizzative adeguate. MatchWine utilizza Supabase per account, autenticazione, database, backend e funzioni server. Il database principale è configurato nella regione europea <strong>eu-west-1 (Irlanda)</strong>.</p>
+            <p>Sono adottate misure quali autenticazione, controlli degli accessi, protezione delle comunicazioni, limitazione delle richieste, controlli tecnici, procedure automatiche di pulizia e protezione delle credenziali. L'accesso ai dati è limitato alle necessità operative e di gestione della piattaforma.</p>
+
+            <h2>6. Fornitori tecnologici e ruoli nel trattamento</h2>
+            <h3>6.1 Supabase</h3>
+            <p>Fornisce database, autenticazione, gestione account, backend e funzioni server. Per i dati degli utenti trattati per erogare i servizi richiesti da MatchWine, Supabase opera come <strong>responsabile del trattamento</strong> e MatchWine come titolare, secondo il DPA. Per determinate informazioni di utilizzo dei propri servizi (Usage Data), Supabase può operare come titolare autonomo, secondo le condizioni contrattuali.</p>
+            <h3>6.2 OpenAI</h3>
+            <p>Fornisce i servizi AI. Per i dati personali trasmessi tramite API e trattati per fornire i servizi richiesti, OpenAI opera come <strong>responsabile del trattamento</strong>, secondo il proprio DPA. Può inoltre trattare determinate informazioni per finalità proprie, quali sicurezza, prevenzione degli abusi e adempimenti normativi, secondo le condizioni applicabili.</p>
+            <h3>6.3 Google</h3>
+            <p>Fornisce Google Login. Google opera come titolare autonomo per i trattamenti relativi alla gestione dei propri account, ai servizi di autenticazione e alla sicurezza della propria infrastruttura. MatchWine è titolare autonomo dei dati ricevuti tramite Google Login e successivamente trattati per creare e gestire gli account MatchWine.</p>
+            <h3>6.4 Netlify</h3>
+            <p>Fornisce hosting, pubblicazione e distribuzione. Per i dati personali trattati per conto di MatchWine nell'erogazione dei servizi di hosting e infrastruttura, Netlify opera come <strong>responsabile del trattamento</strong>, secondo il proprio Data Processing Agreement. Gli eventuali trattamenti per finalità proprie sono disciplinati dalla relativa documentazione.</p>
+            <h3>6.5 Cloudflare</h3>
+            <p>Fornisce Cloudflare Web Analytics e, ove applicabile, servizi infrastrutturali e di sicurezza. Il ruolo dipende dal servizio: per i dati trattati secondo le istruzioni di MatchWine opera come responsabile, ove previsto dal relativo accordo; per le informazioni trattate autonomamente per gestione, sicurezza e miglioramento dei propri servizi opera secondo le proprie condizioni e informative.</p>
+            <h3>6.6 Stripe – Managed Payments</h3>
+            <p>MatchWine utilizza Stripe Managed Payments per gli acquisti digitali e gli abbonamenti. Sold through Link, LLC, società affiliata a Stripe, opera come <strong>Merchant of Record</strong> per le transazioni effettuate tramite Managed Payments. I ruoli privacy delle società Stripe dipendono dalle singole attività: responsabile per i trattamenti effettuati per conto di MatchWine e titolare autonomo per le attività per cui determina finalità e mezzi, incluse, secondo i casi, prevenzione frodi, sicurezza, obblighi normativi e gestione dei servizi di pagamento.</p>
+            <p>I dati personali non vengono venduti a terzi.</p>
+
+            <h2>7. Pagamenti e Stripe Managed Payments</h2>
+            <p>MatchWine utilizza esclusivamente Stripe Managed Payments, servizio fornito da Sold through Link, LLC, che opera come Merchant of Record e venditore ufficiale nei confronti del cliente per le transazioni gestite attraverso il servizio.</p>
+            <p>I prodotti acquistabili sono:</p>
+            <ul><li>Pacchetto da 10 crediti: <strong>1,00 €</strong>.</li><li>Pacchetto da 25 crediti: <strong>2,00 €</strong>.</li><li>Pacchetto da 100 crediti: <strong>5,00 €</strong>.</li><li>Abbonamento Premium mensile: <strong>2,99 €</strong>.</li></ul>
+            <p>Premium prevede il rinnovo automatico secondo le condizioni comunicate al momento dell'acquisto ed è cancellabile secondo le modalità del servizio. I crediti consentono di utilizzare le funzionalità della piattaforma, inclusa la sessione Enologo AI, che non costituisce un prodotto acquistabile separatamente.</p>
+            <p>Sold through Link, LLC gestisce, nell'ambito delle proprie responsabilità di Merchant of Record, il processo di acquisto, l'elaborazione dei pagamenti, gli adempimenti relativi alle imposte indirette applicabili e gli aspetti di assistenza post-vendita previsti dal servizio.</p>
+            <p>Durante l'acquisto possono essere trattati nome, cognome, email, informazioni di fatturazione, informazioni relative al metodo di pagamento, importi, identificativi delle transazioni, prodotti acquistati, informazioni sugli abbonamenti e dati necessari alla prevenzione delle frodi. I dati completi delle carte sono gestiti tramite l'infrastruttura Stripe e non sono conservati direttamente nei database MatchWine.</p>
+            <p>MatchWine riceve le informazioni necessarie a verificare gli acquisti, attribuire i crediti, attivare Premium e gestire le funzionalità acquistate. Per ulteriori informazioni: <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer">Stripe Privacy Policy</a>.</p>
+
+            <h2>8. Trasferimento dei dati verso Paesi terzi</h2>
+            <p>Alcuni fornitori possono trattare dati personali anche al di fuori dello Spazio Economico Europeo. La localizzazione del database principale in Irlanda non esclude trattamenti in altri Paesi per servizi, supporto, infrastrutture o subfornitori.</p>
+            <p>Gli eventuali trasferimenti avvengono nel rispetto degli articoli 44 e seguenti GDPR e possono basarsi, secondo il caso, su decisioni di adeguatezza, Clausole Contrattuali Standard approvate dalla Commissione europea o altre garanzie previste dalla normativa. Per informazioni sulle garanzie applicate è possibile scrivere a <a href="mailto:info@matchwine.it">info@matchwine.it</a>.</p>
+
+            <h2>9. Periodi di conservazione dei dati</h2>
+            <p>MatchWine conserva i dati per il tempo necessario alle finalità per cui sono raccolti, nel rispetto dei principi di limitazione della conservazione e minimizzazione previsti dall'articolo 5 GDPR.</p>
+            <h3>9.1 Account e profilo</h3><p>I dati identificativi e del profilo sono conservati per la durata del rapporto con l'utente e fino alla cancellazione dell'account, fatti salvi obblighi di legge e periodi tecnici relativi alle copie di sicurezza.</p>
+            <h3>9.2 Quiz e classifiche</h3><p>Le risposte ai quiz Trivia sono conservate per un periodo massimo di <strong>13 mesi</strong>. La procedura automatica elimina i record che hanno superato il periodo previsto. Livelli e badge sono conservati per la durata del rapporto, salvo cancellazione o obblighi di legge.</p>
+            <h3>9.3 Log API</h3><p>I record della tabella applicativa <code>api_usage_logs</code>, utilizzati per monitorare consumi e richieste ai servizi, sono conservati per <strong>90 giorni</strong>. La procedura automatica elimina i record precedenti a tale periodo.</p>
+            <h3>9.4 Controllo delle richieste</h3><p>I record della tabella <code>chat_request_guard</code>, utilizzati per protezione delle richieste e prevenzione degli abusi, sono conservati per un massimo di <strong>7 giorni</strong>.</p>
+            <h3>9.5 Pulizia automatica</h3><p>Le procedure automatiche di pulizia dei dati applicativi interessati vengono eseguite quotidianamente alle <strong>03:00 UTC</strong> e riguardano in particolare log API, dati di controllo delle richieste e dati Trivia soggetti a scadenza.</p>
+            <h3>9.6 Backup Supabase</h3><p>Il database principale è ospitato su Supabase Pro nella regione <strong>eu-west-1 (Irlanda)</strong>. I backup giornalieri sono conservati per <strong>7 giorni</strong>, secondo la configurazione del servizio. La funzionalità Point-in-Time Recovery (PITR) non è attivata. I backup possono contenere temporaneamente dati già eliminati dal database operativo fino alla scadenza del relativo ciclo.</p>
+            <h3>9.7 OpenAI</h3><p>La cronologia Enologo AI non viene conservata nel database MatchWine. OpenAI può conservare i dati nei log di monitoraggio degli abusi per un periodo standard fino a <strong>30 giorni</strong>, salvo eccezioni previste dalle condizioni del servizio o dalla normativa. I dati API non vengono utilizzati per addestrare i modelli per impostazione predefinita.</p>
+            <h3>9.8 Cloudflare Web Analytics</h3><p>I dati grezzi utilizzati per le statistiche sono conservati per <strong>7 giorni</strong>; successivamente vengono mantenuti in forma aggregata secondo le modalità del servizio. Cloudflare Web Analytics è progettato per funzionare senza cookie di tracciamento, localStorage o tecniche di fingerprinting.</p>
+            <h3>9.9 Netlify</h3><p>I log tecnici consultabili attraverso il pannello Netlify sono disponibili per una finestra di consultazione di <strong>24 ore</strong>, secondo la configurazione verificata. Eventuali ulteriori dati tecnici sono trattati secondo le condizioni e i periodi applicabili ai rispettivi servizi.</p>
+            <h3>9.10 Google</h3><p>MatchWine conserva i dati ricevuti tramite Google Login per la durata del rapporto e fino alla cancellazione dell'account, fatti salvi gli obblighi di legge. Google tratta autonomamente i dati relativi ai propri account e servizi secondo le proprie condizioni e politiche di conservazione.</p>
+            <h3>9.11 Stripe Managed Payments</h3><p>I dati relativi ad acquisti, pagamenti, abbonamenti e documentazione fiscale sono conservati dai soggetti coinvolti secondo le rispettive responsabilità e per i periodi previsti dalla normativa fiscale, contabile e amministrativa. MatchWine conserva le informazioni necessarie alla gestione dei crediti e all'attivazione delle funzionalità per il tempo necessario al rapporto contrattuale e agli eventuali obblighi di legge.</p>
+            <h3>9.12 Cancellazione</h3><p>Al termine dei periodi applicabili i dati vengono cancellati o resi anonimi, ove possibile, fatti salvi obblighi normativi, esigenze di accertamento o difesa di un diritto e periodi tecnici di conservazione delle copie di sicurezza.</p>
+
+            <h2>10. Cookie e strumenti di analisi</h2>
+            <p>MatchWine utilizza tecnologie tecniche necessarie al funzionamento della piattaforma, all'autenticazione e alla sicurezza. Utilizza inoltre Cloudflare Web Analytics per statistiche sul traffico e sull'utilizzo del sito. Il servizio è progettato per funzionare senza cookie di tracciamento e senza tecniche di fingerprinting.</p>
+            <p>Eventuali cookie e strumenti strettamente necessari sono utilizzati nei limiti previsti dalla normativa. L'introduzione di cookie di profilazione o altri strumenti non strettamente necessari sarà subordinata al consenso preventivo, quando richiesto. Per maggiori dettagli si rimanda alla Cookie Policy di MatchWine.</p>
+
+            <h2>11. Comunicazioni commerciali e marketing</h2>
+            <p>MatchWine distingue le comunicazioni necessarie all'erogazione del servizio (account, sicurezza, autenticazione, acquisti e informazioni sui servizi richiesti) dalle eventuali comunicazioni commerciali.</p>
+            <p>Newsletter, offerte, promozioni e campagne pubblicitarie rivolte agli utenti saranno effettuate nel rispetto della normativa e, ove necessario, previo consenso specifico. Il consenso è facoltativo e non condiziona l'accesso ai servizi principali; può essere revocato in qualsiasi momento. Eventuali nuove finalità saranno comunicate mediante aggiornamento dell'informativa e, ove necessario, richiesta di consenso.</p>
+
+            <h2>12. Diritti dell'interessato</h2>
+            <p>Ai sensi degli articoli 15–22 GDPR, l'interessato può esercitare, nei limiti e alle condizioni previste dalla normativa, i seguenti diritti:</p>
+            <ul><li>Accesso ai dati personali e ricezione di una copia.</li><li>Rettifica dei dati inesatti o incompleti.</li><li>Cancellazione nei casi previsti dalla normativa.</li><li>Limitazione del trattamento nei casi previsti.</li><li>Portabilità dei dati, nei casi previsti.</li><li>Opposizione ai trattamenti basati sul legittimo interesse per motivi connessi alla propria situazione particolare.</li><li>Opposizione in qualsiasi momento al marketing diretto.</li><li>Revoca del consenso, senza pregiudicare la liceità del trattamento precedente.</li></ul>
+            <p>L'interessato può inoltre proporre reclamo al <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener noreferrer">Garante per la protezione dei dati personali</a>.</p>
+            <p>Le richieste possono essere inviate a <a href="mailto:info@matchwine.it">info@matchwine.it</a>. Il titolare fornirà riscontro senza ingiustificato ritardo e, in ogni caso, entro un mese. Il termine può essere prorogato di ulteriori due mesi nei casi previsti dal GDPR; l'interessato sarà informato della proroga e dei motivi entro il primo mese. L'esercizio dei diritti è generalmente gratuito, salvo i casi previsti dalla normativa.</p>
+
+            <h2>13. Cancellazione dell'account</h2>
+            <p>L'utente può richiedere la cancellazione dell'account attraverso l'apposita funzionalità disponibile nella piattaforma oppure contattando <a href="mailto:info@matchwine.it">info@matchwine.it</a>.</p>
+            <p>La procedura è progettata per eliminare il profilo e i dati applicativi associati, compresi crediti residui, preferiti, risposte Trivia e punteggi, nei limiti consentiti dalla normativa. I dati soggetti a obblighi di conservazione e le copie tecniche di backup ancora presenti nei relativi cicli possono essere mantenuti per il tempo strettamente necessario e non sono utilizzati per finalità incompatibili con la cancellazione richiesta.</p>
+            <p>La cancellazione dell'account non comporta automaticamente la cancellazione dei dati conservati autonomamente dai fornitori per obblighi legali o altre finalità legittime. L'eventuale abbonamento Premium deve essere gestito secondo le procedure di cessazione previste da Stripe Managed Payments, per evitare rinnovi non desiderati.</p>
+
+            <h2>14. Natura del conferimento dei dati</h2>
+            <p>Il conferimento dei dati necessari alla registrazione, all'autenticazione e all'utilizzo delle funzionalità richieste è necessario per erogare i servizi. Il mancato conferimento può impedire la creazione dell'account o l'utilizzo di determinate funzionalità. Il conferimento dei dati per eventuali finalità promozionali è facoltativo e il mancato consenso non pregiudica l'accesso ai servizi principali.</p>
+
+            <h2>15. Modifiche all'informativa</h2>
+            <p>Il titolare può aggiornare la presente Privacy Policy in caso di modifiche normative, tecnologiche, organizzative o in occasione dell'introduzione di nuove funzionalità. Le modifiche saranno pubblicate su questa pagina con indicazione della data di aggiornamento. Qualora vengano introdotte nuove finalità o modalità sostanzialmente diverse di trattamento, gli utenti saranno informati secondo quanto previsto dalla normativa.</p>
+
+            <h2>16. Contatti</h2>
+            <p>Per qualsiasi informazione, chiarimento o richiesta relativa alla presente informativa e al trattamento dei dati personali:</p>
+            <p><strong>Alessandro Bonin</strong><br>Via XI Febbraio 8, Parabiago (MI), Italia<br>Email: <a href="mailto:info@matchwine.it">info@matchwine.it</a><br>Sito web: <a href="https://www.matchwine.it" target="_blank" rel="noopener noreferrer">www.matchwine.it</a></p>
+            <div class="mt-10 pt-5 border-t border-[#e8d9bd] text-center"><p class="privacy-meta">MatchWine · Informativa sul trattamento dei dati personali</p><button type="button" class="privacy-back mt-3" onclick="closePrivacyPolicy()"><i data-lucide="arrow-left" class="w-4 h-4"></i><span>Torna a MatchWine</span></button></div>
+        </article>
+    </div>
+</section>
+
+<script>
+function openPrivacyPolicy() {
+    const page = document.getElementById('privacyPage');
+    if (!page) return;
+    page.classList.add('is-open');
+    page.setAttribute('aria-hidden', 'false');
+    page.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+    if (window.lucide) window.lucide.createIcons();
+    history.replaceState(null, '', '#privacy');
+}
+function closePrivacyPolicy() {
+    const page = document.getElementById('privacyPage');
+    if (!page) return;
+    page.classList.remove('is-open');
+    page.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (location.hash === '#privacy') history.replaceState(null, '', location.pathname + location.search);
+}
+window.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') closePrivacyPolicy();
+});
+</script>
+
 </body>
 </html>
